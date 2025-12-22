@@ -5,7 +5,7 @@ def home(request):
     return render(request,'home.html')
 
 def login(request):
-    return render(request,'home.html')
+    return render(request,'login.html')
 
 def register(request):
     return render(request,'home.html')

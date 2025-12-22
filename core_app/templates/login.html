@@ -1,0 +1,42 @@
+{% extends "master.html" %}
+{% load static %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="login-register-box container">  
+    <h1>Login</h1>
+
+    {% if error %}
+        <p class="error-text">{{ error }}</p>
+    {% endif %}
+
+    {% if error_message %}
+        <p class="error-text">{{ error_message }}</p>
+    {% endif %}
+
+    <form action="{% url 'login' %}" method="post">
+        {% csrf_token %}
+        {{form.as_p}}
+
+        <div class="forgot-password">
+              <a href="#">Forgot Password?</a>
+        </div>
+
+        <div>
+            <button type="submit" class="login-register-btn">Login</button>
+        </div>
+    </form>
+
+    <span class="login-register-link">
+        Don't have an account? <a href="{% url 'register' %}">Sign up</a>
+    </span>
+</div>
+<div class="admin-box">
+        <h3>Admin Credentials</h3>
+        <p><strong>Username:</strong> admin</p>
+        <p><strong>Password:</strong> heyyy123</p>
+</div>
+
+
+{% endblock %}
