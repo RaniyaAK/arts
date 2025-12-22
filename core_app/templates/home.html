@@ -1,0 +1,73 @@
+{% extends "master.html" %}
+{% block title %}Home | Paletra{% endblock %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<section class="min-h-screen flex items-center justify-center">
+    <div class="text-center max-w-3xl px-6">
+        <h2 class="text-5xl font-bold mb-6 leading-tight">
+            A calm space for creative minds
+        </h2>
+        <p class="text-xl text-[#4A3628] mb-10">
+            Paletra is a natural, clutter-free place to share ideas, grow creativity,
+            and build your artistic journey.
+        </p>
+        <div class="space-x-6">
+            <a href="{% url 'register' %}"
+               class="bg-[#6B4F3F] text-[#F5E6C8] px-10 py-4 rounded-lg text-lg hover:bg-[#4A3628]">
+                Get Started
+            </a>
+            <a href="#how"
+               class="border-2 border-[#6B4F3F] text-[#6B4F3F] px-10 py-4 rounded-lg text-lg hover:bg-[#F5E6C8]">
+                How it works
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ABOUT SECTION -->
+<section id="about" class="py-32 bg-[#F5E6C8]">
+    <div class="max-w-5xl mx-auto text-center px-6">
+        <h3 class="text-4xl font-semibold mb-6">About Paletra</h3>
+        <p class="text-lg text-[#4A3628] leading-relaxed">
+            Paletra is built for creators who prefer simplicity.
+            No noise, no pressure — just a peaceful space to
+            express, share, and evolve creatively.
+        </p>
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="py-32">
+    <div class="max-w-6xl mx-auto px-6">
+        <h3 class="text-4xl font-semibold text-center mb-16">
+            How it works
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+            <div>
+                <h4 class="text-2xl font-medium mb-4">1. Create</h4>
+                <p class="text-[#4A3628]">
+                    Sign up and start sharing your creative work.
+                </p>
+            </div>
+
+            <div>
+                <h4 class="text-2xl font-medium mb-4">2. Grow</h4>
+                <p class="text-[#4A3628]">
+                    Build your presence and evolve your style.
+                </p>
+            </div>
+
+            <div>
+                <h4 class="text-2xl font-medium mb-4">3. Share</h4>
+                <p class="text-[#4A3628]">
+                    Connect naturally with other creators.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
