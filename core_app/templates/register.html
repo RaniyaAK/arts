@@ -1,0 +1,28 @@
+{% extends "master.html" %}
+{% load static %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="login-register-box container">
+    <h1>Create Account</h1>
+
+    {% if error_message %}
+        <p class="error-text">{{ error_message }}</p>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+
+        <div>
+            <button type="submit" class="login-register-btn">Register</button>
+        </div>
+    </form>
+
+    <span class="login-register-link">
+        Already have an account? <a href="{% url 'login' %}">Login</a>
+    </span>
+</div>
+{% endblock %}
+

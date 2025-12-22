@@ -3,12 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Paletra{% endblock %}</title>
+        {% load static %}
+
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
+<body class="bg-[#FAF7F2]">
 
-<body>
-    {% block content %}{% endblock %}
+    <!-- NAVBAR (ALWAYS VISIBLE) -->
+    <nav class="flex justify-between items-center px-10 py-6">
+        <h1 class="text-2xl font-semibold">Paletra</h1>
+
+        <div class="space-x-6">
+            <a href="/#about" class="text-[#4A3628]">About</a>
+            <a href="/#how" class="text-[#4A3628]">How it works</a>
+            <a href="{% url 'login' %}" class="text-[#4A3628]">Login</a>
+            <a href="{% url 'register' %}"
+               class="bg-[#6B4F3F] text-[#F5E6C8] px-5 py-2 rounded-lg">
+                Sign up
+            </a>
+        </div>
+    </nav>
+
+    <!-- PAGE CONTENT -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
 </body>
-
 </html>
