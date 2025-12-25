@@ -1,0 +1,48 @@
+{% extends "masterss.html" %}
+{% block title %}Client Dashboard | Paletra{% endblock %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+
+    <!-- Welcome Header -->
+    <h2 class="text-primary-color mb-2">Welcome, {{ request.user.username }} 👀</h2>
+    <p class="text-primary-color mb-4">
+        Browse artworks from various artists and favorite pieces.
+    </p>
+
+    <!-- Featured Artists -->
+    <h4 class="mb-3 text-primary-color">Featured Artists</h4>
+    <div class="row g-4 mb-5">
+        {% for i in featured_artists %}
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <img src="{% static 'images/artist_placeholder.png' %}" class="card-img-top" alt="Artist">
+                <div class="card-body">
+                    <h5 class="card-title text-primary-color">Artist {{ i }}</h5>
+                    <p class="card-text text-primary-color">Brief bio or style of the artist.</p>
+                    <a href="#" class="btn btn-outline-primary w-100">View Artworks</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Latest Artworks -->
+    <h4 class="mb-3 text-primary-color">Latest Artworks</h4>
+    <div class="row g-4">
+        {% for i in artworks %}
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <img src="{% static 'images/artwork_placeholder.png' %}" class="card-img-top" alt="Artwork">
+                <div class="card-body">
+                    <h5 class="card-title text-primary-color">Artwork {{ i }}</h5>
+                    <p class="card-text text-primary-color">Short description of the artwork.</p>
+                    <a href="#" class="btn btn-outline-primary w-100">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
