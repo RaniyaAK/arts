@@ -1,42 +1,137 @@
-{% extends "master.html" %}
-{% load static %}
+{% extends "masterss.html" %}
 
-{% block title %}Login{% endblock %}
+{% block body_class %}no-navbar{% endblock %}
 
 {% block content %}
-<div class="login-register-box container">  
-    <h1>Login</h1>
 
-    {% if error %}
-        <p class="error-text">{{ error }}</p>
-    {% endif %}
+<style>
+/* PAGE BASE */
+body {
+    background-color: #F4EFE8;
+}
 
-    {% if error_message %}
-        <p class="error-text">{{ error_message }}</p>
-    {% endif %}
+/* LOGIN CARD */
+.login-wrapper {
+    min-height: 100vh;
+}
 
-    <form action="{% url 'login' %}" method="post">
-        {% csrf_token %}
-        {{form.as_p}}
+.login-card {
+    background: linear-gradient(180deg, #FFF8EE, #F3E8D9);
+    border-radius: 26px;
+    padding: 32px;
+}
 
-        <div class="forgot-password">
-              <a href="#">Forgot Password?</a>
+/* TITLE */
+.login-title {
+    color: #4B3326;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* INPUTS */
+.login-card input {
+    width: 100%;
+    border-radius: 30px;
+    border: 1px solid #D2C2A8;
+    padding: 12px 18px;
+    background-color: #FFFDF8;
+    transition: border 0.25s ease, box-shadow 0.25s ease;
+}
+
+.login-card input:focus {
+    border-color: #CFAF5D;
+    box-shadow: 0 0 0 0.15rem rgba(207,175,93,0.25);
+    outline: none;
+}
+
+/* BUTTON */
+.btn-login {
+    background-color: #6A4632;
+    color: #FFF8E7;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    padding: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+    background-color: #CFAF5D;
+    color: #3E2A20;
+}
+
+/* LINKS — UX FIX */
+.login-links a {
+    position: relative;
+    display: inline-block;
+    font-size: 0.9rem;
+    color: #5A4032;
+    padding-bottom: 3px;
+    transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.login-links a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background-color: #D6B36A;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s ease;
+}
+
+.login-links a:hover {
+    color: #3E2A20;
+    transform: translateX(3px);
+}
+
+.login-links a:hover::after {
+    transform: scaleX(1);
+}
+
+/* REMOVE DJANGO HELP TEXT */
+.helptext {
+    display: none;
+}
+</style>
+
+<div class="container login-wrapper d-flex align-items-center justify-content-center">
+    <div class="col-md-5 col-lg-4">
+
+        <div class="card login-card shadow-lg border-0">
+            <div class="card-body">
+
+                <h4 class="text-center mb-4 login-title">
+                    Sign in to Paletra
+                </h4>
+
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+
+                    <div class="d-grid mt-3">
+                        <button type="submit" class="btn btn-login rounded-pill">
+                            Login
+                        </button>
+                    </div>
+                </form>
+
+                <div class="login-links text-center mt-4">
+                    <a href="{% url 'forgot_password' %}" class="text-decoration-none">
+                        Forgot your password?
+                    </a>
+                    <br>
+                    <a href="{% url 'register' %}" class="text-decoration-none mt-2 d-inline-block">
+                        New here? Create an account
+                    </a>
+                </div>
+
+            </div>
         </div>
 
-        <div>
-            <button type="submit" class="login-register-btn">Login</button>
-        </div>
-    </form>
-
-    <span class="login-register-link">
-        Don't have an account? <a href="{% url 'register' %}">Sign up</a>
-    </span>
+    </div>
 </div>
-<div class="admin-box">
-        <h3>Admin Credentials</h3>
-        <p><strong>Username:</strong> admin</p>
-        <p><strong>Password:</strong> heyyy123</p>
-</div>
-
 
 {% endblock %}

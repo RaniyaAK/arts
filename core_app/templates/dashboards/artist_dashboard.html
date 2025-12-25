@@ -1,0 +1,182 @@
+{% extends "masterss.html" %}
+{% load static %}
+{% block title %}Artist Dashboard | Paletra{% endblock %}
+
+{% block content %}
+
+<style>
+/* PAGE BASE */
+.dashboard-page {
+    background: #FFF7EC;
+    min-height: 100vh;
+}
+
+/* TEXT COLORS */
+.text-main {
+    color: #5C3A21;
+}
+.text-muted-soft {
+    color: #8A6A4F;
+}
+
+/* HEADER */
+.dashboard-header {
+    margin-bottom: 40px;
+}
+
+/* STATS */
+.stat-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 28px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+}
+
+.stat-number {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-top: 10px;
+}
+
+/* BUTTON */
+.btn-art {
+    background: #5C3A21;
+    color: #FFF7EC;
+    border-radius: 50px;
+    padding: 12px 30px;
+    font-weight: 600;
+}
+
+.btn-art:hover {
+    background: #7A4A2B;
+    color: #FFF7EC;
+}
+
+/* DASHBOARD LINK CARD */
+.link-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+}
+
+.link-card:hover {
+    transform: translateY(-6px);
+}
+
+.link-card a {
+    text-decoration: none;
+}
+
+/* ACTIVITY */
+.activity-box {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+}
+</style>
+
+<div class="dashboard-page py-5">
+  <div class="container">
+
+    <!-- HEADER -->
+    <div class="dashboard-header">
+        <h2 class="text-main fw-bold">
+            Welcome, {{ request.user.username }} 🎨
+        </h2>
+        <p class="text-muted-soft">
+            This is your creative space — manage artworks and grow quietly.
+        </p>
+    </div>
+
+    <!-- STATS -->
+    <div class="row mb-5">
+        <div class="col-md-4 mb-3">
+            <div class="stat-card">
+                <h6 class="text-muted-soft">Total Artworks</h6>
+                <div class="stat-number text-main">
+                    {{ artworks|length }}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="stat-card">
+                <h6 class="text-muted-soft">Total Likes</h6>
+                <div class="stat-number text-main">0</div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="stat-card">
+                <h6 class="text-muted-soft">Total Views</h6>
+                <div class="stat-number text-main">0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="row mb-5">
+
+        <div class="col-md-6 mb-3">
+            <div class="link-card">
+                <h4 class="text-main fw-bold mb-2">
+                    Manage Artworks 🎨
+                </h4>
+                <p class="text-muted-soft mb-4">
+                    View, edit and organize all your artworks in one place.
+                </p>
+                <a href="{% url 'view_artworks' %}" class="btn btn-art">
+                    Go to Artworks
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="link-card">
+                <h4 class="text-main fw-bold mb-2">
+                    Add New Artwork ✏️
+                </h4>
+                <p class="text-muted-soft mb-4">
+                    Upload a new piece and share your creativity.
+                </p>
+                <a href="{% url 'add_artworks' %}" class="btn btn-art">
+                    Add Artwork
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ACTIVITY -->
+    <div class="activity-box">
+        <h5 class="text-main mb-3">
+            Recent Activity
+        </h5>
+
+        <ul class="list-group list-group-flush">
+            {% for art in artworks %}
+            <li class="list-group-item px-0 text-muted-soft">
+                🎨 {{ art.title }} added
+            </li>
+            {% empty %}
+            <li class="list-group-item px-0 text-muted-soft">
+                No recent activity yet.
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

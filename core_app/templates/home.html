@@ -1,147 +1,166 @@
-{% extends "master.html" %}
+{% extends "masterss.html" %}
 {% block title %}Home | Paletra{% endblock %}
 
 {% block content %}
 
-<!-- HERO SECTION -->
-<section class="min-h-screen flex items-center justify-center">
-    <div class="text-center max-w-3xl px-6">
-        <h2 class="text-5xl font-bold mb-6 leading-tight">
-            A calm space for creative minds
-        </h2>
-        <p class="text-xl text-[#4A3628] mb-10">
-            Paletra is a natural, clutter-free place to share ideas, grow creativity,
-            and build your artistic journey.
-        </p>
-        <div class="space-x-6">
-            <a href="{% url 'register' %}"
-               class="bg-[#6B4F3F] text-[#F5E6C8] px-10 py-4 rounded-lg text-lg hover:bg-[#4A3628]">
-                Get Started
-            </a>
-            <a href="#how"
-               class="border-2 border-[#6B4F3F] text-[#6B4F3F] px-10 py-4 rounded-lg text-lg hover:bg-[#F5E6C8]">
-                How it works
-            </a>
-        </div>
+<style>
+body {
+    background-color: #FFF5E1;
+}
+
+/* COLORS */
+.brown { color:#5C3A21; }
+.beige { color:#FFF5E1; }
+
+/* HERO */
+.hero {
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+}
+
+.hero-art {
+    height: 380px;
+    border-radius: 40% 60% 55% 45%;
+    background: radial-gradient(circle at 30% 30%, #CFAF5D, #A67C52);
+    opacity: 0.85;
+}
+
+/* CARDS */
+.soft-card {
+    background: rgba(255,245,225,0.9);
+    border-radius: 18px;
+    padding: 30px;
+    transition: transform 0.3s ease;
+}
+
+.soft-card:hover {
+    transform: translateY(-6px);
+}
+
+/* SECTION */
+.section-brown {
+    background: linear-gradient(135deg, #A67C52, #C89F6C);
+}
+
+/* TAGS */
+.tag {
+    display: inline-block;
+    padding: 10px 18px;
+    border-radius: 30px;
+    border: 1px solid #5C3A21;
+    margin: 8px;
+    transition: all 0.3s ease;
+}
+
+.tag:hover {
+    background-color: #CFAF5D;
+    color: #5C3A21;
+}
+
+/* BUTTON */
+.btn-natural {
+    background-color: #5C3A21;
+    color: #CFAF5D;
+    border-radius: 50px;
+    padding: 12px 30px;
+    font-weight: 600;
+}
+
+.btn-natural:hover {
+    background-color: #CFAF5D;
+    color: #5C3A21;
+}
+</style>
+
+<!-- HERO -->
+<section class="hero container">
+  <div class="row align-items-center">
+    <div class="col-md-6">
+      <h1 class="display-5 fw-bold brown">
+        A quiet place for<br>art to grow
+      </h1>
+      <p class="mt-3 brown">
+        Paletra is not a feed.  
+        It’s a space — slow, thoughtful, and built for creators who value process.
+      </p>
+      <a href="{% url 'register' %}" class="btn btn-natural mt-3">
+        Begin your journey
+      </a>
     </div>
+
+    <div class="col-md-6 d-flex justify-content-center mt-4 mt-md-0">
+      <div class="hero-art"></div>
+    </div>
+  </div>
 </section>
 
-<!-- ABOUT SECTION -->
-<section id="about" class="py-32 bg-[#F5E6C8]">
-    <div class="max-w-5xl mx-auto text-center px-6">
-        <h3 class="text-4xl font-semibold mb-6">About Paletra</h3>
-        <p class="text-lg text-[#4A3628] leading-relaxed">
-            Paletra is built for creators who prefer simplicity.
-            No noise, no pressure — just a peaceful space to
-            express, share, and evolve creatively.
+<!-- PURPOSE -->
+<section class="container py-5">
+  <div class="row text-center">
+    <div class="col-md-4 mb-4">
+      <div class="soft-card">
+        <h5 class="brown">Create freely</h5>
+        <p class="brown small">
+          Share without pressure, metrics, or noise.
         </p>
+      </div>
     </div>
+    <div class="col-md-4 mb-4">
+      <div class="soft-card">
+        <h5 class="brown">Grow slowly</h5>
+        <p class="brown small">
+          Let your style evolve naturally over time.
+        </p>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="soft-card">
+        <h5 class="brown">Connect gently</h5>
+        <p class="brown small">
+          Meaningful connections over fast attention.
+        </p>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- HOW IT WORKS -->
-<section id="how" class="py-32">
-    <div class="max-w-6xl mx-auto px-6">
-        <h3 class="text-4xl font-semibold text-center mb-16">
-            How it works
-        </h3>
+<section class="section-brown py-5">
+  <div class="container text-center">
+    <h2 class="beige mb-4">How Paletra flows</h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-            <div>
-                <h4 class="text-2xl font-medium mb-4">1. Create</h4>
-                <p class="text-[#4A3628]">
-                    Sign up and start sharing your creative work.
-                </p>
-            </div>
-
-            <div>
-                <h4 class="text-2xl font-medium mb-4">2. Grow</h4>
-                <p class="text-[#4A3628]">
-                    Build your presence and evolve your style.
-                </p>
-            </div>
-
-            <div>
-                <h4 class="text-2xl font-medium mb-4">3. Share</h4>
-                <p class="text-[#4A3628]">
-                    Connect naturally with other creators.
-                </p>
-            </div>
-        </div>
+    <div class="d-flex flex-wrap justify-content-center">
+      <div class="tag beige">Create an account</div>
+      <div class="tag beige">Upload your work</div>
+      <div class="tag beige">Build a quiet portfolio</div>
+      <div class="tag beige">Grow with others</div>
     </div>
+  </div>
 </section>
 
-<!-- WHY PALETRA -->
-<section class="py-32 bg-[#F5E6C8]">
-    <div class="max-w-6xl mx-auto px-6 text-center">
-        <h3 class="text-4xl font-semibold mb-10">Why Paletra?</h3>
+<!-- WHO -->
+<section class="container py-5 text-center">
+  <h2 class="brown mb-4">This space is for</h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div>
-                <h4 class="text-2xl font-medium mb-4">Minimal by design</h4>
-                <p class="text-[#4A3628]">
-                    No distractions. Just space for your ideas to breathe.
-                </p>
-            </div>
-
-            <div>
-                <h4 class="text-2xl font-medium mb-4">Creator-first</h4>
-                <p class="text-[#4A3628]">
-                    Built for artists, not algorithms.
-                </p>
-            </div>
-
-            <div>
-                <h4 class="text-2xl font-medium mb-4">Naturally calm</h4>
-                <p class="text-[#4A3628]">
-                    Soft tones and peaceful flow to match your process.
-                </p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- WHO IT'S FOR -->
-<section class="py-32">
-    <div class="max-w-5xl mx-auto px-6 text-center">
-        <h3 class="text-4xl font-semibold mb-8">Who is Paletra for?</h3>
-        <p class="text-lg text-[#4A3628] leading-relaxed max-w-3xl mx-auto">
-            Paletra is for illustrators, painters, designers, writers, and anyone
-            who creates from a place of curiosity and calm.
-            Whether you’re just starting or refining your style —
-            this space grows with you.
-        </p>
-    </div>
-</section>
-
-<!-- PHILOSOPHY -->
-<section class="py-32 bg-[#F5E6C8]">
-    <div class="max-w-6xl mx-auto px-6 text-center">
-        <h3 class="text-4xl font-semibold mb-6">
-            Create without noise
-        </h3>
-        <p class="text-xl text-[#4A3628] max-w-4xl mx-auto leading-relaxed">
-            We believe creativity grows best in quiet places.
-            Paletra is not about trends or pressure —
-            it’s about honest expression and slow growth.
-        </p>
-    </div>
+  <div class="d-flex flex-wrap justify-content-center">
+    <div class="tag brown">Illustrators</div>
+    <div class="tag brown">Painters</div>
+    <div class="tag brown">Designers</div>
+    <div class="tag brown">Writers</div>
+    <div class="tag brown">Quiet creators</div>
+  </div>
 </section>
 
 <!-- FINAL CTA -->
-<section class="py-32">
-    <div class="max-w-4xl mx-auto text-center px-6">
-        <h3 class="text-4xl font-semibold mb-6">
-            Start your creative journey
-        </h3>
-        <p class="text-lg text-[#4A3628] mb-10">
-            Join Paletra and build your space — gently, naturally.
-        </p>
-        <a href="{% url 'register' %}"
-           class="bg-[#6B4F3F] text-[#F5E6C8] px-12 py-4 rounded-lg text-lg hover:bg-[#4A3628]">
-            Create your account
-        </a>
-    </div>
+<section class="container py-5 text-center">
+  <h2 class="brown">Create without noise</h2>
+  <p class="brown mt-2">
+    A calm corner of the internet — made for art.
+  </p>
+  <a href="{% url 'register' %}" class="btn btn-natural mt-3">
+    Join Paletra
+  </a>
 </section>
 
 {% endblock %}
-

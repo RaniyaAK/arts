@@ -1,0 +1,91 @@
+{% extends "masterss.html" %}
+{% load static %}
+
+{% block title %}Artworks | Paletra{% endblock %}
+
+{% block content %}
+
+<style>
+.artworks-page {
+    background: #FFF7EC;
+    min-height: 100vh;
+}
+
+.art-card {
+    border-radius: 20px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.art-card img {
+    height: 240px;
+    width: 100%;
+    object-fit: cover;
+}
+
+.art-body {
+    padding: 18px;
+}
+
+.text-main {
+    color: #5C3A21;
+}
+
+.text-muted-soft {
+    color: #8A6A4F;
+}
+</style>
+
+<div class="artworks-page py-5">
+    <div class="container">
+
+        <div class="mb-5 text-center">
+            <h2 class="text-main fw-bold">
+                Artworks Gallery 🎨
+            </h2>
+            <p class="text-muted-soft">
+                Discover creativity shared by artists
+            </p>
+        </div>
+
+        <div class="row g-4">
+            {% for art in artworks %}
+            <div class="col-md-4">
+                <div class="art-card">
+
+                    <img src="{{ art.image.url }}" alt="{{ art.title }}">
+
+                    <div class="art-body">
+                        <h5 class="text-main fw-semibold">
+                            {{ art.title }}
+                        </h5>
+
+                        <p class="small text-muted-soft mb-1">
+                            {{ art.category }}
+                        </p>
+
+                        {% if art.description %}
+                        <p class="small text-muted">
+                            {{ art.description|truncatechars:80 }}
+                        </p>
+                        {% endif %}
+
+                        <p class="small text-muted-soft mt-2">
+                            by {{ art.artist.username }}
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center text-muted">
+                No artworks uploaded yet.
+            </p>
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
