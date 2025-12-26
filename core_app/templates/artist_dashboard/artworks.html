@@ -16,6 +16,13 @@
     overflow: hidden;
     background: #fff;
     box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.art-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.12);
 }
 
 .art-card img {
@@ -41,42 +48,45 @@
     <div class="container">
 
         <div class="mb-5 text-center">
-            <h2 class="text-main fw-bold">
-                Artworks Gallery 🎨
-            </h2>
-            <p class="text-muted-soft">
-                Discover creativity shared by artists
-            </p>
+            <h2 class="text-main fw-bold">Artworks Gallery 🎨</h2>
+            <p class="text-muted-soft">Discover creativity shared by artists</p>
         </div>
 
         <div class="row g-4">
             {% for art in artworks %}
             <div class="col-md-4">
-                <div class="art-card">
 
-                    <img src="{{ art.image.url }}" alt="{{ art.title }}">
+                <!-- WHOLE CARD CLICKABLE -->
+                <a href="{% url 'artwork_detail' art.id %}" style="text-decoration:none;">
 
-                    <div class="art-body">
-                        <h5 class="text-main fw-semibold">
-                            {{ art.title }}
-                        </h5>
+                    <div class="art-card">
 
-                        <p class="small text-muted-soft mb-1">
-                            {{ art.category }}
-                        </p>
+                        <img src="{{ art.image.url }}" alt="{{ art.title }}">
 
-                        {% if art.description %}
-                        <p class="small text-muted">
-                            {{ art.description|truncatechars:80 }}
-                        </p>
-                        {% endif %}
+                        <div class="art-body">
+                            <h5 class="text-main fw-semibold">
+                                {{ art.title }}
+                            </h5>
 
-                        <p class="small text-muted-soft mt-2">
-                            by {{ art.artist.username }}
-                        </p>
+                            <p class="small text-muted-soft mb-1">
+                                {{ art.category }}
+                            </p>
+
+                            {% if art.short_description %}
+                            <p class="small text-muted">
+                                {{ art.short_description|truncatechars:80 }}
+                            </p>
+                            {% endif %}
+
+                            <p class="fw-semibold text-main mt-2">
+                                ₹ {{ art.price }}
+                            </p>
+                        </div>
+
                     </div>
 
-                </div>
+                </a>
+
             </div>
             {% empty %}
             <p class="text-center text-muted">

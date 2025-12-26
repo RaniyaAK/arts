@@ -7,6 +7,9 @@ from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
 from django.contrib.auth.decorators import login_required
 from .forms import ArtworkForm
+from .models import Artwork
+from django.http import HttpResponseForbidden
+
 
 
 User = get_user_model()
@@ -119,9 +122,7 @@ def reset_password(request, email):
 
     return render(request, 'reset_password.html')
 
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from .forms import ArtworkForm
+
 
 @login_required
 def add_artworks(request):
@@ -138,11 +139,49 @@ def add_artworks(request):
     return render(request, 'artist_dashboard/add_artworks.html', {'form': form})
 
 
-from django.shortcuts import render
-from .models import Artwork
-
 def view_artworks(request):
     artworks = Artwork.objects.all().order_by('-created_at')
     return render(request, 'artist_dashboard/artworks.html', {
         'artworks': artworks
     })
+
+
+def artwork_detail(request, artwork_id):
+    artwork = Artwork.objects.get(id=artwork_id)
+    return render(request, 'artist_dashboard/artwork_detail.html', {'artwork': artwork})
+
+
+def edit_artwork(request, artwork_id):
+    artwork = Artwork.objects.get(id=artwork_id)
+    if request.user != artwork.artist:
+        return HttpResponseForbidden()
+
+    # form handling here
+    if request.method == 'POST':
+        form = ArtworkForm(request.POST, request.FILES, instance=artwork)
+        if form.is_valid():
+            form.save()
+            return redirect('artwork_detail', artwork_id=artwork.id)
+    else:
+        form = ArtworkForm(instance=artwork)
+
+    return render(request, 'edit_artwork.html', {'form': form})
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponseForbidden
+from .models import Artwork
+
+def delete_artwork(request, artwork_id):
+    # Get the artwork or 404
+    artwork = get_object_or_404(Artwork, id=artwork_id)
+
+    # Only the artist who owns it can delete
+    if request.user != artwork.artist:
+        return HttpResponseForbidden("You are not allowed to delete this artwork.")
+
+    # Confirm deletion on POST
+    if request.method == 'POST':
+        artwork.delete()
+        return redirect('artworks')  # Redirect to gallery page after delete
+
+    # Render a simple confirmation page
+    return render(request, 'artist_dashboard/delete_artwork.html', {'artwork': artwork})

@@ -23,6 +23,10 @@ urlpatterns = [
 
 
     path('artist_dashboard/artworks/', views.view_artworks, name='view_artworks'),
+    path('artwork/<int:artwork_id>/', views.artwork_detail, name='artwork_detail'),
+
+    path('artwork/<int:artwork_id>/edit/', views.edit_artwork, name='edit_artwork'),
+    path('artwork/<int:artwork_id>/delete/', views.delete_artwork, name='delete_artwork'),
 
 
 
