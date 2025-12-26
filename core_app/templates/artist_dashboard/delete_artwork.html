@@ -1,0 +1,73 @@
+{% extends "masterss.html" %}
+{% load static %}
+
+{% block title %}Delete Artwork | Paletra{% endblock %}
+
+{% block content %}
+
+<style>
+.delete-artwork-page {
+    background: #FFF7EC;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 0;
+}
+
+.delete-box {
+    background: #fff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+    text-align: center;
+    max-width: 500px;
+}
+
+.delete-box h3 {
+    color: #5C3A21;
+    margin-bottom: 20px;
+}
+
+.delete-box p {
+    color: #8A6A4F;
+    margin-bottom: 30px;
+}
+
+.delete-box form button {
+    padding: 10px 20px;
+    border-radius: 25px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    margin-right: 10px;
+}
+
+.delete-btn {
+    background-color: #ff4d4d;
+    color: #fff;
+}
+
+.cancel-btn {
+    background-color: #e0e0e0;
+    color: #5C3A21;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+}
+</style>
+
+<div class="delete-artwork-page">
+    <div class="delete-box">
+        <h3>Delete Artwork</h3>
+        <p>Are you sure you want to delete "<strong>{{ artwork.title }}</strong>"? This action cannot be undone.</p>
+
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" class="delete-btn">Yes, Delete</button>
+            <a href="{% url 'artwork_detail' artwork.id %}" class="cancel-btn">Cancel</a>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
