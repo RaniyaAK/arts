@@ -1,10 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
+from django.core.validators import MinValueValidator, MaxValueValidator
 
-# -------------------------
+
 # Custom User Model
-# -------------------------
 class User(AbstractUser):
     ROLE_CHOICES = [
         ('artist', 'Artist'),
@@ -16,9 +16,7 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
-# -------------------------
 # Artwork Model
-# -------------------------
 CATEGORY_CHOICES = [
     ('Illustration', 'Illustration'),
     ('Painting', 'Painting'),
@@ -29,7 +27,7 @@ CATEGORY_CHOICES = [
 
 class Artwork(models.Model):
     artist = models.ForeignKey(
-        settings.AUTH_USER_MODEL,  # Always refer to custom user model
+        settings.AUTH_USER_MODEL,  
         on_delete=models.CASCADE,
         related_name='artworks'
     )
@@ -37,7 +35,10 @@ class Artwork(models.Model):
     description = models.TextField(blank=True)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
     image = models.ImageField(upload_to='artworks/')
+    price = models.DecimalField(max_digits=8,decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.title} by {self.artist.username}"
+
+

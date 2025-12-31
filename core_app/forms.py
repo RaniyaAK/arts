@@ -1,9 +1,9 @@
-
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import User
+from .models import User, Artwork
 
 class RegisterForm(UserCreationForm):
+
     role = forms.ChoiceField(choices=User.ROLE_CHOICES)
 
     class Meta:
@@ -22,17 +22,21 @@ class ResetPasswordForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput)
     confirm_password = forms.CharField(widget=forms.PasswordInput)
 
-from django import forms
-from .models import Artwork
-
 class ArtworkForm(forms.ModelForm):
     class Meta:
         model = Artwork
-        fields = ['title', 'description', 'category', 'image']
+        fields = ['title', 'description', 'category', 'image', 'price']
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Give your artwork a name'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'What inspired this piece?'}),
-            'category': forms.Select(attrs={'class': 'form-select'}),
-            'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'price': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter price in ₹',
+                'step': '0.01',
+                'min': '1'
+            }),
         }
 
+    def clean_price(self):
+        price = self.cleaned_data.get('price')
+        if price is None or price <= 0:
+            raise forms.ValidationError("Price is required and must be greater than 0.")
+        return price

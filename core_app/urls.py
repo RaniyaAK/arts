@@ -3,7 +3,6 @@ from . import views
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
-from django.urls import path
 from .views import *
 
 urlpatterns = [
@@ -19,15 +18,13 @@ urlpatterns = [
     
     path('artist_dashboard/', views.artist_dashboard, name='artist_dashboard'), 
     path('client_dashboard/', views.client_dashboard, name='client_dashboard'), 
+
     path('artist_dashboard/add_artworks', views.add_artworks, name='add_artworks'), 
-
-
     path('artist_dashboard/artworks/', views.view_artworks, name='view_artworks'),
-    path('artwork/<int:artwork_id>/', views.artwork_detail, name='artwork_detail'),
-
     path('artwork/<int:artwork_id>/edit/', views.edit_artwork, name='edit_artwork'),
     path('artwork/<int:artwork_id>/delete/', views.delete_artwork, name='delete_artwork'),
 
+    path('artwork/<int:artwork_id>/', views.artwork_detail, name='artwork_detail'),
 
 
 ]

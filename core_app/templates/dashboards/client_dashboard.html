@@ -1,48 +1,214 @@
 {% extends "masterss.html" %}
-{% block title %}Client Dashboard | Paletra{% endblock %}
 {% load static %}
+{% block title %}Client Dashboard | Paletra{% endblock %}
+
 {% block content %}
+<style>
+.text-primary-color { color: #5C3A21; }
+
+/* ===== Artists Layout ===== */
+#featured-artists-container,
+#extra-artists-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    width: 100%;
+}
+
+/* ===== Artist Card ===== */
+.artist-card {
+    flex: 0 0 calc(20% - 16px);   /* exactly 5 per row */
+    max-width: calc(20% - 16px);
+    background: #fff;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    padding: 26px 22px;
+    text-align: center;
+    position: relative;
+}
+
+/* Profile Image */
+.artist-circle-img {
+    width: 135px;
+    height: 135px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #5C3A21;
+    margin-bottom: 14px;
+}
+
+.artist-name { font-weight: 600; margin-bottom: 4px; }
+.artist-role {
+    font-size: 0.85rem;
+    color: #8A6A4F;
+    margin-bottom: 14px;
+}
+
+.artist-card .btn {
+    width: 100%;
+    font-size: 0.85rem;
+}
+
+/* ===== Plus / Minus Button ===== */
+.toggle-btn {
+    position: absolute;
+    right: -14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #5C3A21;
+    color: #fff;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.d-none { display: none; }
+
+/* ===== Price Box (Cream Filled) ===== */
+.price-box {
+    border: 1px solid #5C3A21;
+    border-radius: 8px;
+    padding: 7px 14px;
+    display: inline-block;
+    font-weight: 600;
+    color: #5C3A21;
+    margin: 10px 0;
+    font-size: 0.95rem;
+    background: 
+}
+</style>
+
 <div class="container py-5">
 
-    <!-- Welcome Header -->
-    <h2 class="text-primary-color mb-2">Welcome, {{ request.user.username }} 👀</h2>
+    <!-- Welcome -->
+    <h2 class="text-primary-color mb-2">
+        Welcome, {{ request.user.username }} 👀
+    </h2>
     <p class="text-primary-color mb-4">
-        Browse artworks from various artists and favorite pieces.
+        Discover beautiful artworks from talented artists.
     </p>
 
     <!-- Featured Artists -->
     <h4 class="mb-3 text-primary-color">Featured Artists</h4>
-    <div class="row g-4 mb-5">
-        {% for i in featured_artists %}
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <img src="{% static 'images/artist_placeholder.png' %}" class="card-img-top" alt="Artist">
-                <div class="card-body">
-                    <h5 class="card-title text-primary-color">Artist {{ i }}</h5>
-                    <p class="card-text text-primary-color">Brief bio or style of the artist.</p>
-                    <a href="#" class="btn btn-outline-primary w-100">View Artworks</a>
-                </div>
+
+    <!-- FIRST 5 ARTISTS -->
+    <div id="featured-artists-container">
+
+        {% for artist in featured_artists %}
+            {% if forloop.counter <= 5 %}
+            <div class="artist-card">
+
+                <img src="{% if artist.profile_image %}{{ artist.profile_image.url }}{% else %}{% static 'images/artist_placeholder.png' %}{% endif %}"
+                     class="artist-circle-img">
+
+                <div class="artist-name">{{ artist.username }}</div>
+                <div class="artist-role">Creative artist on Paletra</div>
+
+                <a href="{% url 'view_artworks' %}" class="btn btn-outline-primary">
+                    View Artworks
+                </a>
+
+                {% if forloop.counter == 5 and featured_artists|length > 5 %}
+                <div class="toggle-btn" id="openArtists">+</div>
+                {% endif %}
+
             </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- EXTRA ARTISTS -->
+    <div id="extra-artists-container" class="d-none mt-4">
+        {% for artist in featured_artists|slice:"5:" %}
+        <div class="artist-card">
+
+            <img src="{% if artist.profile_image %}{{ artist.profile_image.url }}{% else %}{% static 'images/artist_placeholder.png' %}{% endif %}"
+                 class="artist-circle-img">
+
+            <div class="artist-name">{{ artist.username }}</div>
+            <div class="artist-role">Creative artist on Paletra</div>
+
+            <a href="{% url 'view_artworks' %}" class="btn btn-outline-primary">
+                View Artworks
+            </a>
+
+            {% if forloop.last %}
+            <div class="toggle-btn" id="closeArtists">−</div>
+            {% endif %}
+
         </div>
         {% endfor %}
     </div>
 
     <!-- Latest Artworks -->
-    <h4 class="mb-3 text-primary-color">Latest Artworks</h4>
+    <h4 class="mb-3 text-primary-color mt-5">Latest Artworks</h4>
     <div class="row g-4">
-        {% for i in artworks %}
+        {% for artwork in artworks %}
         <div class="col-md-4">
-            <div class="card shadow-sm">
-                <img src="{% static 'images/artwork_placeholder.png' %}" class="card-img-top" alt="Artwork">
-                <div class="card-body">
-                    <h5 class="card-title text-primary-color">Artwork {{ i }}</h5>
-                    <p class="card-text text-primary-color">Short description of the artwork.</p>
-                    <a href="#" class="btn btn-outline-primary w-100">View Details</a>
+            <div class="card shadow-sm h-100">
+
+                {% if artwork.image %}
+                <img src="{{ artwork.image.url }}" class="card-img-top">
+                {% else %}
+                <img src="{% static 'images/artwork_placeholder.png' %}" class="card-img-top">
+                {% endif %}
+
+                <div class="card-body text-center">
+                    <h5 class="card-title text-primary-color">
+                        {{ artwork.title }}
+                    </h5>
+
+                    <p class="card-text text-primary-color small">
+                        {{ artwork.description|truncatewords:12 }}
+                    </p>
+
+                    <!-- PRICE BOX -->
+                    <div class="price-box">
+                        ₹ {{ artwork.price }}
+                    </div>
+
+                    <a href="{% url 'artwork_detail' artwork.id %}"
+                       class="btn btn-outline-primary w-100 mt-2">
+                        View Details
+                    </a>
                 </div>
+
             </div>
         </div>
+        {% empty %}
+        <p class="text-muted">No artworks available.</p>
         {% endfor %}
     </div>
 
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const openBtn = document.getElementById("openArtists");
+    const closeBtn = document.getElementById("closeArtists");
+    const extra = document.getElementById("extra-artists-container");
+
+    if (openBtn) {
+        openBtn.addEventListener("click", function () {
+            extra.classList.remove("d-none");
+            openBtn.style.display = "none";
+        });
+    }
+
+    if (closeBtn) {
+        closeBtn.addEventListener("click", function () {
+            extra.classList.add("d-none");
+            openBtn.style.display = "flex";
+        });
+    }
+});
+</script>
+
 {% endblock %}
