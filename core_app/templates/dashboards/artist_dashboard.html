@@ -180,3 +180,6 @@
 </div>
 
 {% endblock %}
+
+from core_app.models import Artwork
+Artwork.objects.filter(price=0).update(price=500)

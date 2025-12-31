@@ -1,0 +1,191 @@
+{% extends "masterss.html" %}
+{% load static %}
+{% block title %}Edit Artwork | Paletra{% endblock %}
+
+{% block content %}
+
+<style>
+/* PAGE BASE */
+.add-art-page {
+    background: #FFF7EC;
+    min-height: 100vh;
+}
+
+/* TEXT */
+.text-main {
+    color: #5C3A21;
+}
+.text-muted-soft {
+    color: #8A6A4F;
+}
+
+/* CARD */
+.art-form-card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.08);
+}
+
+/* INPUTS */
+.art-form-card input,
+.art-form-card textarea,
+.art-form-card select {
+    border-radius: 14px;
+    border: 1px solid #E2D2BF;
+    padding: 12px 16px;
+    background: #FFFDF9;
+}
+
+.art-form-card input:focus,
+.art-form-card textarea:focus,
+.art-form-card select:focus {
+    border-color: #B98B5E;
+    box-shadow: 0 0 0 0.15rem rgba(185,139,94,0.25);
+    outline: none;
+}
+
+/* FILE INPUT */
+.file-upload {
+    border: 2px dashed #D6BFA6;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    background: #FFFDF9;
+}
+
+/* BUTTON */
+.btn-art {
+    background: #5C3A21;
+    color: #FFF7EC;
+    border-radius: 50px;
+    padding: 12px 34px;
+    font-weight: 600;
+}
+
+.btn-art:hover {
+    background: #7A4A2B;
+    color: #FFF7EC;
+}
+
+/* PREVIEW */
+.preview-box {
+    background: #FFFDF9;
+    border-radius: 18px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid #E6D6C3;
+}
+</style>
+
+<div class="add-art-page py-5">
+  <div class="container">
+
+    <!-- HEADER -->
+    <div class="mb-5">
+        <h2 class="text-main fw-bold">
+            Edit Artwork ✏️
+        </h2>
+        <p class="text-muted-soft">
+            Update your artwork details.
+        </p>
+    </div>
+
+    <div class="row g-5">
+
+        <!-- FORM -->
+        <div class="col-md-7">
+            <div class="art-form-card">
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <!-- TITLE -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-main">Artwork Title</label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                          <div class="text-danger small mt-1">{{ form.title.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- DESCRIPTION -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-main">Description</label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                          <div class="text-danger small mt-1">{{ form.description.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- CATEGORY -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-main">Category</label>
+                        {{ form.category }}
+                        {% if form.category.errors %}
+                          <div class="text-danger small mt-1">{{ form.category.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- PRICE -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-main">Price (₹)</label>
+                        {{ form.price }}
+                        {% if form.price.errors %}
+                          <div class="text-danger small mt-1">{{ form.price.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- IMAGE UPLOAD -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-main">Change Artwork Image</label>
+                        <div class="file-upload">
+                            <p class="text-muted-soft mb-2">
+                                Upload a new image only if you want to replace the existing one
+                            </p>
+                            {{ form.image }}
+                            {% if form.image.errors %}
+                              <div class="text-danger small mt-1">{{ form.image.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- BUTTONS -->
+                    <div class="mt-4 d-flex gap-3">
+                        <button type="submit" class="btn btn-art">
+                            Update Artwork
+                        </button>
+
+                        <a href="{% url 'artist_dashboard' %}" class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+        <!-- CURRENT PREVIEW -->
+        <div class="col-md-5">
+            <div class="preview-box">
+                <h5 class="text-main mb-3">
+                    Current Artwork
+                </h5>
+
+                {% if form.instance.image %}
+                    <img src="{{ form.instance.image.url }}"
+                         class="img-fluid rounded-3"
+                         alt="Current Artwork">
+                {% else %}
+                    <p class="text-muted-soft small">No image uploaded</p>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

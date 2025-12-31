@@ -1,8 +1,7 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect,get_object_or_404
+from django.contrib.auth import authenticate, login,logout,get_user_model
 from django.contrib import messages
 from .forms import RegisterForm, LoginForm, ForgotPasswordForm, ResetPasswordForm
-from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
 from django.contrib.auth.decorators import login_required
@@ -11,13 +10,11 @@ from .models import Artwork
 from django.http import HttpResponseForbidden
 
 
-
 User = get_user_model()
 
 def home(request):
     return render(request,'home.html')
 
-from django.contrib.auth import logout
 
 def logout_view(request):
     logout(request)
@@ -38,12 +35,20 @@ def artist_dashboard(request):
     })
 
 
-
 @login_required
 def client_dashboard(request):
     if request.user.role != 'client':
         return redirect('login')
-    return render(request, 'dashboards/client_dashboard.html')
+
+    artworks = Artwork.objects.all().order_by('-created_at')[:6]
+    featured_artists = User.objects.filter(role='artist')  # <-- show all artists
+
+    return render(request, 'dashboards/client_dashboard.html', {
+        'artworks': artworks,
+        'featured_artists': featured_artists,
+    })
+
+
 
 
 def register_view(request):
@@ -72,7 +77,6 @@ def login_view(request):
         if user is not None:
             login(request, user)
 
-            # ✅ ROLE BASED REDIRECT
             if user.role == 'artist':
                 return redirect('artist_dashboard')
             elif user.role == 'client':
@@ -132,7 +136,7 @@ def add_artworks(request):
             artwork = form.save(commit=False)
             artwork.artist = request.user
             artwork.save()
-            return redirect('artist_dashboard')  # redirect to dashboard after submit
+            return redirect('artist_dashboard')  
     else:
         form = ArtworkForm()
 
@@ -146,17 +150,11 @@ def view_artworks(request):
     })
 
 
-def artwork_detail(request, artwork_id):
-    artwork = Artwork.objects.get(id=artwork_id)
-    return render(request, 'artist_dashboard/artwork_detail.html', {'artwork': artwork})
-
-
 def edit_artwork(request, artwork_id):
     artwork = Artwork.objects.get(id=artwork_id)
     if request.user != artwork.artist:
         return HttpResponseForbidden()
 
-    # form handling here
     if request.method == 'POST':
         form = ArtworkForm(request.POST, request.FILES, instance=artwork)
         if form.is_valid():
@@ -165,23 +163,34 @@ def edit_artwork(request, artwork_id):
     else:
         form = ArtworkForm(instance=artwork)
 
-    return render(request, 'edit_artwork.html', {'form': form})
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponseForbidden
-from .models import Artwork
+    return render(request, 'artist_dashboard/edit_artwork.html', {'form': form})
+
+
 
 def delete_artwork(request, artwork_id):
-    # Get the artwork or 404
     artwork = get_object_or_404(Artwork, id=artwork_id)
 
-    # Only the artist who owns it can delete
     if request.user != artwork.artist:
         return HttpResponseForbidden("You are not allowed to delete this artwork.")
 
-    # Confirm deletion on POST
     if request.method == 'POST':
         artwork.delete()
-        return redirect('artworks')  # Redirect to gallery page after delete
+        return redirect('artworks')  
 
-    # Render a simple confirmation page
     return render(request, 'artist_dashboard/delete_artwork.html', {'artwork': artwork})
+
+def artwork_detail(request, artwork_id):
+    artwork = Artwork.objects.get(id=artwork_id)
+
+    if request.user.is_authenticated and request.user == artwork.artist:
+        return render(
+            request,
+            'artist_dashboard/artwork_detail_artist.html',
+            {'artwork': artwork}
+        )
+
+    return render(
+        request,
+        'artist_dashboard/artwork_detail_client.html',
+        {'artwork': artwork}
+    )

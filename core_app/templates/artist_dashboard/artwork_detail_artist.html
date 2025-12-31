@@ -1,0 +1,45 @@
+{% extends "masterss.html" %}
+{% load static %}
+{% block title %}My Artwork | Paletra{% endblock %}
+
+{% block content %}
+
+<div class="artwork-detail-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+
+                <div class="artwork-box">
+
+                    <div class="artwork-image">
+                        <img src="{{ artwork.image.url }}" alt="{{ artwork.title }}">
+                    </div>
+
+                    <div class="artwork-info">
+
+                        <h2 class="text-main fw-bold">{{ artwork.title }}</h2>
+                        <p class="text-muted-soft">{{ artwork.category }}</p>
+
+                        <p class="mt-3 text-muted">
+                            {{ artwork.description }}
+                        </p>
+
+                        <h3 class="price mt-3">
+                            ₹ {{ artwork.price }}
+                        </h3>
+
+                        <div class="artist-actions mt-4">
+                            <a href="{% url 'edit_artwork' artwork.id %}">✏️ Edit</a>
+                            <a href="{% url 'delete_artwork' artwork.id %}">🗑 Delete</a>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

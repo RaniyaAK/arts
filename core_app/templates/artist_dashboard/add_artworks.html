@@ -127,6 +127,15 @@
                         {% endif %}
                     </div>
 
+                    <!-- ✅ PRICE (ONLY ADDITION) -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-main">Price (₹)</label>
+                        {{ form.price }}
+                        {% if form.price.errors %}
+                          <div class="text-danger small mt-1">{{ form.price.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
                     <!-- IMAGE UPLOAD -->
                     <div class="mb-4">
                         <label class="form-label fw-semibold text-main">Upload Artwork</label>
