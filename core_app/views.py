@@ -155,7 +155,7 @@ def delete_artwork(request, artwork_id):
     if request.method == 'POST':
         artwork.delete()
         messages.success(request, "Artwork deleted successfully.")
-        return redirect('artwork_detail_artist') 
+        return redirect('artist_my_artworks') 
     return render(request, 'artist_dashboard/delete_artwork.html', {
         'artwork': artwork
     })
