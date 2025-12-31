@@ -9,32 +9,45 @@
 .add-art-page {
     background: #FFF7EC;
     min-height: 100vh;
+    padding: 60px 0;
 }
 
 /* TEXT */
-.text-main {
-    color: #5C3A21;
+.text-main { color: #5C3A21; }
+.text-muted-soft { color: #8A6A4F; }
+
+/* HEADER */
+.page-header h2 {
+    letter-spacing: 0.4px;
 }
-.text-muted-soft {
-    color: #8A6A4F;
+.page-header p {
+    max-width: 420px;
 }
 
 /* CARD */
 .art-form-card {
     background: #ffffff;
-    border-radius: 24px;
-    padding: 40px;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.08);
+    border-radius: 26px;
+    padding: 42px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.08);
 }
 
-/* INPUTS */
+/* 🔧 FIX: FORCE ALL FORM FIELDS TO BLOCK + FULL WIDTH */
 .art-form-card input,
 .art-form-card textarea,
 .art-form-card select {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+
     border-radius: 14px;
     border: 1px solid #E2D2BF;
     padding: 12px 16px;
     background: #FFFDF9;
+}
+
+.art-form-card textarea {
+    min-height: 120px;
 }
 
 .art-form-card input:focus,
@@ -48,19 +61,25 @@
 /* FILE INPUT */
 .file-upload {
     border: 2px dashed #D6BFA6;
-    border-radius: 20px;
-    padding: 40px;
+    border-radius: 22px;
+    padding: 36px;
     text-align: center;
     background: #FFFDF9;
+    transition: border-color 0.25s ease;
 }
 
-/* BUTTON */
+.file-upload:hover {
+    border-color: #B98B5E;
+}
+
+/* BUTTONS */
 .btn-art {
     background: #5C3A21;
     color: #FFF7EC;
     border-radius: 50px;
-    padding: 12px 34px;
+    padding: 12px 36px;
     font-weight: 600;
+    border: none;
 }
 
 .btn-art:hover {
@@ -68,117 +87,111 @@
     color: #FFF7EC;
 }
 
+.btn-soft {
+    border-radius: 50px;
+    padding: 12px 34px;
+    font-weight: 600;
+    border: 1px solid #D6BFA6;
+    color: #5C3A21;
+    background: transparent;
+}
+
+.btn-soft:hover {
+    background: rgba(92,58,33,0.06);
+}
+
 /* PREVIEW */
 .preview-box {
     background: #FFFDF9;
-    border-radius: 18px;
-    padding: 20px;
-    text-align: center;
+    border-radius: 24px;
+    padding: 28px;
     border: 1px solid #E6D6C3;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.05);
+}
+
+.preview-box img {
+    max-height: 360px;
+    object-fit: cover;
 }
 </style>
 
-<div class="add-art-page py-5">
+<div class="add-art-page">
   <div class="container">
 
-    <!-- HEADER -->
-    <div class="mb-5">
-        <h2 class="text-main fw-bold">
-            Edit Artwork ✏️
-        </h2>
+    <div class="page-header mb-5">
+        <h2 class="text-main fw-bold">Edit Artwork</h2>
         <p class="text-muted-soft">
-            Update your artwork details.
+            Refine your artwork details and keep your portfolio up to date.
         </p>
     </div>
 
     <div class="row g-5">
 
-        <!-- FORM -->
         <div class="col-md-7">
             <div class="art-form-card">
 
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
 
-                    <!-- TITLE -->
                     <div class="mb-4">
                         <label class="form-label fw-semibold text-main">Artwork Title</label>
                         {{ form.title }}
-                        {% if form.title.errors %}
-                          <div class="text-danger small mt-1">{{ form.title.errors.0 }}</div>
-                        {% endif %}
                     </div>
 
-                    <!-- DESCRIPTION -->
                     <div class="mb-4">
                         <label class="form-label fw-semibold text-main">Description</label>
                         {{ form.description }}
-                        {% if form.description.errors %}
-                          <div class="text-danger small mt-1">{{ form.description.errors.0 }}</div>
-                        {% endif %}
                     </div>
 
-                    <!-- CATEGORY -->
                     <div class="mb-4">
                         <label class="form-label fw-semibold text-main">Category</label>
                         {{ form.category }}
-                        {% if form.category.errors %}
-                          <div class="text-danger small mt-1">{{ form.category.errors.0 }}</div>
-                        {% endif %}
                     </div>
 
-                    <!-- PRICE -->
                     <div class="mb-4">
                         <label class="form-label fw-semibold text-main">Price (₹)</label>
                         {{ form.price }}
-                        {% if form.price.errors %}
-                          <div class="text-danger small mt-1">{{ form.price.errors.0 }}</div>
-                        {% endif %}
                     </div>
 
-                    <!-- IMAGE UPLOAD -->
                     <div class="mb-4">
-                        <label class="form-label fw-semibold text-main">Change Artwork Image</label>
+                        <label class="form-label fw-semibold text-main">
+                            Update Artwork Image
+                        </label>
                         <div class="file-upload">
-                            <p class="text-muted-soft mb-2">
-                                Upload a new image only if you want to replace the existing one
+                            <p class="text-muted-soft mb-2 small">
+                                Upload only if you want to replace the current image
                             </p>
                             {{ form.image }}
-                            {% if form.image.errors %}
-                              <div class="text-danger small mt-1">{{ form.image.errors.0 }}</div>
-                            {% endif %}
                         </div>
                     </div>
 
-                    <!-- BUTTONS -->
                     <div class="mt-4 d-flex gap-3">
-                        <button type="submit" class="btn btn-art">
-                            Update Artwork
+                        <button type="submit" class="btn-art">
+                            Save Changes
                         </button>
 
-                        <a href="{% url 'artist_dashboard' %}" class="btn btn-outline-secondary">
+                        <!-- RESET FORM INSTEAD OF REDIRECT -->
+                        <button type="reset" class="btn-soft">
                             Cancel
-                        </a>
+                        </button>
                     </div>
+
 
                 </form>
 
             </div>
         </div>
 
-        <!-- CURRENT PREVIEW -->
         <div class="col-md-5">
-            <div class="preview-box">
-                <h5 class="text-main mb-3">
-                    Current Artwork
-                </h5>
+            <div class="preview-box text-center">
+                <h5 class="text-main mb-3 fw-semibold">Current Artwork</h5>
 
                 {% if form.instance.image %}
                     <img src="{{ form.instance.image.url }}"
-                         class="img-fluid rounded-3"
+                         class="img-fluid rounded-4"
                          alt="Current Artwork">
                 {% else %}
-                    <p class="text-muted-soft small">No image uploaded</p>
+                    <p class="text-muted-soft small">No image available</p>
                 {% endif %}
             </div>
         </div>

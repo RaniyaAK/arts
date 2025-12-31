@@ -65,7 +65,7 @@
         <form method="POST">
             {% csrf_token %}
             <button type="submit" class="delete-btn">Yes, Delete</button>
-            <a href="{% url 'artwork_detail' artwork.id %}" class="cancel-btn">Cancel</a>
+            <a href="{% url 'artwork_detail_for_artist' artwork.id %}" class="cancel-btn">Cancel</a>
         </form>
     </div>
 </div>

@@ -128,7 +128,7 @@ def add_artworks(request):
     return render(request, 'artist_dashboard/add_artworks.html', {'form': form})
 
 
-
+@login_required
 def edit_artwork(request, artwork_id):
     artwork = Artwork.objects.get(id=artwork_id)
     if request.user != artwork.artist:
@@ -138,14 +138,14 @@ def edit_artwork(request, artwork_id):
         form = ArtworkForm(request.POST, request.FILES, instance=artwork)
         if form.is_valid():
             form.save()
-            return redirect('artwork_detail', artwork_id=artwork.id)
+            return redirect('artwork_detail_for_artist', artwork_id=artwork.id)
     else:
         form = ArtworkForm(instance=artwork)
 
     return render(request, 'artist_dashboard/edit_artwork.html', {'form': form})
 
 
-
+@login_required
 def delete_artwork(request, artwork_id):
     artwork = get_object_or_404(Artwork, id=artwork_id)
 
@@ -154,9 +154,12 @@ def delete_artwork(request, artwork_id):
 
     if request.method == 'POST':
         artwork.delete()
-        return redirect('artworks')  
+        messages.success(request, "Artwork deleted successfully.")
+        return redirect('artwork_detail_artist') 
+    return render(request, 'artist_dashboard/delete_artwork.html', {
+        'artwork': artwork
+    })
 
-    return render(request, 'artist_dashboard/delete_artwork.html', {'artwork': artwork})
 
 def artwork_detail_for_artist(request, artwork_id):
     artwork = Artwork.objects.get(id=artwork_id)
