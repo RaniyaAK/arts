@@ -1,7 +1,7 @@
 {% extends "masterss.html" %}
 {% load static %}
 
-{% block title %}Artworks | Paletra{% endblock %}
+{% block title %}My Artworks | Paletra{% endblock %}
 
 {% block content %}
 
@@ -9,88 +9,122 @@
 .artworks-page {
     background: #FFF7EC;
     min-height: 100vh;
+    padding: 40px 0;
 }
 
 .art-card {
+    position: relative;
     border-radius: 20px;
     overflow: hidden;
     background: #fff;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    cursor: pointer;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .art-card:hover {
-    transform: translateY(-6px);
+    transform: translateY(-5px);
     box-shadow: 0 15px 40px rgba(0,0,0,0.12);
 }
 
 .art-card img {
-    height: 240px;
     width: 100%;
+    height: 240px;
     object-fit: cover;
+    display: block;
+}
+
+/* Ribbon Category */
+.ribbon {
+    position: absolute;
+    top: 12px;
+    left: -5px;
+    background: #5C3A21;
+    color: #fff;
+    padding: 6px 18px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transform: rotate(-15deg);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
 .art-body {
-    padding: 18px;
+    padding: 15px 18px;
 }
 
-.text-main {
+.art-title {
+    font-weight: 600;
     color: #5C3A21;
+    margin-bottom: 6px;
+    font-size: 1.1rem;
 }
 
-.text-muted-soft {
+.art-price {
+    display: inline-block;
+    background: #CFAF5D;
+    color: #5C3A21;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+}
+
+.art-description {
+    font-size: 0.85rem;
     color: #8A6A4F;
+    margin-top: 5px;
+}
+
+/* Icons row left aligned */
+.art-icons {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    gap: 10px; /* small gap between icons */
+}
+
+.art-icons span {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    color: #8A6A4F;
+}
+
+.art-icons span i {
+    margin-right: 5px;
+    color: #5C3A21;
 }
 </style>
 
-<div class="artworks-page py-5">
+<div class="artworks-page">
     <div class="container">
-
-        <div class="mb-5 text-center">
-            <h2 class="text-main fw-bold">Artworks Gallery 🎨</h2>
-            <p class="text-muted-soft">Discover creativity shared by artists</p>
-        </div>
 
         <div class="row g-4">
             {% for art in artworks %}
             <div class="col-md-4">
-
-                <!-- WHOLE CARD CLICKABLE -->
-                <a href="{% url 'artwork_detail' art.id %}" style="text-decoration:none;">
-
+                <a href="{% url 'artwork_detail_for_artist' art.id %}" style="text-decoration:none;">
                     <div class="art-card">
-
                         <img src="{{ art.image.url }}" alt="{{ art.title }}">
-
+                        <div class="ribbon">{{ art.category }}</div>
                         <div class="art-body">
-                            <h5 class="text-main fw-semibold">
-                                {{ art.title }}
-                            </h5>
-
-                            <p class="small text-muted-soft mb-1">
-                                {{ art.category }}
-                            </p>
-
+                            <div class="art-title">{{ art.title }}</div>
+                            <div class="art-price">₹ {{ art.price }}</div>
                             {% if art.short_description %}
-                            <p class="small text-muted">
-                                {{ art.short_description|truncatechars:80 }}
-                            </p>
+                            <div class="art-description">{{ art.short_description|truncatechars:80 }}</div>
                             {% endif %}
-
-                            <p class="fw-semibold text-main mt-2">
-                                ₹ {{ art.price }}
-                            </p>
+                            
+                            <!-- Icons row left aligned -->
+                            <div class="art-icons">
+                                <span><i class="fa-solid fa-heart"></i> {{ art.likes|default:0 }}</span>
+                                <span><i class="fa-solid fa-eye"></i> {{ art.views|default:0 }}</span>
+                                <span><i class="fa-solid fa-comment"></i> {{ art.comments_count|default:0 }}</span>
+                            </div>
                         </div>
-
                     </div>
-
                 </a>
-
             </div>
             {% empty %}
             <p class="text-center text-muted">
-                No artworks uploaded yet.
+                You have not uploaded any artworks yet.
             </p>
             {% endfor %}
         </div>

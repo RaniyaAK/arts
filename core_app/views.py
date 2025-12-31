@@ -35,21 +35,6 @@ def artist_dashboard(request):
     })
 
 
-@login_required
-def client_dashboard(request):
-    if request.user.role != 'client':
-        return redirect('login')
-
-    artworks = Artwork.objects.all().order_by('-created_at')[:6]
-    featured_artists = User.objects.filter(role='artist')  # <-- show all artists
-
-    return render(request, 'dashboards/client_dashboard.html', {
-        'artworks': artworks,
-        'featured_artists': featured_artists,
-    })
-
-
-
 
 def register_view(request):
     form = RegisterForm(request.POST or None)
@@ -143,12 +128,6 @@ def add_artworks(request):
     return render(request, 'artist_dashboard/add_artworks.html', {'form': form})
 
 
-def view_artworks(request):
-    artworks = Artwork.objects.all().order_by('-created_at')
-    return render(request, 'artist_dashboard/artworks.html', {
-        'artworks': artworks
-    })
-
 
 def edit_artwork(request, artwork_id):
     artwork = Artwork.objects.get(id=artwork_id)
@@ -179,7 +158,7 @@ def delete_artwork(request, artwork_id):
 
     return render(request, 'artist_dashboard/delete_artwork.html', {'artwork': artwork})
 
-def artwork_detail(request, artwork_id):
+def artwork_detail_for_artist(request, artwork_id):
     artwork = Artwork.objects.get(id=artwork_id)
 
     if request.user.is_authenticated and request.user == artwork.artist:
@@ -194,3 +173,38 @@ def artwork_detail(request, artwork_id):
         'artist_dashboard/artwork_detail_client.html',
         {'artwork': artwork}
     )
+
+
+@login_required
+def client_dashboard(request):
+    if request.user.role != 'client':
+        return redirect('login')
+
+    artworks = Artwork.objects.all().order_by('-created_at')[:6]
+    featured_artists = User.objects.filter(role='artist')  # <-- show all artists
+
+    return render(request, 'dashboards/client_dashboard.html', {
+        'artworks': artworks,
+        'featured_artists': featured_artists,
+    })
+
+@login_required
+def artist_artworks_for_client(request, artist_id):
+    artist = get_object_or_404(User, id=artist_id, role='artist')
+    artworks = Artwork.objects.filter(artist=artist).order_by('-created_at')
+
+    return render(request, 'artist_dashboard/artworks.html', {
+        'artist': artist,
+        'artworks': artworks
+    })
+
+@login_required
+def artist_my_artworks(request):
+    if request.user.role != 'artist':
+        return HttpResponseForbidden("Only artists can view this page")
+
+    artworks = Artwork.objects.filter(artist=request.user).order_by('-created_at')
+
+    return render(request, 'artist_dashboard/artworks.html', {
+        'artworks': artworks
+    })

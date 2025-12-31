@@ -6,7 +6,6 @@
 <style>
 .text-primary-color { color: #5C3A21; }
 
-/* ===== Artists Layout ===== */
 #featured-artists-container,
 #extra-artists-container {
     display: flex;
@@ -15,9 +14,8 @@
     width: 100%;
 }
 
-/* ===== Artist Card ===== */
 .artist-card {
-    flex: 0 0 calc(20% - 16px);   /* exactly 5 per row */
+    flex: 0 0 calc(20% - 16px);   
     max-width: calc(20% - 16px);
     background: #fff;
     border-radius: 20px;
@@ -27,7 +25,6 @@
     position: relative;
 }
 
-/* Profile Image */
 .artist-circle-img {
     width: 135px;
     height: 135px;
@@ -49,7 +46,6 @@
     font-size: 0.85rem;
 }
 
-/* ===== Plus / Minus Button ===== */
 .toggle-btn {
     position: absolute;
     right: -14px;
@@ -70,7 +66,6 @@
 
 .d-none { display: none; }
 
-/* ===== Price Box (Cream Filled) ===== */
 .price-box {
     border: 1px solid #5C3A21;
     border-radius: 8px;
@@ -80,19 +75,26 @@
     color: #5C3A21;
     margin: 10px 0;
     font-size: 0.95rem;
-    background: 
+    background: #CFAF5D;
 }
 </style>
 
 <div class="container py-5">
 
-    <!-- Welcome -->
-    <h2 class="text-primary-color mb-2">
-        Welcome, {{ request.user.username }} 👀
-    </h2>
-    <p class="text-primary-color mb-4">
-        Discover beautiful artworks from talented artists.
+<div class="mb-4">
+    <p class="text-primary-color mb-2"
+       style="font-size:1.15rem; font-weight:600;">
+        Discover original artworks from talented independent artists.
     </p>
+
+    <p class="text-primary-color"
+       style="font-size:0.95rem; line-height:1.6; opacity:0.85;">
+        Browse unique creations, explore different styles, and connect with artists
+        through their expressive work.
+    </p>
+</div>
+
+
 
     <!-- Featured Artists -->
     <h4 class="mb-3 text-primary-color">Featured Artists</h4>
@@ -110,9 +112,11 @@
                 <div class="artist-name">{{ artist.username }}</div>
                 <div class="artist-role">Creative artist on Paletra</div>
 
-                <a href="{% url 'view_artworks' %}" class="btn btn-outline-primary">
+                <a href="{% url 'artist_artworks_for_client' artist.id %}"
+                class="btn btn-outline-primary">
                     View Artworks
                 </a>
+
 
                 {% if forloop.counter == 5 and featured_artists|length > 5 %}
                 <div class="toggle-btn" id="openArtists">+</div>
@@ -134,7 +138,7 @@
             <div class="artist-name">{{ artist.username }}</div>
             <div class="artist-role">Creative artist on Paletra</div>
 
-            <a href="{% url 'view_artworks' %}" class="btn btn-outline-primary">
+            <a href="{% url 'artist_my_artworks' %}" class="btn btn-outline-primary">
                 View Artworks
             </a>
 
@@ -173,7 +177,7 @@
                         ₹ {{ artwork.price }}
                     </div>
 
-                    <a href="{% url 'artwork_detail' artwork.id %}"
+                    <a href="{% url 'artwork_detail_for_artist' artwork.id %}"
                        class="btn btn-outline-primary w-100 mt-2">
                         View Details
                     </a>
