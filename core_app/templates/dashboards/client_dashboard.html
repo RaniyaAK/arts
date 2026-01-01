@@ -6,6 +6,7 @@
 <style>
 .text-primary-color { color: #5C3A21; }
 
+/* ================= ARTISTS ================= */
 #featured-artists-container,
 #extra-artists-container {
     display: flex;
@@ -15,7 +16,7 @@
 }
 
 .artist-card {
-    flex: 0 0 calc(20% - 16px);   
+    flex: 0 0 calc(20% - 16px);
     max-width: calc(20% - 16px);
     background: #fff;
     border-radius: 20px;
@@ -66,42 +67,81 @@
 
 .d-none { display: none; }
 
-.price-box {
-    border: 1px solid #5C3A21;
-    border-radius: 8px;
-    padding: 7px 14px;
-    display: inline-block;
+/* ================= LATEST ARTWORKS ================= */
+.latest-art-card {
+    border-radius: 18px;
+    border: 1px solid #e6ddd2;
+    overflow: hidden;
+    transition: all 0.25s ease;
+    background: #fffdf9;
+}
+
+.latest-art-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+}
+
+.latest-art-img {
+    height: 230px;
+    object-fit: cover;
+    background: #f5f1ea;
+}
+
+.latest-art-body {
+    padding: 18px 16px 20px;
+}
+
+.latest-art-title {
+    font-size: 1.05rem;
     font-weight: 600;
     color: #5C3A21;
-    margin: 10px 0;
-    font-size: 0.95rem;
-    background: #CFAF5D;
+    margin-bottom: 6px;
+}
+
+.latest-art-desc {
+    font-size: 0.85rem;
+    color: #7a5a42;
+    line-height: 1.4;
+    margin-bottom: 12px;
+}
+
+.latest-art-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.latest-price {
+    background: #f3e1b3;
+    color: #5C3A21;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    display: inline-block;
 }
 </style>
 
 <div class="container py-5">
 
-<div class="mb-4">
-    <p class="text-primary-color mb-2"
-       style="font-size:1.15rem; font-weight:600;">
-        Discover original artworks from talented independent artists.
-    </p>
+    <!-- INTRO -->
+    <div class="mb-4">
+        <p class="text-primary-color mb-2"
+           style="font-size:1.15rem; font-weight:600;">
+            Discover original artworks from talented independent artists.
+        </p>
 
-    <p class="text-primary-color"
-       style="font-size:0.95rem; line-height:1.6; opacity:0.85;">
-        Browse unique creations, explore different styles, and connect with artists
-        through their expressive work.
-    </p>
-</div>
+        <p class="text-primary-color"
+           style="font-size:0.95rem; line-height:1.6; opacity:0.85;">
+            Browse unique creations, explore different styles, and connect with artists
+            through their expressive work.
+        </p>
+    </div>
 
-
-
-    <!-- Featured Artists -->
+    <!-- FEATURED ARTISTS -->
     <h4 class="mb-3 text-primary-color">Featured Artists</h4>
 
-    <!-- FIRST 5 ARTISTS -->
     <div id="featured-artists-container">
-
         {% for artist in featured_artists %}
             {% if forloop.counter <= 5 %}
             <div class="artist-card">
@@ -113,10 +153,9 @@
                 <div class="artist-role">Creative artist on Paletra</div>
 
                 <a href="{% url 'artist_artworks_for_client' artist.id %}"
-                class="btn btn-outline-primary">
+                   class="btn btn-outline-primary">
                     View Artworks
                 </a>
-
 
                 {% if forloop.counter == 5 and featured_artists|length > 5 %}
                 <div class="toggle-btn" id="openArtists">+</div>
@@ -138,7 +177,8 @@
             <div class="artist-name">{{ artist.username }}</div>
             <div class="artist-role">Creative artist on Paletra</div>
 
-            <a href="{% url 'artist_artworks_for_client' artist.id %}" class="btn btn-outline-primary">
+            <a href="{% url 'artist_artworks_for_client' artist.id %}"
+               class="btn btn-outline-primary">
                 View Artworks
             </a>
 
@@ -150,39 +190,42 @@
         {% endfor %}
     </div>
 
-    <!-- Latest Artworks -->
+    <!-- LATEST ARTWORKS -->
     <h4 class="mb-3 text-primary-color mt-5">Latest Artworks</h4>
+
     <div class="row g-4">
         {% for artwork in artworks %}
         <div class="col-md-4">
-            <div class="card shadow-sm h-100">
+            <div class="latest-art-card h-100">
 
                 {% if artwork.image %}
-                <img src="{{ artwork.image.url }}" class="card-img-top">
+                <img src="{{ artwork.image.url }}" class="latest-art-img w-100">
                 {% else %}
-                <img src="{% static 'images/artwork_placeholder.png' %}" class="card-img-top">
+                <img src="{% static 'images/artwork_placeholder.png' %}" class="latest-art-img w-100">
                 {% endif %}
 
-                <div class="card-body text-center">
-                    <h5 class="card-title text-primary-color">
+                <div class="latest-art-body text-center">
+
+                    <div class="latest-art-title">
                         {{ artwork.title }}
-                    </h5>
-
-                    <p class="card-text text-primary-color small">
-                        {{ artwork.description|truncatewords:12 }}
-                    </p>
-
-                    <!-- PRICE BOX -->
-                    <div class="price-box">
-                        ₹ {{ artwork.price }}
                     </div>
 
-                    <a href="{% url 'artwork_detail_for_artist' artwork.id %}"
-                       class="btn btn-outline-primary w-100 mt-2">
-                        View Details
-                    </a>
-                </div>
+                    <div class="latest-art-desc">
+                        {{ artwork.description|truncatewords:14 }}
+                    </div>
 
+                    <div class="latest-art-footer">
+                        <span class="latest-price">
+                            ₹ {{ artwork.price }}
+                        </span>
+
+                        <a href="{% url 'artwork_detail_for_artist' artwork.id %}"
+                           class="btn btn-outline-primary w-100">
+                            View Details
+                        </a>
+                    </div>
+
+                </div>
             </div>
         </div>
         {% empty %}

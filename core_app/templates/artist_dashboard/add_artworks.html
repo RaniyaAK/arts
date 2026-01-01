@@ -5,13 +5,11 @@
 {% block content %}
 
 <style>
-/* PAGE BASE */
 .add-art-page {
     background: #FFF7EC;
     min-height: 100vh;
 }
 
-/* TEXT */
 .text-main {
     color: #5C3A21;
 }
@@ -19,7 +17,6 @@
     color: #8A6A4F;
 }
 
-/* CARD */
 .art-form-card {
     background: #ffffff;
     border-radius: 24px;
@@ -27,14 +24,17 @@
     box-shadow: 0 18px 40px rgba(0,0,0,0.08);
 }
 
-/* INPUTS */
+/* INPUTS - consistent full width block */
 .art-form-card input,
 .art-form-card textarea,
 .art-form-card select {
+    display: block;
+    width: 100%;
     border-radius: 14px;
     border: 1px solid #E2D2BF;
     padding: 12px 16px;
     background: #FFFDF9;
+    box-sizing: border-box;
 }
 
 .art-form-card input:focus,
@@ -52,6 +52,18 @@
     padding: 40px;
     text-align: center;
     background: #FFFDF9;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* center preview and text */
+}
+
+/* IMAGE PREVIEW INSIDE FILE UPLOAD */
+.file-upload img {
+    max-height: 200px;
+    width: auto;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    display: none;
 }
 
 /* BUTTON */
@@ -61,16 +73,20 @@
     border-radius: 50px;
     padding: 12px 34px;
     font-weight: 600;
+    display: block;
+    margin: 0 auto; /* center the button */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .btn-art:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     background: #7A4A2B;
-    color: #FFF7EC;
 }
 
-/* PREVIEW */
+/* INSTRUCTIONS BOX */
 .preview-box {
-    background: #FFFDF9;
+    background: #FFF9F1; /* slightly highlighted */
     border-radius: 18px;
     padding: 20px;
     text-align: center;
@@ -93,8 +109,24 @@
 
     <div class="row g-5">
 
-        <!-- FORM -->
-        <div class="col-md-7">
+        <!-- INSTRUCTIONS / NOTE (LEFT) -->
+        <div class="col-md-5 order-md-1">
+            <div class="preview-box">
+                <h5 class="text-main mb-3">
+                    Before you publish
+                </h5>
+                <p class="text-muted-soft small">
+                    • Upload high-quality images  
+                    <br>
+                    • Keep descriptions personal  
+                    <br>
+                    • Let the artwork speak  
+                </p>
+            </div>
+        </div>
+
+        <!-- FORM / UPLOAD (RIGHT) -->
+        <div class="col-md-7 order-md-2">
             <div class="art-form-card">
 
                 <form method="post" enctype="multipart/form-data">
@@ -127,7 +159,7 @@
                         {% endif %}
                     </div>
 
-                    <!-- ✅ PRICE (ONLY ADDITION) -->
+                    <!-- PRICE -->
                     <div class="mb-4">
                         <label class="form-label fw-semibold text-main">Price (₹)</label>
                         {{ form.price }}
@@ -139,7 +171,11 @@
                     <!-- IMAGE UPLOAD -->
                     <div class="mb-4">
                         <label class="form-label fw-semibold text-main">Upload Artwork</label>
+
                         <div class="file-upload">
+                            <!-- IMAGE PREVIEW INSIDE FILE UPLOAD -->
+                            <img id="image-preview" alt="Preview">
+
                             <p class="text-muted-soft mb-2">
                                 Drag & drop your image here
                             </p>
@@ -165,29 +201,29 @@
             </div>
         </div>
 
-        <!-- PREVIEW / NOTE -->
-        <div class="col-md-5">
-            <div class="preview-box">
-                <h5 class="text-main mb-3">
-                    Before you publish
-                </h5>
-                <p class="text-muted-soft small">
-                    • Upload high-quality images  
-                    <br>
-                    • Keep descriptions personal  
-                    <br>
-                    • Let the artwork speak  
-                </p>
-
-                <img src="{% static 'images/artwork_placeholder.png' %}"
-                     class="img-fluid rounded-3 mt-3"
-                     alt="Preview">
-            </div>
-        </div>
-
     </div>
 
   </div>
 </div>
+
+<script>
+  const imageInput = document.querySelector('input[type="file"]');
+  const imagePreview = document.getElementById('image-preview');
+
+  imageInput.addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        imagePreview.src = e.target.result;
+        imagePreview.style.display = 'block';
+      }
+      reader.readAsDataURL(file);
+    } else {
+      imagePreview.src = '';
+      imagePreview.style.display = 'none';
+    }
+  });
+</script>
 
 {% endblock %}
