@@ -42,3 +42,20 @@ class Artwork(models.Model):
         return f"{self.title} by {self.artist.username}"
 
 
+class Activity(models.Model):
+    ACTION_CHOICES = (
+        ('added', 'Added'),
+        ('edited', 'Edited'),
+        ('deleted', 'Deleted'),
+    )
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+    artwork_title = models.CharField(max_length=200)
+    action = models.CharField(max_length=10, choices=ACTION_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.artwork_title} - {self.action}"

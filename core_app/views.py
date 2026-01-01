@@ -6,7 +6,7 @@ from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
 from django.contrib.auth.decorators import login_required
 from .forms import ArtworkForm
-from .models import Artwork
+from .models import Artwork,Activity
 from django.http import HttpResponseForbidden
 
 
@@ -21,18 +21,20 @@ def logout_view(request):
     messages.success(request, "Logged out successfully")
     return redirect('login')
 
-
 @login_required
 def artist_dashboard(request):
     if request.user.role != 'artist':
         return redirect('login')
 
     artworks = Artwork.objects.filter(artist=request.user).order_by('-created_at')
+    activities = Activity.objects.filter(user=request.user).order_by('-created_at')[:10]
 
     return render(request, 'dashboards/artist_dashboard.html', {
         'artworks': artworks,
+        'activities': activities,   # ✅ THIS WAS MISSING
         'numbers': range(1, 4),
     })
+
 
 
 
@@ -121,16 +123,26 @@ def add_artworks(request):
             artwork = form.save(commit=False)
             artwork.artist = request.user
             artwork.save()
-            return redirect('artist_dashboard')  
+
+            # ✅ ACTIVITY LOG
+            Activity.objects.create(
+                user=request.user,
+                artwork_title=artwork.title,
+                action='added'
+            )
+
+            return redirect('artist_dashboard')
     else:
         form = ArtworkForm()
 
     return render(request, 'artist_dashboard/add_artworks.html', {'form': form})
 
 
+
 @login_required
 def edit_artwork(request, artwork_id):
-    artwork = Artwork.objects.get(id=artwork_id)
+    artwork = get_object_or_404(Artwork, id=artwork_id)
+
     if request.user != artwork.artist:
         return HttpResponseForbidden()
 
@@ -138,6 +150,14 @@ def edit_artwork(request, artwork_id):
         form = ArtworkForm(request.POST, request.FILES, instance=artwork)
         if form.is_valid():
             form.save()
+
+            # ✅ ACTIVITY LOG
+            Activity.objects.create(
+                user=request.user,
+                artwork_title=artwork.title,
+                action='edited'
+            )
+
             return redirect('artwork_detail_for_artist', artwork_id=artwork.id)
     else:
         form = ArtworkForm(instance=artwork)
@@ -153,12 +173,22 @@ def delete_artwork(request, artwork_id):
         return HttpResponseForbidden("You are not allowed to delete this artwork.")
 
     if request.method == 'POST':
+
+        # ✅ ACTIVITY LOG (before delete)
+        Activity.objects.create(
+            user=request.user,
+            artwork_title=artwork.title,
+            action='deleted'
+        )
+
         artwork.delete()
         messages.success(request, "Artwork deleted successfully.")
-        return redirect('artist_my_artworks') 
+        return redirect('artist_my_artworks')
+
     return render(request, 'artist_dashboard/delete_artwork.html', {
         'artwork': artwork
     })
+
 
 
 def artwork_detail_for_artist(request, artwork_id):
