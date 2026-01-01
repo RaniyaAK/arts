@@ -1,5 +1,8 @@
 {% extends "masterss.html" %}
 {% load static %}
+{% load static %}
+{% load humanize %}
+
 {% block title %}Artist Dashboard | Paletra{% endblock %}
 
 {% block content %}
@@ -164,15 +167,28 @@
         </h5>
 
         <ul class="list-group list-group-flush">
-            {% for art in artworks %}
-            <li class="list-group-item px-0 text-muted-soft">
-                🎨 {{ art.title }} added
-            </li>
-            {% empty %}
-            <li class="list-group-item px-0 text-muted-soft">
-                No recent activity yet.
-            </li>
-            {% endfor %}
+        {% for activity in activities %}
+        <li class="list-group-item px-0 text-muted-soft d-flex justify-content-between">
+            <span>
+                {% if activity.action == 'added' %}
+                    ➕ {{ activity.artwork_title }} added
+                {% elif activity.action == 'edited' %}
+                    ✏️ {{ activity.artwork_title }} edited
+                {% elif activity.action == 'deleted' %}
+                    🗑️ {{ activity.artwork_title }} deleted
+                {% endif %}
+            </span>
+
+            <small class="text-muted">
+                {{ activity.created_at|naturaltime }}
+            </small>
+        </li>
+        {% empty %}
+        <li class="list-group-item px-0 text-muted-soft">
+            No recent activity yet.
+        </li>
+        {% endfor %}
+
         </ul>
     </div>
 
@@ -180,6 +196,3 @@
 </div>
 
 {% endblock %}
-
-from core_app.models import Artwork
-Artwork.objects.filter(price=0).update(price=500)
