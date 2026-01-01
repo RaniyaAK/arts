@@ -138,7 +138,7 @@
             <div class="artist-name">{{ artist.username }}</div>
             <div class="artist-role">Creative artist on Paletra</div>
 
-            <a href="{% url 'artist_my_artworks' %}" class="btn btn-outline-primary">
+            <a href="{% url 'artist_artworks_for_client' artist.id %}" class="btn btn-outline-primary">
                 View Artworks
             </a>
 
