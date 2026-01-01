@@ -114,6 +114,8 @@ def reset_password(request, email):
     return render(request, 'reset_password.html')
 
 
+    #    ______________________________________________________________________________________________________________
+
 
 @login_required
 def add_artworks(request):
@@ -124,7 +126,6 @@ def add_artworks(request):
             artwork.artist = request.user
             artwork.save()
 
-            # ✅ ACTIVITY LOG
             Activity.objects.create(
                 user=request.user,
                 artwork_title=artwork.title,
@@ -174,7 +175,6 @@ def delete_artwork(request, artwork_id):
 
     if request.method == 'POST':
 
-        # ✅ ACTIVITY LOG (before delete)
         Activity.objects.create(
             user=request.user,
             artwork_title=artwork.title,
@@ -189,6 +189,8 @@ def delete_artwork(request, artwork_id):
         'artwork': artwork
     })
 
+
+   # _________________________________________________________________________________________________________________
 
 
 def artwork_detail_for_artist(request, artwork_id):
@@ -214,7 +216,7 @@ def client_dashboard(request):
         return redirect('login')
 
     artworks = Artwork.objects.all().order_by('-created_at')[:6]
-    featured_artists = User.objects.filter(role='artist')  # <-- show all artists
+    featured_artists = User.objects.filter(role='artist') 
 
     return render(request, 'dashboards/client_dashboard.html', {
         'artworks': artworks,
