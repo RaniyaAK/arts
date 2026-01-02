@@ -4,168 +4,117 @@
 
 {% block content %}
 
+<!-- Include Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 <style>
-/* PAGE BASE */
 .artwork-detail-page {
     background: linear-gradient(#FFF7EC, #FFF1E0);
     padding: 55px 0;
     min-height: 100vh;
 }
 
-/* ARTWORK CARD */
 .artwork-box {
-    background: #ffffff;
+    background: #fff;
     border-radius: 18px;
     box-shadow: 0 12px 30px rgba(0,0,0,0.07);
     overflow: hidden;
 }
 
-/* IMAGE */
 .artwork-image img {
     width: 100%;
     height: auto;
     display: block;
 }
 
-/* INFO */
 .artwork-info {
     padding: 34px 38px;
 }
 
-/* COLORS */
-.text-main {
-    color: #4E2E1F;
-}
-.text-muted-soft {
-    color: #8B6B4F;
-}
+.text-main { color: #4E2E1F; }
+.artwork-title { font-size: 2rem; font-weight: 600; margin-bottom: 8px; }
+.artwork-description { font-size: 1.02rem; color: #7A5A3E; line-height:1.8; margin-bottom: 18px; }
 
-/* TITLE */
-.artwork-title {
-    font-size: 2rem;
-    font-weight: 600;
-    letter-spacing: 0.4px;
-    margin-bottom: 8px;
-}
-
-/* DESCRIPTION */
-.artwork-description {
-    font-size: 1.02rem;
-    color: #7A5A3E;
-    line-height: 1.8;
-    margin-bottom: 18px;
-    max-width: 92%;
-}
-
-/* CATEGORY – GRADIENT PILL */
 .category-pill {
     display: inline-block;
     padding: 5px 16px;
     font-size: 0.75rem;
-    font-weight: 500;
-    text-transform: uppercase;
     letter-spacing: 0.8px;
     color: #4E2E1F;
-    background: linear-gradient(135deg, #F7E6C8, #F0DFA3);
+    background: linear-gradient(135deg,#F7E6C8,#F0DFA3);
     border-radius: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     margin-bottom: 12px;
 }
 
-/* DIVIDER */
 .soft-divider {
-    height: 1px;
-    background: linear-gradient(
-        to right,
-        rgba(0,0,0,0.12),
-        rgba(0,0,0,0.02)
-    );
+    height:1px;
+    background: linear-gradient(to right, rgba(0,0,0,0.12), rgba(0,0,0,0.02));
     margin: 22px 0;
 }
 
-/* ARTIST */
-.artist-name {
-    font-size: 0.95rem;
-    color: #6A4A2F;
-}
+.artist-name { font-size:0.95rem; color:#6A4A2F; }
 
-/* PRICE TAG – BALANCED */
-.price-box {
-    display: inline-flex;
+/* PRICE + BUY NOW */
+.price-buy {
+    display: flex;
     align-items: center;
-    gap: 10px;
-    margin-top: 18px;
-    padding: 7px 16px;
-    background: #CFAF5D;
-    border-radius: 8px;
-}
-
-.price-box small {
-    font-size: 0.65rem;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: #4E2E1F;
-}
-
-.price-box span {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #3B2414;
-}
-
-/* ACTION BUTTONS */
-.client-actions {
-    margin-top: 22px;
-}
-
-.client-actions button {
-    margin-right: 10px;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 0.92rem;
-    transition: all 0.25s ease;
-}
-
-.like-btn {
-    background: #FFF0F0;
-    color: #E04545;
-}
-.like-btn:hover {
-    background: #E04545;
-    color: #fff;
-}
-
-.save-btn {
-    background: #F4F1ED;
-    color: #7A5A3E;
-}
-.save-btn:hover {
-    background: #7A5A3E;
-    color: #fff;
-}
-
-.cart-btn {
-    background: #FFF4E8;
-    color: #D2691E;
-}
-.cart-btn:hover {
-    background: #D2691E;
-    color: #fff;
-}
-
-/* BACK BUTTON */
-.back-btn {
-    display: inline-block;
+    gap: 12px;
     margin-bottom: 20px;
-    text-decoration: none;
-    font-size: 0.95rem;
-    color: #5C3A21;
 }
-.back-btn:hover {
-    text-decoration: underline;
+
+.price-box {
+    padding: 8px 18px;
+    background:#F3E1B3; /* subtle, lighter */
+    border-radius:8px;
+    font-weight:600;
+    font-size:1.2rem;
 }
+
+.buy-btn {
+    padding:12px 32px;
+    font-size:1.15rem;
+    background:#5C3A21;
+    color:#fff;
+    font-weight:600;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.25s;
+}
+.buy-btn:hover { background:#3E2416; }
+
+/* CLIENT ACTION ICONS */
+.client-actions {
+    display:flex;
+    gap:30px;
+    margin-top:10px;
+}
+
+.client-actions i {
+    font-size:1.8rem;
+    cursor:pointer;
+    transition: transform 0.2s ease;
+}
+
+/* Slightly larger heart */
+.client-actions .fa-heart { font-size:2rem; }
+
+/* Outline icons initially */
+.client-actions .fa-regular:hover { transform:scale(1.2); }
+
+/* Filled state colors */
+.client-actions .liked { color:#E04545; }
+.client-actions .saved { color:#7A5A3E; }
+.client-actions .carted { color:#D2691E; }
+
+.back-btn {
+    display:inline-block;
+    margin-bottom:20px;
+    font-size:0.95rem;
+    color:#5C3A21;
+    text-decoration:none;
+}
+.back-btn:hover { text-decoration:underline; }
 </style>
 
 <div class="artwork-detail-page">
@@ -173,50 +122,33 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
 
-                <!-- Back -->
                 <a href="{% url 'home' %}" class="back-btn">← Back to Gallery</a>
 
                 <div class="artwork-box">
 
-                    <!-- Image -->
                     <div class="artwork-image">
                         <img src="{{ artwork.image.url }}" alt="{{ artwork.title }}">
                     </div>
 
-                    <!-- Info -->
                     <div class="artwork-info">
-
-                        <!-- Title -->
-                        <h2 class="artwork-title text-main">
-                            {{ artwork.title }}
-                        </h2>
-
-                        <!-- Description -->
-                        <p class="artwork-description">
-                            {{ artwork.description }}
-                        </p>
-
-                        <!-- Category -->
+                        <h2 class="artwork-title text-main">{{ artwork.title }}</h2>
+                        <p class="artwork-description">{{ artwork.description }}</p>
                         <span class="category-pill">{{ artwork.category }}</span>
-
                         <div class="soft-divider"></div>
+                        <p class="artist-name">By <strong class="text-main">{{ artwork.artist.username }}</strong></p>
 
-                        <!-- Artist -->
-                        <p class="artist-name">
-                            By <strong class="text-main">{{ artwork.artist.username }}</strong>
-                        </p>
-
-                        <!-- Price -->
-                        <div class="price-box">
-                            <small>Price</small>
-                            <span>₹ {{ artwork.price }}</span>
+                        <!-- Price + Buy Now -->
+                        <div class="price-buy">
+                            <div class="price-box">₹ {{ artwork.price }}</div>
+                            <button class="buy-btn">🛍️ Buy Now</button>
                         </div>
 
+                        <!-- Icons row -->
                         {% if user.is_authenticated and user.role == 'client' %}
                         <div class="client-actions">
-                            <button class="like-btn">❤️ Like</button>
-                            <button class="save-btn">🔖 Save</button>
-                            <button class="cart-btn">🛒 Add to Cart</button>
+                            <i class="fa-regular fa-heart" id="likeBtn"></i>
+                            <i class="fa-regular fa-bookmark" id="saveBtn"></i>
+                            <i class="fa-regular fa-cart-plus" id="cartBtn"></i>
                         </div>
                         {% endif %}
 
@@ -227,5 +159,31 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const likeBtn = document.getElementById("likeBtn");
+    const saveBtn = document.getElementById("saveBtn");
+    const cartBtn = document.getElementById("cartBtn");
+
+    likeBtn?.addEventListener("click", function() {
+        likeBtn.classList.toggle("fa-regular");
+        likeBtn.classList.toggle("fa-solid");
+        likeBtn.classList.toggle("liked");
+    });
+
+    saveBtn?.addEventListener("click", function() {
+        saveBtn.classList.toggle("fa-regular");
+        saveBtn.classList.toggle("fa-solid");
+        saveBtn.classList.toggle("saved");
+    });
+
+    cartBtn?.addEventListener("click", function() {
+        cartBtn.classList.toggle("fa-regular");
+        cartBtn.classList.toggle("fa-solid");
+        cartBtn.classList.toggle("carted");
+    });
+});
+</script>
 
 {% endblock %}
