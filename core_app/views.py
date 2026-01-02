@@ -139,7 +139,6 @@ def add_artworks(request):
     return render(request, 'artist_dashboard/add_artworks.html', {'form': form})
 
 
-
 @login_required
 def edit_artwork(request, artwork_id):
     artwork = get_object_or_404(Artwork, id=artwork_id)
@@ -152,29 +151,32 @@ def edit_artwork(request, artwork_id):
         if form.is_valid():
             form.save()
 
-            # ✅ ACTIVITY LOG
             Activity.objects.create(
                 user=request.user,
                 artwork_title=artwork.title,
                 action='edited'
             )
 
-            return redirect('artwork_detail_for_artist', artwork_id=artwork.id)
+            # ✅ Redirect to dashboard so changes appear immediately
+            return redirect('artist_dashboard')
     else:
         form = ArtworkForm(instance=artwork)
 
     return render(request, 'artist_dashboard/edit_artwork.html', {'form': form})
 
 
+from django.views.decorators.cache import never_cache
+
+@never_cache
 @login_required
 def delete_artwork(request, artwork_id):
-    artwork = get_object_or_404(Artwork, id=artwork_id)
-
-    if request.user != artwork.artist:
-        return HttpResponseForbidden("You are not allowed to delete this artwork.")
+    artwork = get_object_or_404(
+        Artwork,
+        id=artwork_id,
+        artist=request.user
+    )
 
     if request.method == 'POST':
-
         Activity.objects.create(
             user=request.user,
             artwork_title=artwork.title,
@@ -183,7 +185,7 @@ def delete_artwork(request, artwork_id):
 
         artwork.delete()
         messages.success(request, "Artwork deleted successfully.")
-        return redirect('artist_my_artworks')
+        return redirect('artist_dashboard')  
 
     return render(request, 'artist_dashboard/delete_artwork.html', {
         'artwork': artwork

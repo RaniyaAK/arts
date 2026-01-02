@@ -11,7 +11,6 @@
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-T8CVX...YOUR_HASH..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-
     <style>
         body {
             background-color: #F5F0E6;
@@ -140,6 +139,18 @@
             </div>
         </div>
     </nav>
+
+    <!-- ✅ MESSAGES (ONLY ADDITION) -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 
     <!-- PAGE CONTENT -->
     <main>
