@@ -4,10 +4,177 @@
 
 {% block content %}
 
+<style>
+/* PAGE BASE */
+.artwork-detail-page {
+    background: linear-gradient(#FFF7EC, #FFF1E0);
+    padding: 55px 0;
+    min-height: 100vh;
+}
+
+/* ARTWORK CARD */
+.artwork-box {
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.07);
+    overflow: hidden;
+}
+
+/* IMAGE */
+.artwork-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* INFO */
+.artwork-info {
+    padding: 34px 38px;
+}
+
+/* COLORS */
+.text-main {
+    color: #4E2E1F;
+}
+.text-muted-soft {
+    color: #8B6B4F;
+}
+
+/* TITLE */
+.artwork-title {
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    margin-bottom: 8px;
+}
+
+/* DESCRIPTION */
+.artwork-description {
+    font-size: 1.02rem;
+    color: #7A5A3E;
+    line-height: 1.8;
+    margin-bottom: 18px;
+    max-width: 92%;
+}
+
+/* CATEGORY */
+.category-text {
+    font-size: 0.85rem;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: #9C7A5C;
+}
+
+/* DIVIDER */
+.soft-divider {
+    height: 1px;
+    background: linear-gradient(to right, rgba(0,0,0,0.12), rgba(0,0,0,0.02));
+    margin: 22px 0;
+}
+
+/* ARTIST */
+.artist-name {
+    font-size: 0.95rem;
+    color: #6A4A2F;
+}
+/* PRICE TAG – WARM GOLD */
+.price-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 18px;
+    padding: 6px 16px;
+    background: #CFAF5D;
+    border-radius: 20px;
+}
+
+/* PRICE TAG – MEDIUM, BALANCED */
+.price-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 18px;
+    padding: 7px 16px;   /* 👈 slightly bigger */
+    background: #CFAF5D;
+    border-radius: 8px;
+}
+
+.price-box small {
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #4E2E1F;
+}
+
+.price-box span {
+    font-size: 1.25rem; /* 👈 slightly bigger */
+    font-weight: 600;
+    color: #3B2414;
+}
+
+
+
+/* ACTION BUTTONS */
+.client-actions {
+    margin-top: 22px;
+}
+
+.client-actions button {
+    margin-right: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.92rem;
+    transition: all 0.25s ease;
+}
+
+.like-btn {
+    background: #FFF0F0;
+    color: #E04545;
+}
+.like-btn:hover {
+    background: #E04545;
+    color: #fff;
+}
+
+.save-btn {
+    background: #F4F1ED;
+    color: #7A5A3E;
+}
+.save-btn:hover {
+    background: #7A5A3E;
+    color: #fff;
+}
+
+.cart-btn {
+    background: #FFF4E8;
+    color: #D2691E;
+}
+.cart-btn:hover {
+    background: #D2691E;
+    color: #fff;
+}
+
+/* BACK BUTTON */
+.back-btn {
+    display: inline-block;
+    margin-bottom: 20px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    color: #5C3A21;
+}
+.back-btn:hover {
+    text-decoration: underline;
+}
+</style>
+
 <div class="artwork-detail-page">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
+
+                <a href="{% url 'home' %}" class="back-btn">← Back to Gallery</a>
 
                 <div class="artwork-box">
 
@@ -17,23 +184,31 @@
 
                     <div class="artwork-info">
 
-                        <h2 class="text-main fw-bold">{{ artwork.title }}</h2>
-                        <p class="text-muted-soft">{{ artwork.category }}</p>
+                        <h2 class="artwork-title text-main">
+                            {{ artwork.title }}
+                        </h2>
 
-                        <p class="small text-muted">
-                            By {{ artwork.artist.username }}
-                        </p>
-
-                        <p class="mt-3 text-muted">
+                        <p class="artwork-description">
                             {{ artwork.description }}
                         </p>
 
-                        <h3 class="price mt-3">
-                            ₹ {{ artwork.price }}
-                        </h3>
+                        <p class="category-text">
+                            {{ artwork.category }}
+                        </p>
+
+                        <div class="soft-divider"></div>
+
+                        <p class="artist-name">
+                            By <strong class="text-main">{{ artwork.artist.username }}</strong>
+                        </p>
+
+                        <div class="price-box">
+                            <small>Price</small>
+                            <span>₹ {{ artwork.price }}</span>
+                        </div>
 
                         {% if user.is_authenticated and user.role == 'client' %}
-                        <div class="client-actions mt-4">
+                        <div class="client-actions">
                             <button class="like-btn">❤️ Like</button>
                             <button class="save-btn">🔖 Save</button>
                             <button class="cart-btn">🛒 Add to Cart</button>
@@ -41,7 +216,6 @@
                         {% endif %}
 
                     </div>
-
                 </div>
 
             </div>
