@@ -207,7 +207,7 @@ def artwork_detail_for_artist(request, artwork_id):
 
     return render(
         request,
-        'artist_dashboard/artwork_detail_client.html',
+        'client_dashboard/artwork_detail_client.html',
         {'artwork': artwork}
     )
 
@@ -245,3 +245,15 @@ def artist_my_artworks(request):
     return render(request, 'artist_dashboard/artworks.html', {
         'artworks': artworks
     })
+
+@login_required
+def all_artworks(request):
+    if request.user.role != 'client':
+        return redirect('login')
+
+    artworks = Artwork.objects.all().order_by('-created_at') 
+
+    return render(request, 'client_dashboard/all_artworks.html', {
+        'artworks': artworks
+    })
+

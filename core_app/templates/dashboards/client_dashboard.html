@@ -123,19 +123,33 @@
     display: inline-block;
     text-align: center;
 }
+
+/* ================= SEE ALL / SEE MORE BUTTON ================= */
+.see-all-btn {
+    display: inline-block;
+    background: #5C3A21;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 12px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+.see-all-btn:hover {
+    background: #4A2A18;
+}
 </style>
 
 <div class="container py-5">
 
     <!-- INTRO -->
     <div class="mb-4">
-        <p class="text-primary-color mb-2"
-           style="font-size:1.15rem; font-weight:600;">
+        <p class="text-primary-color mb-2" style="font-size:1.15rem; font-weight:600;">
             Discover original artworks from talented independent artists.
         </p>
 
-        <p class="text-primary-color"
-           style="font-size:0.95rem; line-height:1.6; opacity:0.85;">
+        <p class="text-primary-color" style="font-size:0.95rem; line-height:1.6; opacity:0.85;">
             Browse unique creations, explore different styles, and connect with artists
             through their expressive work.
         </p>
@@ -194,7 +208,7 @@
     </div>
 
     <!-- LATEST ARTWORKS -->
-    <h4 class="mb-3 text-primary-color mt-5">Latest Artworks</h4>
+    <h4 class="text-primary-color mt-5 mb-3">Latest Artworks</h4>
 
     <div class="row g-4">
         {% for artwork in artworks %}
@@ -231,9 +245,12 @@
                 </div>
             </div>
         </div>
-        {% empty %}
-        <p class="text-muted">No artworks available.</p>
         {% endfor %}
+    </div>
+
+    <!-- SEE ALL ARTWORKS BUTTON AT BOTTOM RIGHT -->
+    <div class="d-flex justify-content-end mt-4">
+        <a href="{% url 'all_artworks' %}" class="see-all-btn">See All →</a>
     </div>
 
 </div>

@@ -27,6 +27,7 @@ urlpatterns = [
     path('artwork/<int:artwork_id>/', views.artwork_detail_for_artist, name='artwork_detail_for_artist'),
 
     path('client_dashbaord/<int:artist_id>/artist_artworks_for_client/',views.artist_artworks_for_client,name='artist_artworks_for_client'),
+    path('all-artworks/', views.all_artworks, name='all_artworks'),
 
 ]
 
