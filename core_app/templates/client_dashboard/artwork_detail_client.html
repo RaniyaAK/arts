@@ -57,18 +57,29 @@
     max-width: 92%;
 }
 
-/* CATEGORY */
-.category-text {
-    font-size: 0.85rem;
-    letter-spacing: 0.6px;
+/* CATEGORY – GRADIENT PILL */
+.category-pill {
+    display: inline-block;
+    padding: 5px 16px;
+    font-size: 0.75rem;
+    font-weight: 500;
     text-transform: uppercase;
-    color: #9C7A5C;
+    letter-spacing: 0.8px;
+    color: #4E2E1F;
+    background: linear-gradient(135deg, #F7E6C8, #F0DFA3);
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 12px;
 }
 
 /* DIVIDER */
 .soft-divider {
     height: 1px;
-    background: linear-gradient(to right, rgba(0,0,0,0.12), rgba(0,0,0,0.02));
+    background: linear-gradient(
+        to right,
+        rgba(0,0,0,0.12),
+        rgba(0,0,0,0.02)
+    );
     margin: 22px 0;
 }
 
@@ -77,24 +88,14 @@
     font-size: 0.95rem;
     color: #6A4A2F;
 }
-/* PRICE TAG – WARM GOLD */
-.price-box {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 18px;
-    padding: 6px 16px;
-    background: #CFAF5D;
-    border-radius: 20px;
-}
 
-/* PRICE TAG – MEDIUM, BALANCED */
+/* PRICE TAG – BALANCED */
 .price-box {
     display: inline-flex;
     align-items: center;
     gap: 10px;
     margin-top: 18px;
-    padding: 7px 16px;   /* 👈 slightly bigger */
+    padding: 7px 16px;
     background: #CFAF5D;
     border-radius: 8px;
 }
@@ -107,12 +108,10 @@
 }
 
 .price-box span {
-    font-size: 1.25rem; /* 👈 slightly bigger */
+    font-size: 1.25rem;
     font-weight: 600;
     color: #3B2414;
 }
-
-
 
 /* ACTION BUTTONS */
 .client-actions {
@@ -174,34 +173,40 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
 
+                <!-- Back -->
                 <a href="{% url 'home' %}" class="back-btn">← Back to Gallery</a>
 
                 <div class="artwork-box">
 
+                    <!-- Image -->
                     <div class="artwork-image">
                         <img src="{{ artwork.image.url }}" alt="{{ artwork.title }}">
                     </div>
 
+                    <!-- Info -->
                     <div class="artwork-info">
 
+                        <!-- Title -->
                         <h2 class="artwork-title text-main">
                             {{ artwork.title }}
                         </h2>
 
+                        <!-- Description -->
                         <p class="artwork-description">
                             {{ artwork.description }}
                         </p>
 
-                        <p class="category-text">
-                            {{ artwork.category }}
-                        </p>
+                        <!-- Category -->
+                        <span class="category-pill">{{ artwork.category }}</span>
 
                         <div class="soft-divider"></div>
 
+                        <!-- Artist -->
                         <p class="artist-name">
                             By <strong class="text-main">{{ artwork.artist.username }}</strong>
                         </p>
 
+                        <!-- Price -->
                         <div class="price-box">
                             <small>Price</small>
                             <span>₹ {{ artwork.price }}</span>

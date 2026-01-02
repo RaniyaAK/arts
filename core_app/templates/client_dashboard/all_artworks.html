@@ -1,0 +1,99 @@
+{% extends "masterss.html" %}
+{% load static %}
+{% block title %}All Artworks | Paletra{% endblock %}
+
+{% block content %}
+<style>
+.text-primary-color { color: #5C3A21; }
+
+/* ================= LATEST ARTWORKS ================= */
+.latest-art-card {
+    border-radius: 18px;
+    border: 1px solid #e6ddd2;
+    overflow: hidden;
+    transition: all 0.25s ease;
+    background: #fffdf9;
+}
+
+.latest-art-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+}
+
+.latest-art-img {
+    height: 230px;
+    object-fit: cover;
+    background: #f5f1ea;
+}
+
+.latest-art-body {
+    padding: 18px 16px 20px;
+}
+
+.latest-art-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #5C3A21;
+    margin-bottom: 6px;
+}
+
+.latest-art-desc {
+    font-size: 0.85rem;
+    color: #7a5a42;
+    line-height: 1.4;
+    margin-bottom: 12px;
+}
+
+.latest-art-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.latest-price {
+    background: #f3e1b3;
+    color: #5C3A21;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    display: inline-block;
+    text-align: center;
+}
+</style>
+
+<div class="container py-5">
+    <h3 class="mb-4 text-primary-color">All Artworks</h3>
+
+    <div class="row g-4">
+        {% for artwork in artworks %}
+        <div class="col-md-4">
+            <div class="latest-art-card h-100">
+                {% if artwork.image %}
+                <img src="{{ artwork.image.url }}" class="latest-art-img w-100">
+                {% else %}
+                <img src="{% static 'images/artwork_placeholder.png' %}" class="latest-art-img w-100">
+                {% endif %}
+
+                <div class="latest-art-body text-center">
+                    <div class="latest-art-title">{{ artwork.title }}</div>
+                    <div class="latest-art-desc">{{ artwork.description|truncatewords:14 }}</div>
+
+                    <div class="latest-art-footer">
+                        <span class="latest-price">₹ {{ artwork.price }}</span>
+
+                        <a href="{% url 'artwork_detail_for_artist' artwork.id %}" 
+                           class="btn btn-outline-primary w-100">
+                           View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-muted">No artworks available.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
