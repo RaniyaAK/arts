@@ -4,8 +4,10 @@
 
 {% block content %}
 
-<!-- Include Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- Font Awesome -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <style>
 .artwork-detail-page {
@@ -32,8 +34,19 @@
 }
 
 .text-main { color: #4E2E1F; }
-.artwork-title { font-size: 2rem; font-weight: 600; margin-bottom: 8px; }
-.artwork-description { font-size: 1.02rem; color: #7A5A3E; line-height:1.8; margin-bottom: 18px; }
+
+.artwork-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.artwork-description {
+    font-size: 1.02rem;
+    color: #7A5A3E;
+    line-height: 1.8;
+    margin-bottom: 18px;
+}
 
 .category-pill {
     display: inline-block;
@@ -47,14 +60,17 @@
 }
 
 .soft-divider {
-    height:1px;
+    height: 1px;
     background: linear-gradient(to right, rgba(0,0,0,0.12), rgba(0,0,0,0.02));
     margin: 22px 0;
 }
 
-.artist-name { font-size:0.95rem; color:#6A4A2F; }
+.artist-name {
+    font-size: 0.95rem;
+    color: #6A4A2F;
+}
 
-/* PRICE + BUY NOW */
+/* PRICE */
 .price-buy {
     display: flex;
     align-items: center;
@@ -64,57 +80,59 @@
 
 .price-box {
     padding: 8px 18px;
-    background:#F3E1B3; /* subtle, lighter */
-    border-radius:8px;
-    font-weight:600;
-    font-size:1.2rem;
+    background: #F3E1B3;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1.2rem;
 }
 
 .buy-btn {
-    padding:12px 32px;
-    font-size:1.15rem;
-    background:#5C3A21;
-    color:#fff;
-    font-weight:600;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    transition:0.25s;
+    padding: 12px 32px;
+    font-size: 1.15rem;
+    background: #5C3A21;
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.25s;
 }
-.buy-btn:hover { background:#3E2416; }
+.buy-btn:hover { background: #3E2416; }
 
-/* CLIENT ACTION ICONS */
+/* ACTION ICONS */
 .client-actions {
-    display:flex;
-    gap:30px;
-    margin-top:10px;
+    display: flex;
+    gap: 30px;
+    margin-top: 10px;
 }
 
 .client-actions i {
-    font-size:1.8rem;
-    cursor:pointer;
-    transition: transform 0.2s ease;
+    font-size: 1.8rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s ease;
 }
 
-/* Slightly larger heart */
-.client-actions .fa-heart { font-size:2rem; }
+/* Bigger heart */
+.client-actions .fa-heart { font-size: 2rem; }
 
-/* Outline icons initially */
-.client-actions .fa-regular:hover { transform:scale(1.2); }
+/* Active states */
+.liked  { color: #E04545; }
+.saved  { color: #7A5A3E; }
+.carted { color: #D2691E; transform: scale(1.15); }
 
-/* Filled state colors */
-.client-actions .liked { color:#E04545; }
-.client-actions .saved { color:#7A5A3E; }
-.client-actions .carted { color:#D2691E; }
+/* Hover only when inactive */
+.client-actions i:not(.liked):not(.saved):not(.carted):hover {
+    transform: scale(1.2);
+}
 
 .back-btn {
-    display:inline-block;
-    margin-bottom:20px;
-    font-size:0.95rem;
-    color:#5C3A21;
-    text-decoration:none;
+    display: inline-block;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+    color: #5C3A21;
+    text-decoration: none;
 }
-.back-btn:hover { text-decoration:underline; }
+.back-btn:hover { text-decoration: underline; }
 </style>
 
 <div class="artwork-detail-page">
@@ -133,22 +151,25 @@
                     <div class="artwork-info">
                         <h2 class="artwork-title text-main">{{ artwork.title }}</h2>
                         <p class="artwork-description">{{ artwork.description }}</p>
+
                         <span class="category-pill">{{ artwork.category }}</span>
                         <div class="soft-divider"></div>
-                        <p class="artist-name">By <strong class="text-main">{{ artwork.artist.username }}</strong></p>
 
-                        <!-- Price + Buy Now -->
+                        <p class="artist-name">
+                            By <strong class="text-main">{{ artwork.artist.username }}</strong>
+                        </p>
+
                         <div class="price-buy">
                             <div class="price-box">₹ {{ artwork.price }}</div>
                             <button class="buy-btn">🛍️ Buy Now</button>
                         </div>
 
-                        <!-- Icons row -->
                         {% if user.is_authenticated and user.role == 'client' %}
                         <div class="client-actions">
                             <i class="fa-regular fa-heart" id="likeBtn"></i>
                             <i class="fa-regular fa-bookmark" id="saveBtn"></i>
-                            <i class="fa-regular fa-cart-plus" id="cartBtn"></i>
+                            <!-- Cart must be SOLID -->
+                            <i class="fa-solid fa-cart-shopping" id="cartBtn"></i>
                         </div>
                         {% endif %}
 
@@ -161,28 +182,28 @@
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
+
     const likeBtn = document.getElementById("likeBtn");
     const saveBtn = document.getElementById("saveBtn");
     const cartBtn = document.getElementById("cartBtn");
 
-    likeBtn?.addEventListener("click", function() {
+    likeBtn?.addEventListener("click", () => {
         likeBtn.classList.toggle("fa-regular");
         likeBtn.classList.toggle("fa-solid");
         likeBtn.classList.toggle("liked");
     });
 
-    saveBtn?.addEventListener("click", function() {
+    saveBtn?.addEventListener("click", () => {
         saveBtn.classList.toggle("fa-regular");
         saveBtn.classList.toggle("fa-solid");
         saveBtn.classList.toggle("saved");
     });
 
-    cartBtn?.addEventListener("click", function() {
-        cartBtn.classList.toggle("fa-regular");
-        cartBtn.classList.toggle("fa-solid");
+    cartBtn?.addEventListener("click", () => {
         cartBtn.classList.toggle("carted");
     });
+
 });
 </script>
 

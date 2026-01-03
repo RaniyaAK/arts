@@ -6,6 +6,33 @@
 <style>
 .text-primary-color { color: #5C3A21; }
 
+/* SEARCH BAR */
+.search-group {
+    display: flex;
+    align-items: center;
+    border: 1px solid #d8c7b5;
+    border-radius: 12px;
+    padding: 0 12px;
+    background: #fff;
+}
+.search-group i {
+    color: #8A6A4F;
+    font-size: 1rem;
+}
+.search-input {
+    border: none;
+    outline: none;
+    padding: 12px 12px;
+    width: 100%;
+    border-radius: 12px;
+}
+.search-clear {
+    cursor: pointer;
+    color: #8A6A4F;
+    font-size: 1rem;
+    display: none;
+}
+
 /* ================= ARTISTS ================= */
 #featured-artists-container,
 #extra-artists-container {
@@ -36,16 +63,8 @@
 }
 
 .artist-name { font-weight: 600; margin-bottom: 4px; }
-.artist-role {
-    font-size: 0.85rem;
-    color: #8A6A4F;
-    margin-bottom: 14px;
-}
-
-.artist-card .btn {
-    width: 100%;
-    font-size: 0.85rem;
-}
+.artist-role { font-size: 0.85rem; color: #8A6A4F; margin-bottom: 14px; }
+.artist-card .btn { width: 100%; font-size: 0.85rem; }
 
 .toggle-btn {
     position: absolute;
@@ -81,50 +100,14 @@
     box-shadow: 0 12px 28px rgba(0,0,0,0.12);
 }
 
-.latest-art-img {
-    height: 230px;
-    object-fit: cover;
-    background: #f5f1ea;
-}
+.latest-art-img { height: 230px; object-fit: cover; background: #f5f1ea; }
+.latest-art-body { padding: 18px 16px 20px; }
+.latest-art-title { font-size: 1.05rem; font-weight: 600; color: #5C3A21; margin-bottom: 6px; }
+.latest-art-desc { font-size: 0.85rem; color: #7a5a42; line-height: 1.4; margin-bottom: 12px; }
+.latest-art-footer { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.latest-price { background: #f3e1b3; color: #5C3A21; font-weight: 600; padding: 6px 16px; border-radius: 30px; font-size: 0.9rem; }
 
-.latest-art-body {
-    padding: 18px 16px 20px;
-}
-
-.latest-art-title {
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: #5C3A21;
-    margin-bottom: 6px;
-}
-
-.latest-art-desc {
-    font-size: 0.85rem;
-    color: #7a5a42;
-    line-height: 1.4;
-    margin-bottom: 12px;
-}
-
-.latest-art-footer {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-}
-
-/* Price box */
-.latest-price {
-    background: #f3e1b3;
-    color: #5C3A21;
-    font-weight: 600;
-    padding: 6px 16px;
-    border-radius: 30px;
-    font-size: 0.9rem;
-    display: inline-block;
-    text-align: center;
-}
-
-/* ================= SEE ALL / SEE MORE BUTTON ================= */
+/* ================= SEE ALL BUTTON ================= */
 .see-all-btn {
     display: inline-block;
     background: #5C3A21;
@@ -134,10 +117,25 @@
     padding: 12px 20px;
     border-radius: 12px;
     text-decoration: none;
-    transition: all 0.25s ease;
 }
-.see-all-btn:hover {
-    background: #4A2A18;
+.see-all-btn:hover { background: #4A2A18; }
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 1200px) {
+    .artist-card { flex: 0 0 calc(25% - 16px); max-width: calc(25% - 16px); }
+}
+@media (max-width: 992px) {
+    .artist-card { flex: 0 0 calc(33.33% - 16px); max-width: calc(33.33% - 16px); }
+}
+@media (max-width: 768px) {
+    .artist-card { flex: 0 0 calc(50% - 16px); max-width: calc(50% - 16px); }
+    .latest-art-img { height: 200px; }
+}
+@media (max-width: 576px) {
+    .artist-card { flex: 0 0 100%; max-width: 100%; }
+    .latest-art-img { height: 180px; }
+    .search-group { flex-direction: row; gap: 6px; }
+    .search-input { padding: 10px; }
 }
 </style>
 
@@ -148,36 +146,38 @@
         <p class="text-primary-color mb-2" style="font-size:1.15rem; font-weight:600;">
             Discover original artworks from talented independent artists.
         </p>
-
         <p class="text-primary-color" style="font-size:0.95rem; line-height:1.6; opacity:0.85;">
-            Browse unique creations, explore different styles, and connect with artists
-            through their expressive work.
+            Browse unique creations, explore different styles, and connect with artists.
         </p>
     </div>
 
+    <!-- SEARCH -->
+    <div class="mb-4">
+        <div class="search-group">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" class="search-input"
+                   placeholder="Search artists or artworks...">
+            <i class="fa-solid fa-xmark search-clear" id="clearSearch"></i>
+        </div>
+    </div>
+
+    <p id="noResults" class="text-center text-muted mt-4" style="display:none;">
+        No results found
+    </p>
+
     <!-- FEATURED ARTISTS -->
     <h4 class="mb-3 text-primary-color">Featured Artists</h4>
-
     <div id="featured-artists-container">
         {% for artist in featured_artists %}
             {% if forloop.counter <= 5 %}
-            <div class="artist-card">
-
-                <img src="{% if artist.profile_image %}{{ artist.profile_image.url }}{% else %}{% static 'images/artist_placeholder.png' %}{% endif %}"
-                     class="artist-circle-img">
-
+            <div class="artist-card" data-artist-name="{{ artist.username|lower }}">
+                <img src="{% if artist.profile_image %}{{ artist.profile_image.url }}{% else %}{% static 'images/artist_placeholder.png' %}{% endif %}" class="artist-circle-img">
                 <div class="artist-name">{{ artist.username }}</div>
                 <div class="artist-role">Creative artist on Paletra</div>
-
-                <a href="{% url 'artist_artworks_for_client' artist.id %}"
-                   class="btn btn-outline-primary">
-                    View Artworks
-                </a>
-
+                <a href="{% url 'artist_artworks_for_client' artist.id %}" class="btn btn-outline-primary">View Artworks</a>
                 {% if forloop.counter == 5 and featured_artists|length > 5 %}
                 <div class="toggle-btn" id="openArtists">+</div>
                 {% endif %}
-
             </div>
             {% endif %}
         {% endfor %}
@@ -186,73 +186,41 @@
     <!-- EXTRA ARTISTS -->
     <div id="extra-artists-container" class="d-none mt-4">
         {% for artist in featured_artists|slice:"5:" %}
-        <div class="artist-card">
-
-            <img src="{% if artist.profile_image %}{{ artist.profile_image.url }}{% else %}{% static 'images/artist_placeholder.png' %}{% endif %}"
-                 class="artist-circle-img">
-
+        <div class="artist-card" data-artist-name="{{ artist.username|lower }}">
+            <img src="{% if artist.profile_image %}{{ artist.profile_image.url }}{% else %}{% static 'images/artist_placeholder.png' %}{% endif %}" class="artist-circle-img">
             <div class="artist-name">{{ artist.username }}</div>
             <div class="artist-role">Creative artist on Paletra</div>
-
-            <a href="{% url 'artist_artworks_for_client' artist.id %}"
-               class="btn btn-outline-primary">
-                View Artworks
-            </a>
-
+            <a href="{% url 'artist_artworks_for_client' artist.id %}" class="btn btn-outline-primary">View Artworks</a>
             {% if forloop.last %}
             <div class="toggle-btn" id="closeArtists">−</div>
             {% endif %}
-
         </div>
         {% endfor %}
     </div>
 
     <!-- LATEST ARTWORKS -->
     <h4 class="text-primary-color mt-5 mb-3">Latest Artworks</h4>
-
     <div class="row g-4">
         {% for artwork in artworks %}
-        <div class="col-md-4">
+        <div class="col-md-4 artwork-item" data-artwork-name="{{ artwork.title|lower }}">
             <div class="latest-art-card h-100">
-
-                {% if artwork.image %}
-                <img src="{{ artwork.image.url }}" class="latest-art-img w-100">
-                {% else %}
-                <img src="{% static 'images/artwork_placeholder.png' %}" class="latest-art-img w-100">
-                {% endif %}
-
+                <img src="{% if artwork.image %}{{ artwork.image.url }}{% else %}{% static 'images/artwork_placeholder.png' %}{% endif %}" class="latest-art-img w-100">
                 <div class="latest-art-body text-center">
-
-                    <div class="latest-art-title">
-                        {{ artwork.title }}
-                    </div>
-
-                    <div class="latest-art-desc">
-                        {{ artwork.description|truncatewords:14 }}
-                    </div>
-
+                    <div class="latest-art-title">{{ artwork.title }}</div>
+                    <div class="latest-art-desc">{{ artwork.description|truncatewords:14 }}</div>
                     <div class="latest-art-footer">
-                        <span class="latest-price">
-                            ₹ {{ artwork.price }}
-                        </span>
-
-                        <a href="{% url 'artwork_detail_for_artist' artwork.id %}"
-                           class="btn btn-outline-primary w-100">
-                            View Details
-                        </a>
+                        <span class="latest-price">₹ {{ artwork.price }}</span>
+                        <a href="{% url 'artwork_detail_for_artist' artwork.id %}" class="btn btn-outline-primary w-100">View Details</a>
                     </div>
-
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
 
-    <!-- SEE ALL ARTWORKS BUTTON AT BOTTOM RIGHT -->
     <div class="d-flex justify-content-end mt-4">
         <a href="{% url 'all_artworks' %}" class="see-all-btn">See All →</a>
     </div>
-
 </div>
 
 <script>
@@ -262,20 +230,62 @@ document.addEventListener("DOMContentLoaded", function () {
     const closeBtn = document.getElementById("closeArtists");
     const extra = document.getElementById("extra-artists-container");
 
-    if (openBtn) {
-        openBtn.addEventListener("click", function () {
-            extra.classList.remove("d-none");
-            openBtn.style.display = "none";
-        });
-    }
+    if (openBtn) openBtn.onclick = () => {
+        extra.classList.remove("d-none");
+        openBtn.style.display = "none";
+    };
 
-    if (closeBtn) {
-        closeBtn.addEventListener("click", function () {
-            extra.classList.add("d-none");
-            openBtn.style.display = "flex";
+    if (closeBtn) closeBtn.onclick = () => {
+        extra.classList.add("d-none");
+        if (openBtn) openBtn.style.display = "flex";
+    };
+
+    const searchInput = document.getElementById("searchInput");
+    const clearBtn = document.getElementById("clearSearch");
+    const noResults = document.getElementById("noResults");
+
+    const artistCards = document.querySelectorAll(".artist-card");
+    const artworkCards = document.querySelectorAll(".artwork-item");
+
+    searchInput.addEventListener("input", function () {
+        const q = this.value.toLowerCase().trim();
+        let found = false;
+        let hiddenMatch = false;
+
+        artistCards.forEach(card => {
+            const match = card.dataset.artistName.includes(q);
+            card.style.display = q && !match ? "none" : "block";
+            if (match && q) {
+                found = true;
+                if (extra && extra.contains(card)) hiddenMatch = true;
+            }
         });
-    }
+
+        artworkCards.forEach(card => {
+            const match = card.dataset.artworkName.includes(q);
+            card.style.display = q && !match ? "none" : "block";
+            if (match && q) found = true;
+        });
+
+        if (q && hiddenMatch && extra) {
+            extra.classList.remove("d-none");
+            if (openBtn) openBtn.style.display = "none";
+        }
+
+        if (!q && extra) {
+            extra.classList.add("d-none");
+            if (openBtn) openBtn.style.display = "flex";
+        }
+
+        clearBtn.style.display = q ? "inline" : "none";
+        noResults.style.display = q && !found ? "block" : "none";
+    });
+
+    clearBtn.onclick = () => {
+        searchInput.value = "";
+        searchInput.dispatchEvent(new Event("input"));
+        searchInput.focus();
+    };
 });
 </script>
-
 {% endblock %}
