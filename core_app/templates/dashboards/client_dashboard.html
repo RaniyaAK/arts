@@ -110,6 +110,7 @@
     background: #f5f1ea;
 }
 
+/* ✅ VIEW DETAILS OVERLAY ON IMAGE HOVER */
 .latest-art-img-wrapper::after {
     content: "View Details";
     position: absolute;
@@ -124,6 +125,9 @@
     opacity: 0;
     transition: opacity 0.25s ease;
     pointer-events: none;
+}
+.latest-art-img-wrapper:hover::after {
+    opacity: 1;
 }
 
 .latest-art-body {
@@ -150,17 +154,17 @@
     justify-content: center;
 }
 
-/* ✅ ONLY UPDATED STYLE */
+/* ✅ PRICE TAG STYLE */
 .latest-price {
     display: inline-block;
-    margin-bottom: 20px;
-    padding: 8px 18px;
+    margin-bottom: 14px;
+    padding: 6px 14px;
     background: #CFAF5D;
     color: #5C3A21;
-    font-size: 1.25rem;
+    font-size: 0.95rem;
     font-weight: 700;
-    border-radius: 14px;
-    letter-spacing: 0.3px;
+    border-radius: 12px;
+    letter-spacing: 0.2px;
 }
 
 /* ================= SEE ALL BUTTON ================= */
