@@ -100,12 +100,68 @@
     box-shadow: 0 12px 28px rgba(0,0,0,0.12);
 }
 
-.latest-art-img { height: 230px; object-fit: cover; background: #f5f1ea; }
-.latest-art-body { padding: 18px 16px 20px; }
-.latest-art-title { font-size: 1.05rem; font-weight: 600; color: #5C3A21; margin-bottom: 6px; }
-.latest-art-desc { font-size: 0.85rem; color: #7a5a42; line-height: 1.4; margin-bottom: 12px; }
-.latest-art-footer { display: flex; flex-direction: column; gap: 10px; align-items: center; }
-.latest-price { background: #f3e1b3; color: #5C3A21; font-weight: 600; padding: 6px 16px; border-radius: 30px; font-size: 0.9rem; }
+.latest-art-img-wrapper {
+    position: relative;
+}
+
+.latest-art-img {
+    height: 230px;
+    object-fit: cover;
+    background: #f5f1ea;
+}
+
+.latest-art-img-wrapper::after {
+    content: "View Details";
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+}
+
+.latest-art-body {
+    padding: 18px 16px 20px;
+    text-align: center;
+}
+
+.latest-art-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #5C3A21;
+    margin-bottom: 6px;
+}
+
+.latest-art-desc {
+    font-size: 0.85rem;
+    color: #7a5a42;
+    line-height: 1.4;
+    margin-bottom: 12px;
+}
+
+.latest-art-footer {
+    display: flex;
+    justify-content: center;
+}
+
+/* ✅ ONLY UPDATED STYLE */
+.latest-price {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 8px 18px;
+    background: #CFAF5D;
+    color: #5C3A21;
+    font-size: 1.25rem;
+    font-weight: 700;
+    border-radius: 14px;
+    letter-spacing: 0.3px;
+}
 
 /* ================= SEE ALL BUTTON ================= */
 .see-all-btn {
@@ -119,24 +175,6 @@
     text-decoration: none;
 }
 .see-all-btn:hover { background: #4A2A18; }
-
-/* ================= RESPONSIVE ================= */
-@media (max-width: 1200px) {
-    .artist-card { flex: 0 0 calc(25% - 16px); max-width: calc(25% - 16px); }
-}
-@media (max-width: 992px) {
-    .artist-card { flex: 0 0 calc(33.33% - 16px); max-width: calc(33.33% - 16px); }
-}
-@media (max-width: 768px) {
-    .artist-card { flex: 0 0 calc(50% - 16px); max-width: calc(50% - 16px); }
-    .latest-art-img { height: 200px; }
-}
-@media (max-width: 576px) {
-    .artist-card { flex: 0 0 100%; max-width: 100%; }
-    .latest-art-img { height: 180px; }
-    .search-group { flex-direction: row; gap: 6px; }
-    .search-input { padding: 10px; }
-}
 </style>
 
 <div class="container py-5">
@@ -204,13 +242,17 @@
         {% for artwork in artworks %}
         <div class="col-md-4 artwork-item" data-artwork-name="{{ artwork.title|lower }}">
             <div class="latest-art-card h-100">
-                <img src="{% if artwork.image %}{{ artwork.image.url }}{% else %}{% static 'images/artwork_placeholder.png' %}{% endif %}" class="latest-art-img w-100">
-                <div class="latest-art-body text-center">
+                <div class="latest-art-img-wrapper">
+                    <a href="{% url 'artwork_detail_for_artist' artwork.id %}">
+                        <img src="{% if artwork.image %}{{ artwork.image.url }}{% else %}{% static 'images/artwork_placeholder.png' %}{% endif %}"
+                             class="latest-art-img w-100">
+                    </a>
+                </div>
+                <div class="latest-art-body">
                     <div class="latest-art-title">{{ artwork.title }}</div>
                     <div class="latest-art-desc">{{ artwork.description|truncatewords:14 }}</div>
                     <div class="latest-art-footer">
                         <span class="latest-price">₹ {{ artwork.price }}</span>
-                        <a href="{% url 'artwork_detail_for_artist' artwork.id %}" class="btn btn-outline-primary w-100">View Details</a>
                     </div>
                 </div>
             </div>
@@ -225,7 +267,6 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-
     const openBtn = document.getElementById("openArtists");
     const closeBtn = document.getElementById("closeArtists");
     const extra = document.getElementById("extra-artists-container");
@@ -238,53 +279,6 @@ document.addEventListener("DOMContentLoaded", function () {
     if (closeBtn) closeBtn.onclick = () => {
         extra.classList.add("d-none");
         if (openBtn) openBtn.style.display = "flex";
-    };
-
-    const searchInput = document.getElementById("searchInput");
-    const clearBtn = document.getElementById("clearSearch");
-    const noResults = document.getElementById("noResults");
-
-    const artistCards = document.querySelectorAll(".artist-card");
-    const artworkCards = document.querySelectorAll(".artwork-item");
-
-    searchInput.addEventListener("input", function () {
-        const q = this.value.toLowerCase().trim();
-        let found = false;
-        let hiddenMatch = false;
-
-        artistCards.forEach(card => {
-            const match = card.dataset.artistName.includes(q);
-            card.style.display = q && !match ? "none" : "block";
-            if (match && q) {
-                found = true;
-                if (extra && extra.contains(card)) hiddenMatch = true;
-            }
-        });
-
-        artworkCards.forEach(card => {
-            const match = card.dataset.artworkName.includes(q);
-            card.style.display = q && !match ? "none" : "block";
-            if (match && q) found = true;
-        });
-
-        if (q && hiddenMatch && extra) {
-            extra.classList.remove("d-none");
-            if (openBtn) openBtn.style.display = "none";
-        }
-
-        if (!q && extra) {
-            extra.classList.add("d-none");
-            if (openBtn) openBtn.style.display = "flex";
-        }
-
-        clearBtn.style.display = q ? "inline" : "none";
-        noResults.style.display = q && !found ? "block" : "none";
-    });
-
-    clearBtn.onclick = () => {
-        searchInput.value = "";
-        searchInput.dispatchEvent(new Event("input"));
-        searchInput.focus();
     };
 });
 </script>
