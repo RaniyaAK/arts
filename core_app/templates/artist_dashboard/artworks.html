@@ -6,15 +6,24 @@
 {% block content %}
 
 <style>
-
-
-
 .artworks-page {
-    background: #FFEDB3; /* soft buttery light */
+    background: #FFEDB3;
     min-height: 100vh;
     padding: 40px 0;
 }
 
+/* BACK BUTTON */
+.back-btn {
+    display: inline-block;
+    margin-bottom: 20px;
+    background: #5C3A21;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+}
+.back-btn:hover { background: #4A2A18; }
 
 .art-card {
     position: relative;
@@ -83,7 +92,7 @@
     display: flex;
     align-items: center;
     margin-top: 10px;
-    gap: 10px; /* small gap between icons */
+    gap: 10px;
 }
 
 .art-icons span {
@@ -101,6 +110,9 @@
 
 <div class="artworks-page">
     <div class="container">
+
+        <!-- BACK BUTTON -->
+        <a href="javascript:history.back()" class="back-btn">← Back</a>
 
         <div class="row g-4">
             {% for art in artworks %}
