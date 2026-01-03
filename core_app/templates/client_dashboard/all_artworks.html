@@ -6,6 +6,19 @@
 <style>
 .text-primary-color { color: #5C3A21; }
 
+/* BACK BUTTON */
+.back-btn {
+    display: inline-block;
+    margin-bottom: 20px;
+    background: #5C3A21;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+}
+.back-btn:hover { background: #4A2A18; }
+
 /* ================= LATEST ARTWORKS ================= */
 .latest-art-card {
     border-radius: 18px;
@@ -64,6 +77,10 @@
 </style>
 
 <div class="container py-5">
+
+    <!-- BACK BUTTON -->
+    <a href="javascript:history.back()" class="back-btn">← Back</a>
+
     <h3 class="mb-4 text-primary-color">All Artworks</h3>
 
     <div class="row g-4">

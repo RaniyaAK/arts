@@ -257,3 +257,4 @@ def all_artworks(request):
         'artworks': artworks
     })
 
+ #bbb3ff;

@@ -54,7 +54,7 @@
     background: #FFFDF9;
     display: flex;
     flex-direction: column;
-    align-items: center; /* center preview and text */
+    align-items: center;
 }
 
 /* IMAGE PREVIEW INSIDE FILE UPLOAD */
@@ -74,7 +74,7 @@
     padding: 12px 34px;
     font-weight: 600;
     display: block;
-    margin: 0 auto; /* center the button */
+    margin: 0 auto;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -86,16 +86,35 @@
 
 /* INSTRUCTIONS BOX */
 .preview-box {
-    background: #FFF9F1; /* slightly highlighted */
+    background: #FFF9F1;
     border-radius: 18px;
     padding: 20px;
     text-align: center;
     border: 1px solid #E6D6C3;
 }
+
+/* BACK BUTTON */
+.back-btn {
+    display: inline-block;
+    margin-bottom: 25px;
+    background: #5C3A21;
+    color: #FFF7EC;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+.back-btn:hover {
+    background: #4A2A18;
+}
 </style>
 
 <div class="add-art-page py-5">
   <div class="container">
+
+    <!-- BACK BUTTON -->
+    <a href="javascript:history.back()" class="back-btn">← Back</a>
 
     <!-- HEADER -->
     <div class="mb-5">
