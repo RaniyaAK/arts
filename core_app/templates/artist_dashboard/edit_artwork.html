@@ -113,10 +113,29 @@
     max-height: 360px;
     object-fit: cover;
 }
+
+/* BACK BUTTON */
+.back-btn {
+    display: inline-block;
+    margin-bottom: 25px;
+    background: #5C3A21;
+    color: #FFF7EC;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+.back-btn:hover {
+    background: #4A2A18;
+}
 </style>
 
 <div class="add-art-page">
   <div class="container">
+
+    <!-- BACK BUTTON -->
+    <a href="javascript:history.back()" class="back-btn">← Back</a>
 
     <div class="page-header mb-5">
         <h2 class="text-main fw-bold">Edit Artwork</h2>

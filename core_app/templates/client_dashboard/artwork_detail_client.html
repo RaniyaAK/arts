@@ -48,15 +48,24 @@
     margin-bottom: 18px;
 }
 
-.category-pill {
-    display: inline-block;
-    padding: 5px 16px;
-    font-size: 0.75rem;
-    letter-spacing: 0.8px;
+/* CATEGORY STYLE BELOW IMAGE */
+.art-category {
+    font-weight: 600;
     color: #4E2E1F;
-    background: linear-gradient(135deg,#F7E6C8,#F0DFA3);
-    border-radius: 20px;
     margin-bottom: 12px;
+}
+
+/* PRICE TAG LIKE FIRST PAGE */
+.price-box {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 8px 18px;
+    background: #CFAF5D;
+    color: #5C3A21;
+    font-size: 1.25rem;
+    font-weight: 700;
+    border-radius: 14px;
+    letter-spacing: 0.3px;
 }
 
 .soft-divider {
@@ -68,22 +77,6 @@
 .artist-name {
     font-size: 0.95rem;
     color: #6A4A2F;
-}
-
-/* PRICE */
-.price-buy {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 20px;
-}
-
-.price-box {
-    padding: 8px 18px;
-    background: #F3E1B3;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 1.2rem;
 }
 
 .buy-btn {
@@ -149,26 +142,28 @@
                     </div>
 
                     <div class="artwork-info">
+                        <!-- CATEGORY BELOW IMAGE -->
+                        <div class="art-category">#{{ artwork.category }}</div>
+
                         <h2 class="artwork-title text-main">{{ artwork.title }}</h2>
                         <p class="artwork-description">{{ artwork.description }}</p>
 
-                        <span class="category-pill">{{ artwork.category }}</span>
+                        <!-- PRICE TAG LIKE FIRST PAGE -->
+                        <div class="price-box">₹ {{ artwork.price }}</div>
+
                         <div class="soft-divider"></div>
 
                         <p class="artist-name">
                             By <strong class="text-main">{{ artwork.artist.username }}</strong>
                         </p>
 
-                        <div class="price-buy">
-                            <div class="price-box">₹ {{ artwork.price }}</div>
-                            <button class="buy-btn">🛍️ Buy Now</button>
-                        </div>
+                        <!-- BUY NOW BUTTON (unchanged) -->
+                        <button class="buy-btn">🛍️ Buy Now</button>
 
                         {% if user.is_authenticated and user.role == 'client' %}
                         <div class="client-actions">
                             <i class="fa-regular fa-heart" id="likeBtn"></i>
                             <i class="fa-regular fa-bookmark" id="saveBtn"></i>
-                            <!-- Cart must be SOLID -->
                             <i class="fa-solid fa-cart-shopping" id="cartBtn"></i>
                         </div>
                         {% endif %}

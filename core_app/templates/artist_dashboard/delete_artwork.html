@@ -1,6 +1,5 @@
 {% extends "masterss.html" %}
 {% load static %}
-
 {% block title %}Delete Artwork | Paletra{% endblock %}
 
 {% block content %}
@@ -9,10 +8,26 @@
 .delete-artwork-page {
     background: #FFF7EC;
     min-height: 100vh;
+    padding: 60px 20px;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 0;
+    flex-direction: column;
+    align-items: center; /* center the delete box */
+}
+
+/* BACK BUTTON */
+.back-btn {
+    align-self: flex-start; /* left-align inside the container */
+    margin-bottom: 30px;
+    background: #5C3A21;
+    color: #FFF7EC;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+.back-btn:hover {
+    background: #4A2A18;
 }
 
 .delete-box {
@@ -22,6 +37,7 @@
     box-shadow: 0 12px 35px rgba(0,0,0,0.08);
     text-align: center;
     max-width: 500px;
+    width: 100%; /* ensure responsiveness */
 }
 
 .delete-box h3 {
@@ -58,15 +74,18 @@
 </style>
 
 <div class="delete-artwork-page">
+
+    <!-- BACK BUTTON -->
+    <a href="javascript:history.back()" class="back-btn">← Back</a>
+
     <div class="delete-box">
         <h3>Delete Artwork</h3>
         <p>Are you sure you want to delete "<strong>{{ artwork.title }}</strong>"? This action cannot be undone.</p>
 
         <form method="POST">
             {% csrf_token %}
-            <button type="submit" class="delete-btn">Yes, Delete</button>
+            <button type="submit" class="delete-btn">Delete</button>
             <a href="{% url 'artist_my_artworks' %}" class="cancel-btn">Cancel</a>
-
         </form>
     </div>
 </div>

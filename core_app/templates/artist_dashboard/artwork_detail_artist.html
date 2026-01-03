@@ -47,16 +47,37 @@
 
 /* INFO */
 .artwork-info {
-    padding: 32px 34px;
+    padding: 20px 24px 32px;
 }
 
 .text-main { color: #5C3A21; }
 .text-muted-soft { color: #8A6A4F; }
+.text-muted { color: #7a5a42; }
 
-/* PRICE BOX – SIMPLE & CLEAN */
+/* CATEGORY BELOW IMAGE */
+.art-category {
+    color: #5C3A21;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-top: 8px;
+    margin-bottom: 12px;
+}
+.art-category::before {
+    content: "# ";
+    font-weight: 600;
+}
+
+/* DESCRIPTION */
+.art-description {
+    color: #7a5a42;
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+/* PRICE BOX */
 .price-box {
     display: inline-block;
-    margin-top: 18px;
+    margin-bottom: 20px;
     padding: 8px 18px;
     background: #CFAF5D;
     color: #5C3A21;
@@ -70,13 +91,14 @@
 .info-divider {
     height: 1px;
     background: rgba(92,58,33,0.18);
-    margin: 26px 0 20px;
+    margin: 20px 0;
 }
 
 /* ACTIONS */
 .artist-actions {
     display: flex;
-    gap: 22px;
+    align-items: center;
+    gap: 16px;
 }
 
 .artist-actions a {
@@ -85,6 +107,10 @@
     color: #8A6A4F;
     text-decoration: none;
     transition: color 0.2s ease;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .artist-actions a:hover {
@@ -93,6 +119,13 @@
 
 .artist-actions a.delete:hover {
     color: #b33a3a;
+}
+
+/* VERTICAL BAR BETWEEN BUTTONS */
+.artist-actions .divider {
+    width: 1px;
+    height: 20px;
+    background: rgba(92,58,33,0.3);
 }
 </style>
 
@@ -111,15 +144,16 @@
         <!-- INFO -->
         <div class="artwork-info">
 
-            <h2 class="text-main fw-bold mb-1">
+            <!-- CATEGORY BELOW IMAGE -->
+            <p class="art-category">{{ artwork.category }}</p>
+
+            <!-- TITLE -->
+            <h2 class="text-main fw-bold mb-2">
                 {{ artwork.title }}
             </h2>
 
-            <p class="text-muted-soft mb-3">
-                {{ artwork.category }}
-            </p>
-
-            <p class="text-muted">
+            <!-- DESCRIPTION -->
+            <p class="art-description">
                 {{ artwork.description }}
             </p>
 
@@ -131,10 +165,15 @@
             <!-- DIVIDER -->
             <div class="info-divider"></div>
 
-            <!-- ACTIONS -->
+            <!-- ACTIONS WITH ICONS -->
             <div class="artist-actions">
-                <a href="{% url 'edit_artwork' artwork.id %}">Edit</a>
-                <a href="{% url 'delete_artwork' artwork.id %}" class="delete">Delete</a>
+                <a href="{% url 'edit_artwork' artwork.id %}">
+                    <i class="fa-solid fa-pen-to-square"></i> Edit
+                </a>
+                <div class="divider"></div>
+                <a href="{% url 'delete_artwork' artwork.id %}" class="delete">
+                    <i class="fa-solid fa-trash"></i> Delete
+                </a>
             </div>
 
         </div>
