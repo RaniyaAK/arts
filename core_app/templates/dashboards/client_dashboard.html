@@ -1,289 +1,54 @@
 {% extends "masterss.html" %}
-{% load static %}
+
 {% block title %}Client Dashboard | Paletra{% endblock %}
 
 {% block content %}
-<style>
-.text-primary-color { color: #5C3A21; }
-
-/* SEARCH BAR */
-.search-group {
-    display: flex;
-    align-items: center;
-    border: 1px solid #d8c7b5;
-    border-radius: 12px;
-    padding: 0 12px;
-    background: #fff;
-}
-.search-group i {
-    color: #8A6A4F;
-    font-size: 1rem;
-}
-.search-input {
-    border: none;
-    outline: none;
-    padding: 12px 12px;
-    width: 100%;
-    border-radius: 12px;
-}
-.search-clear {
-    cursor: pointer;
-    color: #8A6A4F;
-    font-size: 1rem;
-    display: none;
-}
-
-/* ================= ARTISTS ================= */
-#featured-artists-container,
-#extra-artists-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    width: 100%;
-}
-
-.artist-card {
-    flex: 0 0 calc(20% - 16px);
-    max-width: calc(20% - 16px);
-    background: #fff;
-    border-radius: 20px;
-    border: 1px solid #ddd;
-    padding: 26px 22px;
-    text-align: center;
-    position: relative;
-}
-
-.artist-circle-img {
-    width: 135px;
-    height: 135px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #5C3A21;
-    margin-bottom: 14px;
-}
-
-.artist-name { font-weight: 600; margin-bottom: 4px; }
-.artist-role { font-size: 0.85rem; color: #8A6A4F; margin-bottom: 14px; }
-.artist-card .btn { width: 100%; font-size: 0.85rem; }
-
-.toggle-btn {
-    position: absolute;
-    right: -14px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: #5C3A21;
-    color: #fff;
-    font-size: 1.1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-
-.d-none { display: none; }
-
-/* ================= LATEST ARTWORKS ================= */
-.latest-art-card {
-    border-radius: 18px;
-    border: 1px solid #e6ddd2;
-    overflow: hidden;
-    transition: all 0.25s ease;
-    background: #fffdf9;
-}
-
-.latest-art-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 28px rgba(0,0,0,0.12);
-}
-
-.latest-art-img-wrapper {
-    position: relative;
-}
-
-.latest-art-img {
-    height: 230px;
-    object-fit: cover;
-    background: #f5f1ea;
-}
-
-/* ✅ VIEW DETAILS OVERLAY ON IMAGE HOVER */
-.latest-art-img-wrapper::after {
-    content: "View Details";
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.45);
-    color: #fff;
-    font-weight: 600;
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.25s ease;
-    pointer-events: none;
-}
-.latest-art-img-wrapper:hover::after {
-    opacity: 1;
-}
-
-.latest-art-body {
-    padding: 18px 16px 20px;
-    text-align: center;
-}
-
-.latest-art-title {
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: #5C3A21;
-    margin-bottom: 6px;
-}
-
-.latest-art-desc {
-    font-size: 0.85rem;
-    color: #7a5a42;
-    line-height: 1.4;
-    margin-bottom: 12px;
-}
-
-.latest-art-footer {
-    display: flex;
-    justify-content: center;
-}
-
-/* ✅ PRICE TAG STYLE */
-.latest-price {
-    display: inline-block;
-    margin-bottom: 14px;
-    padding: 6px 14px;
-    background: #CFAF5D;
-    color: #5C3A21;
-    font-size: 0.95rem;
-    font-weight: 700;
-    border-radius: 12px;
-    letter-spacing: 0.2px;
-}
-
-/* ================= SEE ALL BUTTON ================= */
-.see-all-btn {
-    display: inline-block;
-    background: #5C3A21;
-    color: #fff;
-    font-weight: 600;
-    font-size: 1rem;
-    padding: 12px 20px;
-    border-radius: 12px;
-    text-decoration: none;
-}
-.see-all-btn:hover { background: #4A2A18; }
-</style>
-
 <div class="container py-5">
 
-    <!-- INTRO -->
-    <div class="mb-4">
-        <p class="text-primary-color mb-2" style="font-size:1.15rem; font-weight:600;">
-            Discover original artworks from talented independent artists.
-        </p>
-        <p class="text-primary-color" style="font-size:0.95rem; line-height:1.6; opacity:0.85;">
-            Browse unique creations, explore different styles, and connect with artists.
-        </p>
-    </div>
+    <h2 class="text-primary-color mb-4">Welcome, {{ request.user.username }} 👤</h2>
 
-    <!-- SEARCH -->
-    <div class="mb-4">
-        <div class="search-group">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="searchInput" class="search-input"
-                   placeholder="Search artists or artworks...">
-            <i class="fa-solid fa-xmark search-clear" id="clearSearch"></i>
-        </div>
-    </div>
-
-    <p id="noResults" class="text-center text-muted mt-4" style="display:none;">
-        No results found
-    </p>
-
-    <!-- FEATURED ARTISTS -->
-    <h4 class="mb-3 text-primary-color">Featured Artists</h4>
-    <div id="featured-artists-container">
+    <!-- Featured Artists -->
+    <h4 class="text-primary-color mb-3">Featured Artists</h4>
+    <div class="row mb-5">
         {% for artist in featured_artists %}
-            {% if forloop.counter <= 5 %}
-            <div class="artist-card" data-artist-name="{{ artist.username|lower }}">
-                <img src="{% if artist.profile_image %}{{ artist.profile_image.url }}{% else %}{% static 'images/artist_placeholder.png' %}{% endif %}" class="artist-circle-img">
-                <div class="artist-name">{{ artist.username }}</div>
-                <div class="artist-role">Creative artist on Paletra</div>
-                <a href="{% url 'artist_artworks_for_client' artist.id %}" class="btn btn-outline-primary">View Artworks</a>
-                {% if forloop.counter == 5 and featured_artists|length > 5 %}
-                <div class="toggle-btn" id="openArtists">+</div>
-                {% endif %}
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm h-100 text-center p-3">
+                <div class="mb-2">
+                    <i class="fas fa-user fa-3x text-primary-color"></i>
+                </div>
+                <h6 class="fw-semibold">{{ artist.username }}</h6>
+                <a href="{% url 'artist_artworks_for_client' artist.id %}" class="btn btn-outline-primary btn-sm mt-2">View Artworks</a>
             </div>
-            {% endif %}
-        {% endfor %}
-    </div>
-
-    <!-- EXTRA ARTISTS -->
-    <div id="extra-artists-container" class="d-none mt-4">
-        {% for artist in featured_artists|slice:"5:" %}
-        <div class="artist-card" data-artist-name="{{ artist.username|lower }}">
-            <img src="{% if artist.profile_image %}{{ artist.profile_image.url }}{% else %}{% static 'images/artist_placeholder.png' %}{% endif %}" class="artist-circle-img">
-            <div class="artist-name">{{ artist.username }}</div>
-            <div class="artist-role">Creative artist on Paletra</div>
-            <a href="{% url 'artist_artworks_for_client' artist.id %}" class="btn btn-outline-primary">View Artworks</a>
-            {% if forloop.last %}
-            <div class="toggle-btn" id="closeArtists">−</div>
-            {% endif %}
         </div>
+        {% empty %}
+        <p>No featured artists yet.</p>
         {% endfor %}
     </div>
 
-    <!-- LATEST ARTWORKS -->
-    <h4 class="text-primary-color mt-5 mb-3">Latest Artworks</h4>
-    <div class="row g-4">
+    <!-- Latest Artworks -->
+    <h4 class="text-primary-color mb-3">Latest Artworks</h4>
+    <div class="row">
         {% for artwork in artworks %}
-        <div class="col-md-4 artwork-item" data-artwork-name="{{ artwork.title|lower }}">
-            <div class="latest-art-card h-100">
-                <div class="latest-art-img-wrapper">
-                    <a href="{% url 'artwork_detail_for_artist' artwork.id %}">
-                        <img src="{% if artwork.image %}{{ artwork.image.url }}{% else %}{% static 'images/artwork_placeholder.png' %}{% endif %}"
-                             class="latest-art-img w-100">
-                    </a>
-                </div>
-                <div class="latest-art-body">
-                    <div class="latest-art-title">{{ artwork.title }}</div>
-                    <div class="latest-art-desc">{{ artwork.description|truncatewords:14 }}</div>
-                    <div class="latest-art-footer">
-                        <span class="latest-price">₹ {{ artwork.price }}</span>
-                    </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <img src="{{ artwork.image.url }}" class="card-img-top" alt="{{ artwork.title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ artwork.title }}</h5>
+                    <p class="text-muted">{{ artwork.category }} | By {{ artwork.artist.username }}</p>
+                    <p class="fw-semibold">₹ {{ artwork.price }}</p>
+                    <a href="{% url 'artwork_detail_for_artist' artwork.id %}" class="btn btn-outline-primary btn-sm">View</a>
                 </div>
             </div>
         </div>
+        {% empty %}
+        <p>No artworks available yet.</p>
         {% endfor %}
     </div>
 
-    <div class="d-flex justify-content-end mt-4">
-        <a href="{% url 'all_artworks' %}" class="see-all-btn">See All →</a>
+    <!-- View All Artworks -->
+    <div class="text-center mt-4">
+        <a href="{% url 'all_artworks' %}" class="btn bg-primary-color">Browse All Artworks</a>
     </div>
+
 </div>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const openBtn = document.getElementById("openArtists");
-    const closeBtn = document.getElementById("closeArtists");
-    const extra = document.getElementById("extra-artists-container");
-
-    if (openBtn) openBtn.onclick = () => {
-        extra.classList.remove("d-none");
-        openBtn.style.display = "none";
-    };
-
-    if (closeBtn) closeBtn.onclick = () => {
-        extra.classList.add("d-none");
-        if (openBtn) openBtn.style.display = "flex";
-    };
-});
-</script>
 {% endblock %}

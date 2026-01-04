@@ -1,236 +1,76 @@
 {% extends "masterss.html" %}
-{% load static %}
-{% load humanize %}
 
 {% block title %}Artist Dashboard | Paletra{% endblock %}
 
 {% block content %}
+<div class="container py-5">
 
-<style>
-/* PAGE BASE */
-.dashboard-page {
-    background: #FFF7EC;
-    min-height: 100vh;
-}
+    <h2 class="text-primary-color mb-4">Welcome, {{ request.user.username }} 🎨</h2>
 
-/* TEXT COLORS */
-.text-main {
-    color: #5C3A21;
-}
-.text-muted-soft {
-    color: #8A6A4F;
-}
-
-/* HEADER */
-.dashboard-header {
-    margin-bottom: 40px;
-}
-
-/* STATS */
-.stat-card {
-    background: #ffffff;
-    border-radius: 18px;
-    padding: 28px;
-    text-align: center;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.06);
-    transition: transform 0.3s ease;
-}
-
-.stat-card:hover {
-    transform: translateY(-4px);
-}
-
-.stat-number {
-    font-size: 2.2rem;
-    font-weight: 700;
-    margin-top: 10px;
-}
-
-/* BUTTON */
-.btn-art {
-    background: #5C3A21;
-    color: #FFF7EC;
-    border-radius: 50px;
-    padding: 12px 30px;
-    font-weight: 600;
-}
-
-.btn-art:hover {
-    background: #7A4A2B;
-    color: #FFF7EC;
-}
-
-/* DASHBOARD LINK CARD */
-.link-card {
-    background: #ffffff;
-    border-radius: 20px;
-    padding: 40px;
-    text-align: center;
-    box-shadow: 0 12px 28px rgba(0,0,0,0.08);
-    transition: transform 0.3s ease;
-}
-
-.link-card:hover {
-    transform: translateY(-6px);
-}
-
-.link-card a {
-    text-decoration: none;
-}
-
-/* ACTIVITY */
-.activity-box {
-    background: #ffffff;
-    border-radius: 18px;
-    padding: 24px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.06);
-}
-
-/* RECENT ACTIVITY LIST */
-.activity-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.activity-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 10px;
-    border-bottom: 1px solid #E6D6C3;
-    transition: background 0.2s;
-}
-
-.activity-item:last-child {
-    border-bottom: none;
-}
-
-.activity-item:hover {
-    background: #FFF3E0; /* subtle hover highlight */
-    border-radius: 8px;
-}
-
-.activity-title {
-    font-weight: 600;
-    color: #5C3A21;
-    font-size: 14px;
-}
-
-.activity-action {
-    font-size: 13px;
-    color: #8A6A4F;
-}
-
-.activity-action .action-text {
-    font-weight: 700; /* bold action */
-    margin-right: 8px; /* spacing from timestamp */
-}
-</style>
-
-<div class="dashboard-page py-5">
-  <div class="container">
-
-    <!-- HEADER -->
-    <div class="dashboard-header">
-        <h2 class="text-main fw-bold">
-            Welcome, {{ request.user.username }} 
-        </h2>
-        <p class="text-muted-soft">
-            This is your creative space — manage artworks and grow quietly.
-        </p>
-    </div>
-
-    <!-- STATS -->
+    <!-- Quick Stats -->
     <div class="row mb-5">
         <div class="col-md-4 mb-3">
-            <div class="stat-card">
-                <h6 class="text-muted-soft">Total Artworks</h6>
-                <div class="stat-number text-main">
-                    {{ artworks|length }}
+            <div class="card p-3 shadow-sm">
+                <h5>Total Artworks</h5>
+                <p class="fs-3 fw-bold">{{ artworks.count }}</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card p-3 shadow-sm">
+                <h5>Recent Activity</h5>
+                <p class="fs-5">
+                    {% if activities %}
+                        {{ activities.0.action|capfirst }}: "{{ activities.0.artwork_title }}"
+                    {% else %}
+                        No recent activity
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card p-3 shadow-sm">
+                <h5>Add New Artwork</h5>
+                <a href="{% url 'add_artworks' %}" class="btn bg-primary-color mt-2">Add Artwork</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Artworks -->
+    <h4 class="text-primary-color mb-3">My Artworks</h4>
+    <div class="row">
+        {% for artwork in artworks %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <img src="{{ artwork.image.url }}" class="card-img-top" alt="{{ artwork.title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ artwork.title }}</h5>
+                    <p class="card-text text-muted">{{ artwork.category }}</p>
+                    <p class="fw-semibold">₹ {{ artwork.price }}</p>
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'edit_artwork' artwork.id %}" class="btn btn-outline-primary btn-sm">Edit</a>
+                        <a href="{% url 'delete_artwork' artwork.id %}" class="btn btn-outline-danger btn-sm">Delete</a>
+                        <a href="{% url 'artwork_detail_for_artist' artwork.id %}" class="btn btn-outline-secondary btn-sm">View</a>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-4 mb-3">
-            <div class="stat-card">
-                <h6 class="text-muted-soft">Total Likes</h6>
-                <div class="stat-number text-main">0</div>
-            </div>
-        </div>
-
-        <div class="col-md-4 mb-3">
-            <div class="stat-card">
-                <h6 class="text-muted-soft">Total Views</h6>
-                <div class="stat-number text-main">0</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- QUICK ACTIONS -->
-    <div class="row mb-5">
-
-        <div class="col-md-6 mb-3">
-            <div class="link-card">
-                <h4 class="text-main fw-bold mb-2">
-                    Manage Artworks 
-                </h4>
-                <p class="text-muted-soft mb-4">
-                    View, edit and organize all your artworks in one place.
-                </p>
-                <a href="{% url 'artist_my_artworks' %}" class="btn btn-art">
-                    Go to Artworks
-                </a>
-            </div>
-        </div>
-
-        <div class="col-md-6 mb-3">
-            <div class="link-card">
-                <h4 class="text-main fw-bold mb-2">
-                    Add New Artwork 
-                </h4>
-                <p class="text-muted-soft mb-4">
-                    Upload a new piece and share your creativity.
-                </p>
-                <a href="{% url 'add_artworks' %}" class="btn btn-art">
-                    Add Artwork
-                </a>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- ACTIVITY -->
-    <div class="activity-box">
-        <h5 class="text-main mb-3">
-            Recent Activity
-        </h5>
-
-        <ul class="activity-list">
-        {% for activity in activities %}
-            <li class="activity-item">
-                <!-- Left: Artwork title -->
-                <span class="activity-title">{{ activity.artwork_title }}</span>
-                <!-- Right: Bold action + timestamp -->
-                <span class="activity-action">
-                    {% if activity.action == 'added' %}
-                        <span class="action-text">Added </span>{{ activity.created_at|naturaltime }}
-                    {% elif activity.action == 'edited' %}
-                        <span class="action-text">Edited </span>{{ activity.created_at|naturaltime }}
-                    {% elif activity.action == 'deleted' %}
-                        <span class="action-text">Deleted </span>{{ activity.created_at|naturaltime }}
-                    {% endif %}
-                </span>
-            </li>
         {% empty %}
-            <li class="activity-item">
-                <span class="activity-title">No recent activity yet.</span>
-            </li>
+        <p>You haven’t added any artworks yet. Click “Add Artwork” to get started!</p>
         {% endfor %}
-        </ul>
     </div>
 
-  </div>
-</div>
+    <!-- Recent Activities -->
+    <h4 class="text-primary-color mt-5 mb-3">Recent Activities</h4>
+    <ul class="list-group">
+        {% for activity in activities %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ activity.artwork_title }} - <span class="text-capitalize">{{ activity.action }}</span>
+            <small class="text-muted">{{ activity.created_at|date:"d M Y, H:i" }}</small>
+        </li>
+        {% empty %}
+        <li class="list-group-item">No recent activity</li>
+        {% endfor %}
+    </ul>
 
+</div>
 {% endblock %}

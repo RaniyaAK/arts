@@ -9,17 +9,11 @@ from .forms import ArtworkForm
 from .models import Artwork,Activity
 from django.http import HttpResponseForbidden
 
-
 User = get_user_model()
 
 def home(request):
     return render(request,'home.html')
 
-
-def logout_view(request):
-    logout(request)
-    messages.success(request, "Logged out successfully")
-    return redirect('login')
 
 @login_required
 def artist_dashboard(request):
@@ -36,46 +30,98 @@ def artist_dashboard(request):
     })
 
 
+User = get_user_model()
 
 
+# Registration View
 def register_view(request):
+    # Redirect if already logged in
+    if request.user.is_authenticated:
+        if request.user.role == 'artist':
+            return redirect('artist_dashboard')
+        elif request.user.role == 'client':
+            return redirect('client_dashboard')
+
     form = RegisterForm(request.POST or None)
+
+    # Get role from POST (dropdown) first, fallback to GET query string
+    role = request.POST.get('role') or request.GET.get('role')
+
     if request.method == 'POST' and form.is_valid():
-        user = form.save()        
-        login(request, user)     
+        user = form.save(commit=False)
+
+        # Validate role
+        if role not in ['artist', 'client']:
+            messages.error(request, "Please select a valid role to register.")
+            return render(request, 'register.html', {'form': form, 'role': role})
+
+        user.role = role
+        user.save()
+
+        login(request, user)
+        messages.success(request, f"Welcome, {user.username}! Your account has been created.")
+
+        # Redirect based on role
         if user.role == 'artist':
             return redirect('artist_dashboard')
         elif user.role == 'client':
             return redirect('client_dashboard')
 
-    return render(request, 'register.html', {'form': form})
+    elif request.method == 'POST':
+        messages.error(request, "Please correct the errors below.")
+
+    return render(request, 'register.html', {'form': form, 'role': role})
 
 
+
+# -------------------------------
+# Login View
+# -------------------------------
 def login_view(request):
+    # If user already logged in, redirect to dashboard
+    if request.user.is_authenticated:
+        if request.user.role == 'artist':
+            return redirect('artist_dashboard')
+        elif request.user.role == 'client':
+            return redirect('client_dashboard')
+
     form = LoginForm(request.POST or None)
 
     if request.method == 'POST' and form.is_valid():
-        user = authenticate(
-            request,
-            username=form.cleaned_data['username'],
-            password=form.cleaned_data['password']
-        )
+        username = form.cleaned_data['username']
+        password = form.cleaned_data['password']
+
+        user = authenticate(request, username=username, password=password)
 
         if user is not None:
             login(request, user)
 
+            messages.success(request, f"Welcome back, {user.username}!")
+
+            # Redirect to dashboard based on role
             if user.role == 'artist':
                 return redirect('artist_dashboard')
             elif user.role == 'client':
                 return redirect('client_dashboard')
             else:
-                messages.error(request, "User role not assigned")
+                messages.error(request, "Your account does not have a role assigned. Contact admin.")
+                logout(request)
                 return redirect('login')
 
-        messages.error(request, "Invalid credentials")
+        else:
+            messages.error(request, "Invalid username or password.")
 
     return render(request, 'login.html', {'form': form})
 
+
+# -------------------------------
+# Logout View
+# -------------------------------
+@login_required
+def logout_view(request):
+    logout(request)
+    messages.success(request, "Logged out successfully.")
+    return redirect('login')
 
 def forgot_password(request):
     if request.method == 'POST':
