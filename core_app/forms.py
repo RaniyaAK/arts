@@ -3,16 +3,27 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import User, Artwork
 
 class RegisterForm(UserCreationForm):
-
-    role = forms.ChoiceField(choices=User.ROLE_CHOICES)
-
     class Meta:
         model = User
-        fields = ['username', 'email', 'role', 'password1', 'password2']
+        fields = ['username', 'email', 'password1', 'password2']
+        widgets = {
+            'username': forms.TextInput(attrs={'placeholder': 'Username', 'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'placeholder': 'Email', 'class': 'form-control'}),
+            'password1': forms.PasswordInput(attrs={'placeholder': 'Password', 'class': 'form-control'}),
+            'password2': forms.PasswordInput(attrs={'placeholder': 'Confirm Password', 'class': 'form-control'}),
+        }
+
 
 class LoginForm(forms.Form):
-    username = forms.CharField()
-    password = forms.CharField(widget=forms.PasswordInput)
+    username = forms.CharField(
+        label="Username",
+        widget=forms.TextInput(attrs={'placeholder': 'Username', 'class': 'form-control'})
+    )
+    password = forms.CharField(
+        label="Password",
+        widget=forms.PasswordInput(attrs={'placeholder': 'Password', 'class': 'form-control'})
+    )
+
 
 class ForgotPasswordForm(forms.Form):
     email = forms.EmailField()

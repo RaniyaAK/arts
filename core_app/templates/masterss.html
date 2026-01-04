@@ -9,7 +9,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-T8CVX...YOUR_HASH..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
         body {
@@ -101,6 +101,7 @@
         body.no-navbar nav {
             display: none;
         }
+
     </style>
 </head>
 
@@ -110,8 +111,6 @@
     <nav class="navbar navbar-expand-lg shadow-sm py-3">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="/">
-                <!-- Optional logo -->
-                <!-- <img src="{% static 'images/logo.png' %}" alt="Paletra Logo" class="me-2"> -->
                 <span class="fw-semibold text-primary-color">Paletra</span>
             </a>
 
@@ -127,30 +126,23 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#how">How it works</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">Login</a>
-                    </li>
-                    <li class="nav-item ms-lg-2">
-                        <a class="btn bg-primary-color rounded-pill px-4" href="{% url 'register' %}">
-                            Sign up
-                        </a>
-                    </li>
+
+                    {% if request.user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        </li>
+                        <li class="nav-item ms-lg-2">
+                            <a class="btn bg-primary-color rounded-pill px-4" href="{% url 'register' %}">Sign up</a>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
     </nav>
-
-    <!-- ✅ MESSAGES (ONLY ADDITION) -->
-    {% if messages %}
-    <div class="container mt-3">
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        {% endfor %}
-    </div>
-    {% endif %}
 
     <!-- PAGE CONTENT -->
     <main>

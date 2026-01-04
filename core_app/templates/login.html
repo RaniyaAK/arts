@@ -3,14 +3,11 @@
 {% block body_class %}no-navbar{% endblock %}
 
 {% block content %}
-
 <style>
-/* PAGE BASE */
 body {
     background-color: #F4EFE8;
 }
 
-/* LOGIN CARD */
 .login-wrapper {
     min-height: 100vh;
 }
@@ -21,14 +18,12 @@ body {
     padding: 32px;
 }
 
-/* TITLE */
 .login-title {
     color: #4B3326;
     font-weight: 600;
     letter-spacing: 0.5px;
 }
 
-/* INPUTS */
 .login-card input {
     width: 100%;
     border-radius: 30px;
@@ -44,7 +39,6 @@ body {
     outline: none;
 }
 
-/* BUTTON */
 .btn-login {
     background-color: #6A4632;
     color: #FFF8E7;
@@ -59,7 +53,6 @@ body {
     color: #3E2A20;
 }
 
-/* LINKS — UX FIX */
 .login-links a {
     position: relative;
     display: inline-block;
@@ -91,7 +84,15 @@ body {
     transform: scaleX(1);
 }
 
-/* REMOVE DJANGO HELP TEXT */
+.alert {
+    background-color: #f8d7da;
+    color: #842029;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+
 .helptext {
     display: none;
 }
@@ -103,29 +104,37 @@ body {
         <div class="card login-card shadow-lg border-0">
             <div class="card-body">
 
-                <h4 class="text-center mb-4 login-title">
-                    Sign in to Paletra
-                </h4>
+                <h4 class="text-center mb-4 login-title">Sign in to Paletra</h4>
+
+                <!-- Show Django messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
 
                 <form method="post">
                     {% csrf_token %}
-                    {{ form.as_p }}
+
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">{{ field.errors }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
 
                     <div class="d-grid mt-3">
-                        <button type="submit" class="btn btn-login rounded-pill">
-                            Login
-                        </button>
+                        <button type="submit" class="btn btn-login rounded-pill">Login</button>
                     </div>
                 </form>
 
                 <div class="login-links text-center mt-4">
-                    <a href="{% url 'forgot_password' %}" class="text-decoration-none">
-                        Forgot your password?
-                    </a>
+                    <a href="{% url 'forgot_password' %}" class="text-decoration-none">Forgot your password?</a>
                     <br>
-                    <a href="{% url 'register' %}" class="text-decoration-none mt-2 d-inline-block">
-                        New here? Create an account
-                    </a>
+                    <a href="{% url 'register' %}" class="text-decoration-none mt-2 d-inline-block">New here? Create an account</a>
                 </div>
 
             </div>

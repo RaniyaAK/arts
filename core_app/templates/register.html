@@ -3,22 +3,17 @@
 {% block body_class %}no-navbar{% endblock %}
 
 {% block content %}
-
 <style>
-/* REGISTER PAGE */
 .register-card {
     background-color: #FFF8E7;
     border-radius: 26px;
 }
-
 .register-title {
     color: #5C4033;
 }
-
 .register-card label {
     color: #5C4033;
 }
-
 .register-card input,
 .register-card select {
     width: 100%;
@@ -27,37 +22,36 @@
     border: 1px solid #CBB89D;
     background-color: #FFFDF8;
 }
-
 .register-card input:focus,
 .register-card select:focus {
     border-color: #CFAF5D;
     outline: none;
     box-shadow: 0 0 0 0.15rem rgba(207,175,93,0.25);
 }
-
-/* BUTTON */
 .btn-register {
     background-color: #8B5E3C;
     color: #FFF8E7;
     font-weight: 600;
 }
-
 .btn-register:hover {
     background-color: #CFAF5D;
     color: #5C4033;
 }
-
-/* LINKS */
 .register-links a {
     color: #5C4033;
     font-size: 0.9rem;
 }
-
 .register-links a:hover {
     color: #CFAF5D;
 }
-
-/* Hide Django help texts */
+.alert {
+    background-color: #f8d7da;
+    color: #842029;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
 .helptext {
     display: none;
 }
@@ -66,106 +60,55 @@
 <div class="container">
     <div class="row justify-content-center align-items-center" style="min-height: 100vh;">
         <div class="col-md-6 col-lg-5">
-
             <div class="card register-card shadow-lg border-0">
                 <div class="card-body p-4">
 
-                    <h3 class="text-center mb-4 register-title">
-                        Create Your Account
-                    </h3>
+                    <h3 class="text-center mb-4 register-title">Create Your Account</h3>
+
+                    <!-- Show Django messages -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
 
                     <form method="post" novalidate>
                         {% csrf_token %}
 
+                        <!-- Role Selection Dropdown -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">I am a:</label>
+                            <select name="role" class="form-control" required>
+                                <option value="" {% if not role %}selected{% endif %}>Select role</option>
+                                <option value="artist" {% if role == "artist" %}selected{% endif %}>Artist</option>
+                                <option value="client" {% if role == "client" %}selected{% endif %}>Client</option>
+                            </select>
+                        </div>
+
+                        <!-- Other Form Fields -->
                         {% for field in form %}
                             <div class="mb-3">
-                                <label class="form-label fw-semibold">
-                                    {{ field.label }}
-                                </label>
-
+                                <label class="form-label fw-semibold">{{ field.label }}</label>
                                 {{ field }}
-
                                 {% if field.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {{ field.errors }}
-                                    </div>
+                                    <div class="text-danger small mt-1">{{ field.errors }}</div>
                                 {% endif %}
                             </div>
                         {% endfor %}
 
                         <div class="d-grid mt-3">
-                            <button type="submit" class="btn btn-register rounded-pill">
-                                Register
-                            </button>
+                            <button type="submit" class="btn btn-register rounded-pill">Register</button>
                         </div>
                     </form>
 
                     <div class="text-center mt-3 register-links">
-                        <a href="{% url 'login' %}" class="text-decoration-none">
-                            Already have an account?
-                        </a>
+                        <a href="{% url 'login' %}" class="text-decoration-none">Already have an account? Login</a>
                     </div>
 
                 </div>
             </div>
-
         </div>
     </div>
 </div>
 
 {% endblock %}
-
-<!-- 
-other idea...u have to mix the color not only brown ..bcz my home page is ni this theme so the logo is slo in this theme look weird
-
-Ah, got it! You want the logo to feel artistic and colorful, not just brown shades, so it fits with your homepage’s creative, paint-splash vibe. Here’s an idea breakdown before creating the new logo:
-
-Concept for the colorful Paletra logo:
-
-Paintbrush “P”
-
-Keep the first letter “P” as a paintbrush stroke.
-
-Make it multicolor, like watercolor splashes — a gradient or mixed pigments, not a single color.
-
-The brush stroke can splash slightly outside the letter for a natural artistic feel.
-
-Text “aletra”
-
-Keep it clean and readable.
-
-Use a neutral tone like soft brown/cream so the brush “P” pops but still connects with the homepage.
-
-Optionally, add subtle gradient highlight in letters to reflect the brush’s colors.
-
-Style
-
-The brush stroke can have irregular edges or subtle splatter to make it dynamic.
-
-No blocky or solid shapes; more like actual watercolor or paint.
-
-Maintain the overall balance so it can be used on light/dark backgrounds.
-
-If you want, I can create a new visual logo with this colorful “paintbrush P” concept that fits your homepage theme perfectly.
-
-Do you want me to go ahead and make it? -->
-<!-- 
-1 with include brush
-
-You've hit the free plan limit for image generations requests. You can create more images when the limit resets in 20 hours and 14 minutes.
-
-Once it resets, I’ll generate Option 1 exactly as you want:
-
-A clear “P” formed by a paintbrush
-
-Brush bristles visible at the top
-
-Stroke goes upward (so it reads as P, not D)
-
-Mixed colors (not just brown): soft creams, muted blues, warm ochres, subtle splashes
-
-Artistic but clean — fits your homepage vibe
-
-No duplicate “P” (the brush is the P)
-
-When the limit resets, just reply with “go” and I’ll create it immediately 🎨🖌️ -->
