@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import User, Artwork
 
+
 class RegisterForm(UserCreationForm):
     class Meta:
         model = User
@@ -51,3 +52,13 @@ class ArtworkForm(forms.ModelForm):
         if price is None or price <= 0:
             raise forms.ValidationError("Price is required and must be greater than 0.")
         return price
+
+class ProfileCompletionForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['name', 'bio', 'profile_image']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Your Name'}),
+            'bio': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Short bio', 'rows': 3}),
+        }
+

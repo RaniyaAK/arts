@@ -3,18 +3,19 @@ from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-
-# Custom User Model
 class User(AbstractUser):
     ROLE_CHOICES = [
         ('artist', 'Artist'),
         ('client', 'Client'),
     ]
-
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
 
-    def __str__(self):
-        return self.username
+    # Profile completion fields
+    name = models.CharField(max_length=150, blank=True, null=True)
+    bio = models.TextField(blank=True, null=True)
+    profile_image = models.ImageField(upload_to='profiles/', blank=True, null=True)
+    is_profile_complete = models.BooleanField(default=False)  # ✅ flag for profile
+
 
 # Artwork Model
 CATEGORY_CHOICES = [

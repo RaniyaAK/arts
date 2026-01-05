@@ -1,0 +1,33 @@
+{% extends "masterss.html" %}
+
+{% block title %}Complete Profile | Paletra{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 500px;">
+    <h2 class="mb-4 text-center">Complete Your Profile</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        
+        <div class="mb-3">
+            {{ form.name.label_tag }} 
+            {{ form.name }}
+            {{ form.name.errors }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.bio.label_tag }} 
+            {{ form.bio }}
+            {{ form.bio.errors }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.profile_image.label_tag }}
+            {{ form.profile_image }}
+            {{ form.profile_image.errors }}
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Save Profile</button>
+    </form>
+</div>
+{% endblock %}
