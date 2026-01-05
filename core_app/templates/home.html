@@ -1,227 +1,79 @@
 {% extends "masterss.html" %}
-{% load static %}
 
-{% block title %}Digital Art Commission Platform{% endblock %}
+{% block nav_links %}
+  <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+  <li class="nav-item"><a class="nav-link" href="#how">How It Works</a></li>
+  {% if not request.user.is_authenticated %}
+    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+  {% endif %}
+{% endblock %}
+
+{% block title %}Paletra - Digital Art Platform{% endblock %}
 
 {% block content %}
-<style>
-body {
-    background: #fff7ec;
-    font-family: 'Segoe UI', sans-serif;
-    margin: 0;
-    padding: 0;
-}
-
-.hero {
-    padding: 60px 20px;
-    text-align: center;
-}
-
-.hero h1 {
-    font-size: 2.6rem;
-    color: #5c3a21;
-    margin-bottom: 15px;
-}
-
-.hero p {
-    font-size: 1rem;
-    color: #7a5a3a;
-    max-width: 700px;
-    margin: 0 auto 40px auto;
-    line-height: 1.6;
-}
-
-.role-section {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-}
-
-.role-card-link {
-    text-decoration: none;
-    display: block;
-    flex: 1 1 280px;
-    max-width: 320px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.role-card-link:focus {
-    outline: 2px solid #CFAF5D;
-    outline-offset: 4px;
-}
-
-.role-card-link:hover .role-card {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
-}
-
-.role-card {
-    background: #fff;
-    border-radius: 16px;
-    padding: 30px 20px;
-    text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.role-card h3 {
-    color: #5c3a21;
-    margin-bottom: 12px;
-    font-size: 1.25rem;
-}
-
-.role-card p {
-    color: #8a6a4f;
-    font-size: 0.9rem;
-    margin-bottom: 20px;
-    min-height: 60px;
-}
-
-.role-card-button {
-    display: inline-block;
-    background: #5c3a21;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 500;
-    transition: background 0.3s ease;
-}
-
-.role-card-button:hover,
-.role-card-button:focus {
-    background: #7a4b2a;
-}
-
-.login-link {
-    margin-top: 30px;
-    font-size: 1rem;
-}
-
-.login-link a {
-    color: #5c3a21;
-    font-weight: 600;
-    text-decoration: none;
-}
-
-.login-link a:hover,
-.login-link a:focus {
-    color: #7a4b2a;
-}
-
-.how-it-works {
-    margin-top: 60px;
-    text-align: center;
-    padding: 20px;
-}
-
-.how-it-works h2 {
-    color: #5c3a21;
-    margin-bottom: 30px;
-    font-size: 1.75rem;
-}
-
-.steps {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-}
-
-.step {
-    background: #fff;
-    padding: 20px;
-    width: 220px;
-    border-radius: 14px;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.06);
-    text-align: center;
-    transition: transform 0.2s ease;
-}
-
-.step:hover {
-    transform: translateY(-4px);
-}
-
-.step h4 {
-    color: #5c3a21;
-    font-size: 1.1rem;
-    margin-bottom: 10px;
-}
-
-.step p {
-    font-size: 0.85rem;
-    color: #8a6a4f;
-    line-height: 1.4;
-}
-
-/* RESPONSIVE ADJUSTMENTS */
-@media (max-width: 480px) {
-    .hero h1 {
-        font-size: 2rem;
-    }
-    .hero p {
-        font-size: 0.95rem;
-        margin-bottom: 30px;
-    }
-    .role-card {
-        padding: 20px 15px;
-    }
-    .role-card p {
-        min-height: auto;
-    }
-    .step {
-        width: 90%;
-    }
-}
-</style>
-
-<div class="hero">
-    <h1>Digital Art Commission Platform</h1>
-    <p>
-        A service-based platform that connects artists with clients for commissioning custom digital artworks, including booking, communication, and order tracking.
+<div class="hero text-center" style="padding:80px 20px;">
+    <h1 style="color:#5c3a21; font-size:2.6rem;">Digital Art Commission Platform</h1>
+    <p style="color:#7a5a3a; max-width:700px; margin:20px auto 30px auto; line-height:1.6;">
+        A service-based platform connecting artists with clients for commissioning digital artworks.
     </p>
 
-    <div class="role-section">
-        <a href="{% url 'register' %}?role=artist" class="role-card-link">
-            <div class="role-card">
-                <h3>🎨 I am an Artist</h3>
-                <p>Create your profile, showcase your artworks, receive commission requests, and earn through your creativity.</p>
-                <span class="role-card-button">Join as Artist</span>
-            </div>
-        </a>
+    <!-- ✅ GET STARTED BUTTON -->
+    <a href="{% url 'register' %}" class="btn bg-primary-color px-4 py-2 rounded-pill" style="font-weight:600; margin-top:20px;">
+        Get Started
+    </a>
+</div>
 
-        <a href="{% url 'register' %}?role=client" class="role-card-link">
-            <div class="role-card">
-                <h3>👤 I am a Client</h3>
-                <p>Browse talented artists, request custom artworks, track progress, and receive unique digital art.</p>
-                <span class="role-card-button">Join as Client</span>
-            </div>
-        </a>
-    </div>
+<!-- Artist & Client Role Cards -->
+<div class="role-section d-flex flex-wrap justify-content-center gap-4" style="margin-top:50px;">
+    <a href="{% url 'register' %}?role=artist" class="role-card-link">
+        <div class="role-card p-4 bg-white rounded shadow text-center" style="width:280px;">
+            <h3 style="color:#5c3a21;">🎨 I am an Artist</h3>
+            <p style="color:#8a6a4f; min-height:60px;">
+                Create your profile, showcase your artworks, receive commission requests, and earn through your creativity.
+            </p>
+            <span class="role-card-button btn bg-primary-color px-3 py-2 rounded-pill">Join as Artist</span>
+        </div>
+    </a>
 
-    <div class="login-link">
-        Already have an account? <a href="{% url 'login' %}">Login here</a>
-    </div>
+    <a href="{% url 'register' %}?role=client" class="role-card-link">
+        <div class="role-card p-4 bg-white rounded shadow text-center" style="width:280px;">
+            <h3 style="color:#5c3a21;">👤 I am a Client</h3>
+            <p style="color:#8a6a4f; min-height:60px;">
+                Browse talented artists, request custom artworks, track progress, and receive unique digital art.
+            </p>
+            <span class="role-card-button btn bg-primary-color px-3 py-2 rounded-pill">Join as Client</span>
+        </div>
+    </a>
+</div>
 
-    <div class="how-it-works">
-        <h2>How It Works</h2>
-        <div class="steps">
-            <div class="step">
-                <h4>1. Choose Artist</h4>
-                <p>Browse artists and view their artwork samples.</p>
-            </div>
-            <div class="step">
-                <h4>2. Request Art</h4>
-                <p>Send a custom commission request with details.</p>
-            </div>
-            <div class="step">
-                <h4>3. Track Progress</h4>
-                <p>Communicate and track order status.</p>
-            </div>
-            <div class="step">
-                <h4>4. Get Artwork</h4>
-                <p>Receive and download your completed artwork.</p>
-            </div>
+<!-- How it Works -->
+<div id="how" class="how-it-works text-center" style="margin-top:60px;">
+    <h2 style="color:#5c3a21; margin-bottom:30px;">How It Works</h2>
+    <div class="steps d-flex flex-wrap justify-content-center gap-3">
+        <div class="step p-3 bg-white rounded shadow" style="width:220px;">
+            <h4 style="color:#5c3a21;">1. Choose Artist</h4>
+            <p style="color:#8a6a4f;">Browse artists and view artwork samples.</p>
+        </div>
+        <div class="step p-3 bg-white rounded shadow" style="width:220px;">
+            <h4 style="color:#5c3a21;">2. Request Art</h4>
+            <p style="color:#8a6a4f;">Send a custom commission request with details.</p>
+        </div>
+        <div class="step p-3 bg-white rounded shadow" style="width:220px;">
+            <h4 style="color:#5c3a21;">3. Track Progress</h4>
+            <p style="color:#8a6a4f;">Communicate and monitor order status.</p>
+        </div>
+        <div class="step p-3 bg-white rounded shadow" style="width:220px;">
+            <h4 style="color:#5c3a21;">4. Get Artwork</h4>
+            <p style="color:#8a6a4f;">Receive and download completed artwork.</p>
         </div>
     </div>
+</div>
+
+<!-- About Section -->
+<div id="about" class="about-section text-center" style="margin-top:60px; padding:20px;">
+    <h2 style="color:#5c3a21; margin-bottom:30px;">About</h2>
+    <p style="color:#7a5a3a; max-width:700px; margin:0 auto; line-height:1.6;">
+        Paletra is a digital art commission platform where clients can easily hire verified artists and track their orders.
+    </p>
 </div>
 {% endblock %}

@@ -20,14 +20,11 @@ urlpatterns = [
     path('client_dashboard/', views.client_dashboard, name='client_dashboard'), 
 
     path('artist_dashboard/add_artworks', views.add_artworks, name='add_artworks'), 
-    path('artist_dashboard/artist_my_artworks/', views.artist_my_artworks, name='artist_my_artworks'),
-    path('artwork/<int:artwork_id>/edit/', views.edit_artwork, name='edit_artwork'),
-    path('artwork/<int:artwork_id>/delete/', views.delete_artwork, name='delete_artwork'),
+    path('complete_profile/', views.complete_profile, name='complete_profile'),
 
-    path('artwork/<int:artwork_id>/', views.artwork_detail_for_artist, name='artwork_detail_for_artist'),
+    
 
-    path('client_dashbaord/<int:artist_id>/artist_artworks_for_client/',views.artist_artworks_for_client,name='artist_artworks_for_client'),
-    path('all-artworks/', views.all_artworks, name='all_artworks'),
+
 
 ]
 

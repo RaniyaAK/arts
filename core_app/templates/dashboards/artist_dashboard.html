@@ -1,76 +1,51 @@
 {% extends "masterss.html" %}
+{% load static %}
 
 {% block title %}Artist Dashboard | Paletra{% endblock %}
 
 {% block content %}
 <div class="container py-5">
 
-    <h2 class="text-primary-color mb-4">Welcome, {{ request.user.username }} 🎨</h2>
-
-    <!-- Quick Stats -->
-    <div class="row mb-5">
-        <div class="col-md-4 mb-3">
-            <div class="card p-3 shadow-sm">
-                <h5>Total Artworks</h5>
-                <p class="fs-3 fw-bold">{{ artworks.count }}</p>
-            </div>
+    <!-- Profile Section -->
+    <div class="row mb-5 align-items-center">
+        <div class="col-md-3 text-center">
+            {% if request.user.profile_image %}
+                <img src="{{ request.user.profile_image.url }}" alt="{{ request.user.username }}" class="rounded-circle" style="width:150px; height:150px; object-fit:cover;">
+            {% else %}
+                <img src="{% static 'default-profile.png' %}" alt="Profile Image" class="rounded-circle" style="width:150px; height:150px; object-fit:cover;">
+            {% endif %}
         </div>
-        <div class="col-md-4 mb-3">
-            <div class="card p-3 shadow-sm">
-                <h5>Recent Activity</h5>
-                <p class="fs-5">
-                    {% if activities %}
-                        {{ activities.0.action|capfirst }}: "{{ activities.0.artwork_title }}"
-                    {% else %}
-                        No recent activity
-                    {% endif %}
-                </p>
-            </div>
-        </div>
-        <div class="col-md-4 mb-3">
-            <div class="card p-3 shadow-sm">
-                <h5>Add New Artwork</h5>
-                <a href="{% url 'add_artworks' %}" class="btn bg-primary-color mt-2">Add Artwork</a>
-            </div>
+        <div class="col-md-9">
+            <h2 class="text-primary-color">{{ request.user.username }}</h2>
+            <p class="text-muted">{{ request.user.bio|default:"No bio added yet." }}</p>
+            <a href="{% url 'complete_profile' %}" class="btn btn-outline-secondary btn-sm">Edit Profile</a>
         </div>
     </div>
 
-    <!-- My Artworks -->
+    <!-- Add New Artwork Button -->
+    <div class="mb-4 text-center">
+        <a href="{% url 'add_artworks' %}" class="btn btn-primary">Add New Artwork</a>
+    </div>
+
+    <!-- Artworks Gallery -->
     <h4 class="text-primary-color mb-3">My Artworks</h4>
-    <div class="row">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
         {% for artwork in artworks %}
-        <div class="col-md-4 mb-4">
-            <div class="card shadow-sm h-100">
-                <img src="{{ artwork.image.url }}" class="card-img-top" alt="{{ artwork.title }}">
+        <div class="col">
+            <div class="card h-100 shadow-sm text-center">
+                <img src="{{ artwork.image.url }}" class="card-img-top" alt="{{ artwork.title }}" style="height:250px; object-fit:cover;">
                 <div class="card-body">
                     <h5 class="card-title">{{ artwork.title }}</h5>
-                    <p class="card-text text-muted">{{ artwork.category }}</p>
-                    <p class="fw-semibold">₹ {{ artwork.price }}</p>
-                    <div class="d-flex justify-content-between">
-                        <a href="{% url 'edit_artwork' artwork.id %}" class="btn btn-outline-primary btn-sm">Edit</a>
-                        <a href="{% url 'delete_artwork' artwork.id %}" class="btn btn-outline-danger btn-sm">Delete</a>
-                        <a href="{% url 'artwork_detail_for_artist' artwork.id %}" class="btn btn-outline-secondary btn-sm">View</a>
-                    </div>
+                    <a href="{% url 'delete_artwork' artwork.id %}" class="btn btn-outline-danger btn-sm mt-2">Delete</a>
                 </div>
             </div>
         </div>
         {% empty %}
-        <p>You haven’t added any artworks yet. Click “Add Artwork” to get started!</p>
+        <div class="col">
+            <p class="text-center">You haven’t added any artworks yet.</p>
+        </div>
         {% endfor %}
     </div>
-
-    <!-- Recent Activities -->
-    <h4 class="text-primary-color mt-5 mb-3">Recent Activities</h4>
-    <ul class="list-group">
-        {% for activity in activities %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ activity.artwork_title }} - <span class="text-capitalize">{{ activity.action }}</span>
-            <small class="text-muted">{{ activity.created_at|date:"d M Y, H:i" }}</small>
-        </li>
-        {% empty %}
-        <li class="list-group-item">No recent activity</li>
-        {% endfor %}
-    </ul>
 
 </div>
 {% endblock %}

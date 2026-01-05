@@ -1,20 +1,142 @@
-from django.shortcuts import render, redirect,get_object_or_404
-from django.contrib.auth import authenticate, login,logout,get_user_model
-from django.contrib import messages
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from .forms import RegisterForm, LoginForm, ForgotPasswordForm, ResetPasswordForm
-from django.core.mail import send_mail
-from django.utils.crypto import get_random_string
+from .forms import ArtworkForm, ProfileCompletionForm  # <-- new form
+from .models import Artwork, Activity
 from django.contrib.auth.decorators import login_required
-from .forms import ArtworkForm
-from .models import Artwork,Activity
 from django.http import HttpResponseForbidden
+from django.views.decorators.cache import never_cache
 
 User = get_user_model()
 
+
 def home(request):
-    return render(request,'home.html')
+    return render(request, 'home.html')
 
 
+# -------------------------------
+# Profile Completion
+# -------------------------------
+@login_required
+def complete_profile(request):
+    if request.user.is_profile_complete:
+        if request.user.role == 'artist':
+            return redirect('artist_dashboard')
+        else:
+            return redirect('client_dashboard')
+
+    if request.method == 'POST':
+        form = ProfileCompletionForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_profile_complete = True
+            user.save()
+            if user.role == 'artist':
+                return redirect('artist_dashboard')
+            else:
+                return redirect('client_dashboard')
+    else:
+        form = ProfileCompletionForm(instance=request.user)
+
+    return render(request, 'complete_profile.html', {'form': form})
+
+
+def register_view(request):
+    if request.user.is_authenticated:
+        # Already logged in users go straight to dashboard
+        if request.user.role == 'artist':
+            return redirect('artist_dashboard')
+        elif request.user.role == 'client':
+            return redirect('client_dashboard')
+
+    form = RegisterForm(request.POST or None)
+    role = request.POST.get('role') or request.GET.get('role')
+
+    if request.method == 'POST' and form.is_valid():
+        user = form.save(commit=False)
+
+        if role not in ['artist', 'client']:
+            return render(request, 'register.html', {'form': form, 'role': role})
+
+        user.role = role
+        user.is_profile_complete = False  # ✅ profile not complete yet
+        user.save()
+
+        login(request, user)  # automatically log in after registration
+
+        # Redirect **immediately to profile completion**
+        return redirect('complete_profile')
+
+    return render(request, 'register.html', {'form': form, 'role': role})
+
+def login_view(request):
+    if request.user.is_authenticated:
+        # Normal login, go straight to dashboard
+        if request.user.role == 'artist':
+            return redirect('artist_dashboard')
+        elif request.user.role == 'client':
+            return redirect('client_dashboard')
+
+    form = LoginForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        username = form.cleaned_data['username']
+        password = form.cleaned_data['password']
+
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            # No profile check here — only after registration
+            if user.role == 'artist':
+                return redirect('artist_dashboard')
+            elif user.role == 'client':
+                return redirect('client_dashboard')
+
+    return render(request, 'login.html', {'form': form})
+
+
+# Logout View
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
+
+# Forgot & Reset Password
+def forgot_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        try:
+            user = User.objects.get(email=email)
+            return redirect('reset_password', email=user.email)
+        except User.DoesNotExist:
+            pass
+    return render(request, 'forgot_password.html')
+
+
+def reset_password(request, email):
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+        if password == confirm_password:
+            try:
+                user = User.objects.get(email=email)
+                user.set_password(password)
+                user.save()
+                login(request, user)
+                if not user.is_profile_complete:
+                    return redirect('complete_profile')
+                if user.role == 'artist':
+                    return redirect('artist_dashboard')
+                elif user.role == 'client':
+                    return redirect('client_dashboard')
+            except User.DoesNotExist:
+                pass
+    return render(request, 'reset_password.html')
+
+
+# -------------------------------
+# Artwork Views (unchanged)
+# -------------------------------
 @login_required
 def artist_dashboard(request):
     if request.user.role != 'artist':
@@ -25,143 +147,21 @@ def artist_dashboard(request):
 
     return render(request, 'dashboards/artist_dashboard.html', {
         'artworks': artworks,
-        'activities': activities,   # ✅ THIS WAS MISSING
+        'activities': activities,
         'numbers': range(1, 4),
     })
 
 
-User = get_user_model()
-
-
-# Registration View
-def register_view(request):
-    # Redirect if already logged in
-    if request.user.is_authenticated:
-        if request.user.role == 'artist':
-            return redirect('artist_dashboard')
-        elif request.user.role == 'client':
-            return redirect('client_dashboard')
-
-    form = RegisterForm(request.POST or None)
-
-    # Get role from POST (dropdown) first, fallback to GET query string
-    role = request.POST.get('role') or request.GET.get('role')
-
-    if request.method == 'POST' and form.is_valid():
-        user = form.save(commit=False)
-
-        # Validate role
-        if role not in ['artist', 'client']:
-            messages.error(request, "Please select a valid role to register.")
-            return render(request, 'register.html', {'form': form, 'role': role})
-
-        user.role = role
-        user.save()
-
-        login(request, user)
-        messages.success(request, f"Welcome, {user.username}! Your account has been created.")
-
-        # Redirect based on role
-        if user.role == 'artist':
-            return redirect('artist_dashboard')
-        elif user.role == 'client':
-            return redirect('client_dashboard')
-
-    elif request.method == 'POST':
-        messages.error(request, "Please correct the errors below.")
-
-    return render(request, 'register.html', {'form': form, 'role': role})
-
-
-
-# -------------------------------
-# Login View
-# -------------------------------
-def login_view(request):
-    # If user already logged in, redirect to dashboard
-    if request.user.is_authenticated:
-        if request.user.role == 'artist':
-            return redirect('artist_dashboard')
-        elif request.user.role == 'client':
-            return redirect('client_dashboard')
-
-    form = LoginForm(request.POST or None)
-
-    if request.method == 'POST' and form.is_valid():
-        username = form.cleaned_data['username']
-        password = form.cleaned_data['password']
-
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            login(request, user)
-
-            messages.success(request, f"Welcome back, {user.username}!")
-
-            # Redirect to dashboard based on role
-            if user.role == 'artist':
-                return redirect('artist_dashboard')
-            elif user.role == 'client':
-                return redirect('client_dashboard')
-            else:
-                messages.error(request, "Your account does not have a role assigned. Contact admin.")
-                logout(request)
-                return redirect('login')
-
-        else:
-            messages.error(request, "Invalid username or password.")
-
-    return render(request, 'login.html', {'form': form})
-
-
-# -------------------------------
-# Logout View
-# -------------------------------
 @login_required
-def logout_view(request):
-    logout(request)
-    messages.success(request, "Logged out successfully.")
-    return redirect('login')
+def client_dashboard(request):
+    if request.user.role != 'client':
+        return redirect('login')
+    if not request.user.is_profile_complete:
+        return redirect('complete_profile')
 
-def forgot_password(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        try:
-            user = User.objects.get(email=email)
-            return redirect('reset_password', email=user.email)
-        except User.DoesNotExist:
-            messages.error(request, 'No account found')
-    return render(request, 'forgot_password.html')
-
-
-def reset_password(request, email):
-    if request.method == 'POST':
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirm_password')
-
-        if password != confirm_password:
-            messages.error(request, 'Passwords do not match.')
-        else:
-            try:
-                user = User.objects.get(email=email)
-                user.set_password(password)
-                user.save()
-
-                login(request, user)
-
-                if user.role == 'artist':
-                    return redirect('artist_dashboard')
-                elif user.role == 'client':
-                    return redirect('client_dashboard')
-
-            except User.DoesNotExist:
-                messages.error(request, 'Invalid user.')
-
-    return render(request, 'reset_password.html')
-
-
-    #    ______________________________________________________________________________________________________________
-
+    artworks = Artwork.objects.all().order_by('-created_at')[:6]
+    featured_artists = User.objects.filter(role='artist')
+    return render(request, 'dashboards/client_dashboard.html', {'artworks': artworks, 'featured_artists': featured_artists})
 
 @login_required
 def add_artworks(request):
@@ -171,136 +171,8 @@ def add_artworks(request):
             artwork = form.save(commit=False)
             artwork.artist = request.user
             artwork.save()
-
-            Activity.objects.create(
-                user=request.user,
-                artwork_title=artwork.title,
-                action='added'
-            )
-
+            Activity.objects.create(user=request.user, artwork_title=artwork.title, action='added')
             return redirect('artist_dashboard')
     else:
         form = ArtworkForm()
-
     return render(request, 'artist_dashboard/add_artworks.html', {'form': form})
-
-
-@login_required
-def edit_artwork(request, artwork_id):
-    artwork = get_object_or_404(Artwork, id=artwork_id)
-
-    if request.user != artwork.artist:
-        return HttpResponseForbidden()
-
-    if request.method == 'POST':
-        form = ArtworkForm(request.POST, request.FILES, instance=artwork)
-        if form.is_valid():
-            form.save()
-
-            Activity.objects.create(
-                user=request.user,
-                artwork_title=artwork.title,
-                action='edited'
-            )
-
-            # ✅ Redirect to dashboard so changes appear immediately
-            return redirect('artist_dashboard')
-    else:
-        form = ArtworkForm(instance=artwork)
-
-    return render(request, 'artist_dashboard/edit_artwork.html', {'form': form})
-
-
-from django.views.decorators.cache import never_cache
-
-@never_cache
-@login_required
-def delete_artwork(request, artwork_id):
-    artwork = get_object_or_404(
-        Artwork,
-        id=artwork_id,
-        artist=request.user
-    )
-
-    if request.method == 'POST':
-        Activity.objects.create(
-            user=request.user,
-            artwork_title=artwork.title,
-            action='deleted'
-        )
-
-        artwork.delete()
-        messages.success(request, "Artwork deleted successfully.")
-        return redirect('artist_dashboard')  
-
-    return render(request, 'artist_dashboard/delete_artwork.html', {
-        'artwork': artwork
-    })
-
-
-   # _________________________________________________________________________________________________________________
-
-
-def artwork_detail_for_artist(request, artwork_id):
-    artwork = Artwork.objects.get(id=artwork_id)
-
-    if request.user.is_authenticated and request.user == artwork.artist:
-        return render(
-            request,
-            'artist_dashboard/artwork_detail_artist.html',
-            {'artwork': artwork}
-        )
-
-    return render(
-        request,
-        'client_dashboard/artwork_detail_client.html',
-        {'artwork': artwork}
-    )
-
-
-@login_required
-def client_dashboard(request):
-    if request.user.role != 'client':
-        return redirect('login')
-
-    artworks = Artwork.objects.all().order_by('-created_at')[:6]
-    featured_artists = User.objects.filter(role='artist') 
-
-    return render(request, 'dashboards/client_dashboard.html', {
-        'artworks': artworks,
-        'featured_artists': featured_artists,
-    })
-
-@login_required
-def artist_artworks_for_client(request, artist_id):
-    artist = get_object_or_404(User, id=artist_id, role='artist')
-    artworks = Artwork.objects.filter(artist=artist).order_by('-created_at')
-
-    return render(request, 'artist_dashboard/artworks.html', {
-        'artist': artist,
-        'artworks': artworks
-    })
-
-@login_required
-def artist_my_artworks(request):
-    if request.user.role != 'artist':
-        return HttpResponseForbidden("Only artists can view this page")
-
-    artworks = Artwork.objects.filter(artist=request.user).order_by('-created_at')
-
-    return render(request, 'artist_dashboard/artworks.html', {
-        'artworks': artworks
-    })
-
-@login_required
-def all_artworks(request):
-    if request.user.role != 'client':
-        return redirect('login')
-
-    artworks = Artwork.objects.all().order_by('-created_at') 
-
-    return render(request, 'client_dashboard/all_artworks.html', {
-        'artworks': artworks
-    })
-
- #bbb3ff;
