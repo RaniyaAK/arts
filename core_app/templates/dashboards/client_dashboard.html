@@ -17,7 +17,7 @@
                     <i class="fas fa-user fa-3x text-primary-color"></i>
                 </div>
                 <h6 class="fw-semibold">{{ artist.username }}</h6>
-                <a href="{% url 'artist_artworks_for_client' artist.id %}" class="btn btn-outline-primary btn-sm mt-2">View Artworks</a>
+                <a href="#" class="btn btn-outline-primary btn-sm mt-2">View Artworks</a>
             </div>
         </div>
         {% empty %}
@@ -31,12 +31,15 @@
         {% for artwork in artworks %}
         <div class="col-md-4 mb-4">
             <div class="card shadow-sm h-100">
-                <img src="{{ artwork.image.url }}" class="card-img-top" alt="{{ artwork.title }}">
+                <!-- IMAGE STYLING UPDATED -->
+                <img src="{{ artwork.image.url }}" 
+                     class="card-img-top rounded" 
+                     alt="{{ artwork.title }}" 
+                     style="height:250px; object-fit:cover; width:100%;">
+
                 <div class="card-body">
                     <h5 class="card-title">{{ artwork.title }}</h5>
-                    <p class="text-muted">{{ artwork.category }} | By {{ artwork.artist.username }}</p>
-                    <p class="fw-semibold">₹ {{ artwork.price }}</p>
-                    <a href="{% url 'artwork_detail_for_artist' artwork.id %}" class="btn btn-outline-primary btn-sm">View</a>
+                    <p class="text-muted small">{{ artwork.category }} | By {{ artwork.artist.username }}</p>
                 </div>
             </div>
         </div>
@@ -47,7 +50,7 @@
 
     <!-- View All Artworks -->
     <div class="text-center mt-4">
-        <a href="{% url 'all_artworks' %}" class="btn bg-primary-color">Browse All Artworks</a>
+        <a href="#" class="btn bg-primary-color text-cream">Browse All Artworks</a>
     </div>
 
 </div>

@@ -34,24 +34,13 @@ class ResetPasswordForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput)
     confirm_password = forms.CharField(widget=forms.PasswordInput)
 
+
 class ArtworkForm(forms.ModelForm):
     class Meta:
         model = Artwork
-        fields = ['title', 'description', 'category', 'image', 'price']
-        widgets = {
-            'price': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter price in ₹',
-                'step': '0.01',
-                'min': '1'
-            }),
-        }
+        fields = ['image']
 
-    def clean_price(self):
-        price = self.cleaned_data.get('price')
-        if price is None or price <= 0:
-            raise forms.ValidationError("Price is required and must be greater than 0.")
-        return price
+
 
 class ProfileCompletionForm(forms.ModelForm):
     class Meta:
@@ -62,3 +51,14 @@ class ProfileCompletionForm(forms.ModelForm):
             'bio': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Short bio', 'rows': 3}),
         }
 
+from django import forms
+from .models import User
+
+class ProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['name', 'bio', 'profile_image']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Your Name'}),
+            'bio': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Short bio', 'rows': 3}),
+        }

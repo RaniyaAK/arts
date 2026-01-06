@@ -1,93 +1,95 @@
 {% extends "masterss.html" %}
-{% load static %}
-{% block title %}Delete Artwork | Paletra{% endblock %}
+{% block title %}Confirm Delete | Paletra{% endblock %}
 
 {% block content %}
-
 <style>
-.delete-artwork-page {
-    background: #FFF7EC;
+.delete-page {
     min-height: 100vh;
-    padding: 60px 20px;
+    background: #FFF7EC;
     display: flex;
-    flex-direction: column;
-    align-items: center; /* center the delete box */
+    align-items: center;
+    justify-content: center;
 }
 
-/* BACK BUTTON */
-.back-btn {
-    align-self: flex-start; /* left-align inside the container */
-    margin-bottom: 30px;
-    background: #5C3A21;
-    color: #FFF7EC;
-    padding: 8px 16px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 500;
-    transition: background 0.2s ease;
-}
-.back-btn:hover {
-    background: #4A2A18;
-}
-
-.delete-box {
-    background: #fff;
+.delete-card {
+    background: #ffffff;
     padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+    border-radius: 24px;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.08);
     text-align: center;
-    max-width: 500px;
-    width: 100%; /* ensure responsiveness */
 }
 
-.delete-box h3 {
+.delete-icon {
+    font-size: 48px;
+    color: #C0392B;
+    margin-bottom: 15px;
+}
+
+.delete-title {
     color: #5C3A21;
-    margin-bottom: 20px;
+    font-weight: 700;
 }
 
-.delete-box p {
+.delete-text {
     color: #8A6A4F;
-    margin-bottom: 30px;
+    font-size: 15px;
+    margin-top: 10px;
 }
 
-.delete-box form button {
-    padding: 10px 20px;
-    border-radius: 25px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    margin-right: 10px;
-}
-
-.delete-btn {
-    background-color: #ff4d4d;
-    color: #fff;
-}
-
-.cancel-btn {
-    background-color: #e0e0e0;
+.btn-cancel {
+    background: #E6D6C3;
     color: #5C3A21;
+    border-radius: 50px;
+    padding: 10px 22px;
     text-decoration: none;
-    padding: 10px 20px;
-    border-radius: 25px;
+    font-weight: 600;
 }
+
+.btn-delete {
+    background: #C0392B;
+    color: #fff;
+    border-radius: 50px;
+    padding: 10px 22px;
+    border: none;
+    font-weight: 600;
+}
+
+.btn-delete:hover {
+    background: #A93226;
+}
+
 </style>
 
-<div class="delete-artwork-page">
+<div class="delete-page">
+    <div class="delete-card">
 
-    <!-- BACK BUTTON -->
-    <a href="javascript:history.back()" class="back-btn">← Back</a>
+        <div class="delete-icon">🗑️</div>
 
-    <div class="delete-box">
-        <h3>Delete Artwork</h3>
-        <p>Are you sure you want to delete "<strong>{{ artwork.title }}</strong>"? This action cannot be undone.</p>
+        <h4 class="delete-title">
+            Delete Sample Artwork?
+        </h4>
 
-        <form method="POST">
+        <p class="delete-text">
+            Are you sure you want to delete this sample artwork?<br>
+            This action <b>cannot be undone</b>.
+        </p>
+
+        <form method="post" class="mt-4">
             {% csrf_token %}
-            <button type="submit" class="delete-btn">Delete</button>
-            <a href="{% url 'artist_my_artworks' %}" class="cancel-btn">Cancel</a>
+
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{% url 'artist_dashboard' %}" class="btn-cancel">
+                    Cancel
+                </a>
+
+                <button type="submit" class="btn-delete">
+                    Yes, Delete
+                </button>
+            </div>
         </form>
+
     </div>
 </div>
-
 {% endblock %}

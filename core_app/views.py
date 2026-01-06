@@ -171,8 +171,44 @@ def add_artworks(request):
             artwork = form.save(commit=False)
             artwork.artist = request.user
             artwork.save()
-            Activity.objects.create(user=request.user, artwork_title=artwork.title, action='added')
+
+            Activity.objects.create(
+                user=request.user,
+                artwork_title='Sample Artwork',
+                action='added'
+            )
+
             return redirect('artist_dashboard')
     else:
         form = ArtworkForm()
+
     return render(request, 'artist_dashboard/add_artworks.html', {'form': form})
+
+@login_required
+def delete_artwork(request, artwork_id):
+    artwork = get_object_or_404(Artwork, id=artwork_id, artist=request.user)
+
+    if request.method == 'POST':
+        artwork.delete()
+        return redirect('artist_dashboard')
+
+    return render(request, 'artist_dashboard/delete_artwork.html', {
+        'artwork': artwork
+    })
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .forms import ProfileEditForm
+
+@login_required
+def edit_profile(request):
+    user = request.user
+    if request.method == 'POST':
+        form = ProfileEditForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('artist_dashboard' if user.role=='artist' else 'client_dashboard')
+    else:
+        form = ProfileEditForm(instance=user)
+
+    return render(request, 'edit_profile.html', {'form': form})

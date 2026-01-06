@@ -22,7 +22,10 @@ urlpatterns = [
     path('artist_dashboard/add_artworks', views.add_artworks, name='add_artworks'), 
     path('complete_profile/', views.complete_profile, name='complete_profile'),
 
-    
+    path('artwork/<int:artwork_id>/delete/', views.delete_artwork, name='delete_artwork'),
+    path('edit-profile/', views.edit_profile, name='edit_profile'),
+
+
 
 
 
@@ -30,3 +33,6 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+
