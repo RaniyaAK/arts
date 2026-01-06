@@ -28,19 +28,16 @@ CATEGORY_CHOICES = [
 
 class Artwork(models.Model):
     artist = models.ForeignKey(
-        settings.AUTH_USER_MODEL,  
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='artworks'
     )
-    title = models.CharField(max_length=200)
-    description = models.TextField(blank=True)
-    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
+
     image = models.ImageField(upload_to='artworks/')
-    price = models.DecimalField(max_digits=8,decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.title} by {self.artist.username}"
+        return f"Artwork by {self.artist.username}"
 
 
 class Activity(models.Model):

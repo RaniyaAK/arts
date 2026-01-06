@@ -6,46 +6,81 @@
 {% block content %}
 <div class="container py-5">
 
-    <!-- Profile Section -->
-    <div class="row mb-5 align-items-center">
-        <div class="col-md-3 text-center">
-            {% if request.user.profile_image %}
-                <img src="{{ request.user.profile_image.url }}" alt="{{ request.user.username }}" class="rounded-circle" style="width:150px; height:150px; object-fit:cover;">
-            {% else %}
-                <img src="{% static 'default-profile.png' %}" alt="Profile Image" class="rounded-circle" style="width:150px; height:150px; object-fit:cover;">
-            {% endif %}
-        </div>
-        <div class="col-md-9">
-            <h2 class="text-primary-color">{{ request.user.username }}</h2>
-            <p class="text-muted">{{ request.user.bio|default:"No bio added yet." }}</p>
-            <a href="{% url 'complete_profile' %}" class="btn btn-outline-secondary btn-sm">Edit Profile</a>
-        </div>
+    <!-- INFO NOTE -->
+    <div class="alert alert-light border mb-4">
+        <strong>Note:</strong>
+        The artworks below are <b>sample works</b> uploaded by you
+        to showcase your style. These are <b>not sold directly</b>.
+        Clients can request custom digital artwork based on these samples.
     </div>
 
-    <!-- Add New Artwork Button -->
+    <!-- ADD NEW ARTWORK BUTTON -->
     <div class="mb-4 text-center">
-        <a href="{% url 'add_artworks' %}" class="btn btn-primary">Add New Artwork</a>
+        <a href="{% url 'add_artworks' %}" class="btn bg-primary-color text-cream rounded-pill px-4">
+            Add Sample Artwork
+        </a>
     </div>
 
-    <!-- Artworks Gallery -->
-    <h4 class="text-primary-color mb-3">My Artworks</h4>
+    <!-- ARTWORK GALLERY -->
+    <h4 class="text-primary-color mb-3">My Sample Artworks</h4>
+
     <div class="row row-cols-1 row-cols-md-3 g-4">
         {% for artwork in artworks %}
         <div class="col">
-            <div class="card h-100 shadow-sm text-center">
-                <img src="{{ artwork.image.url }}" class="card-img-top" alt="{{ artwork.title }}" style="height:250px; object-fit:cover;">
+            <div class="card h-100 shadow-sm text-center artwork-card">
+
+                <!-- IMAGE -->
+                <img src="{{ artwork.image.url }}"
+                     class="card-img-top"
+                     alt="Sample Artwork"
+                     style="height:250px; object-fit:cover;">
+
                 <div class="card-body">
-                    <h5 class="card-title">{{ artwork.title }}</h5>
-                    <a href="{% url 'delete_artwork' artwork.id %}" class="btn btn-outline-danger btn-sm mt-2">Delete</a>
+
+                    <!-- UPLOAD DATE -->
+                    <p class="text-muted small mb-2">
+                        Uploaded on {{ artwork.created_at|date:"d M Y" }}
+                    </p>
+
+                    <!-- DELETE BUTTON -->
+                    <a href="{% url 'delete_artwork' artwork.id %}" class="btn btn-outline-danger btn-sm mt-2">
+                        Delete
+                    </a>
+
                 </div>
             </div>
         </div>
         {% empty %}
         <div class="col">
-            <p class="text-center">You haven’t added any artworks yet.</p>
+            <p class="text-center text-muted">
+                You haven’t added any sample artworks yet.
+            </p>
         </div>
         {% endfor %}
     </div>
 
 </div>
+
+<!-- Theme CSS Overrides -->
+<style>
+/* Card hover effect */
+.artwork-card:hover {
+    box-shadow: 0 12px 25px rgba(92, 58, 33, 0.25); /* soft brown shadow */
+    transform: translateY(-3px);
+    transition: all 0.3s ease;
+    background-color: #FFF7EC; /* light cream */
+}
+
+/* Delete button theme */
+.btn-outline-danger {
+    border-color: #8B5E3C; /* brown-main */
+    color: #8B5E3C;
+}
+
+.btn-outline-danger:hover {
+    background-color: #8B5E3C; /* brown-main */
+    color: #FFF8E7; /* cream */
+    border-color: #8B5E3C;
+}
+</style>
 {% endblock %}

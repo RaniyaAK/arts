@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
     <title>{% block title %}Paletra{% endblock %}</title>
 
     <!-- Bootstrap CSS -->
@@ -12,7 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous"/>
 
     <style>
-        body { background-color: #F5F0E6; font-family: "Segoe UI", sans-serif; margin:0; }
+        /* --- Root Theme --- */
         :root {
             --brown-dark: #5C4033;
             --brown-main: #8B5E3C;
@@ -21,12 +22,30 @@
             --cream: #FFF8E7;
         }
 
+        body {
+            background-color: #F5F0E6;
+            font-family: "Segoe UI", sans-serif;
+            margin: 0;
+        }
+
+        main { min-height: 80vh; }
+
         .text-primary-color { color: var(--brown-dark); }
 
-        /* Navbar */
-        .navbar { background-color: rgba(255,248,231,0.95); backdrop-filter: blur(6px); }
+        /* --- Navbar --- */
+        .navbar { 
+            background-color: rgba(255,248,231,0.95); 
+            backdrop-filter: blur(6px); 
+            position: relative;
+            z-index: 1000;
+        }
         .navbar-brand span { font-size: 1.4rem; letter-spacing: 1px; }
-        .nav-link { color: var(--brown-dark) !important; margin-right: 14px; position: relative; }
+        .nav-link { 
+            color: var(--brown-dark) !important; 
+            margin-right: 14px; 
+            position: relative;
+            transition: color 0.3s ease;
+        }
         .nav-link::after {
             content: "";
             position: absolute;
@@ -37,8 +56,12 @@
             background-color: var(--gold-soft);
             transition: width 0.3s ease;
         }
+        .nav-link:hover {
+            color: var(--brown-dark);
+        }
         .nav-link:hover::after { width: 100%; }
 
+        /* --- Buttons --- */
         .btn-outline-primary {
             border-color: var(--brown-main);
             color: var(--brown-dark);
@@ -49,7 +72,6 @@
             border-color: var(--gold-soft);
             color: var(--brown-dark);
         }
-
         .btn.bg-primary-color {
             background-color: var(--brown-main);
             color: var(--cream);
@@ -60,9 +82,47 @@
             color: var(--brown-dark);
         }
 
-        main { min-height: 80vh; }
+        /* --- Dropdown --- */
+        .dropdown-menu { 
+            border-radius: 12px; 
+            box-shadow: 0 8px 25px rgba(92,58,33,0.2); 
+            z-index: 1100;
+            background-color: var(--cream);
+            padding: 12px 8px;
+            min-width: 220px;
+        }
+        .dropdown-toggle::after { display: none !important; }
+        .dropdown-item.btn {
+            font-size: 0.95rem;
+            padding: 6px 0;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .dropdown-item.btn-outline-secondary {
+            border: 1px solid var(--brown-main);
+            color: var(--brown-dark);
+            background-color: var(--cream);
+        }
+        .dropdown-item.btn-outline-secondary:hover {
+            background-color: var(--gold-soft);
+            color: var(--brown-dark);
+            border-color: var(--gold-soft);
+        }
+        .dropdown-item.btn-outline-danger {
+            border: 1px solid var(--brown-main);
+            color: var(--brown-dark);
+            background-color: var(--cream);
+        }
+        .dropdown-item.btn-outline-danger:hover {
+            background-color: var(--brown-main);
+            color: var(--cream);
+            border-color: var(--brown-main);
+        }
+        .dropdown-menu li strong { color: var(--brown-dark); }
+        .dropdown-menu li.text-muted { color: var(--brown-dark); opacity: 0.7; }
 
-        /* Hide navbar if body has class "no-navbar" */
+        /* --- Hide navbar if needed --- */
         body.no-navbar nav { display: none; }
     </style>
 </head>
@@ -71,7 +131,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg shadow-sm py-3">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="/">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
                 <span class="fw-semibold text-primary-color">Paletra</span>
             </a>
 
@@ -82,17 +142,54 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav align-items-lg-center">
                     {% if request.path == '/' %}
-                        <!-- Homepage Navbar -->
                         <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
                         <li class="nav-item"><a class="nav-link" href="#how">How It Works</a></li>
                         {% if not request.user.is_authenticated %}
                             <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
                         {% endif %}
                     {% else %}
-                        <!-- Dashboard Navbar -->
-                        <li class="nav-item ms-2">
-                            <a class="btn bg-primary-color rounded-pill px-4" href="{% url 'logout' %}">Logout</a>
+                        {% if request.user.is_authenticated %}
+                        <!-- Profile Dropdown -->
+                        <li class="nav-item dropdown ms-3">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                {% if request.user.profile_image %}
+                                    <img src="{{ request.user.profile_image.url }}" alt="{{ request.user.name }}"
+                                         class="rounded-circle" style="width:35px; height:35px; object-fit:cover; margin-right:8px;">
+                                {% else %}
+                                    <img src="{% static 'default-profile.png' %}" alt="Profile"
+                                         class="rounded-circle" style="width:35px; height:35px; object-fit:cover; margin-right:8px;">
+                                {% endif %}
+                                {{ request.user.name }}
+                            </a>
+
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li class="px-2 py-1">
+                                    <strong>{{ request.user.name }}</strong>
+                                </li>
+                                <li class="px-2 py-1 text-muted small">
+                                    {{ request.user.bio|default:"No bio added yet." }}
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item btn btn-outline-secondary w-100 mb-1"
+                                       href="{% url 'edit_profile' %}">
+                                       Edit Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item btn btn-outline-danger w-100"
+                                       href="{% url 'logout' %}">
+                                       Logout
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
+                        {% else %}
+                        <li class="nav-item ms-2">
+                            <a class="btn bg-primary-color rounded-pill px-4" href="{% url 'login' %}">Login</a>
+                        </li>
+                        {% endif %}
                     {% endif %}
                 </ul>
             </div>
