@@ -5,6 +5,7 @@
 
 {% block content %}
 <style>
+/* Page */
 .edit-profile-page {
     background: #FFF7EC;
     min-height: 100vh;
@@ -13,6 +14,7 @@
 .text-main { color: #5C3A21; }
 .text-muted-soft { color: #8A6A4F; }
 
+/* Card */
 .profile-form-card {
     background: #ffffff;
     border-radius: 24px;
@@ -22,56 +24,7 @@
     margin: 0 auto;
 }
 
-.file-upload {
-    position: relative;
-    border: 2px dashed #D6BFA6;
-    border-radius: 20px;
-    padding: 30px;
-    text-align: center;
-    background: #FFFDF9;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-    margin-bottom: 20px;
-}
-
-.file-upload input[type="file"] {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-}
-
-.file-upload img {
-    max-height: 180px;
-    width: auto;
-    margin-bottom: 15px;
-    border-radius: 12px;
-    display: block;
-}
-
-.btn-save {
-    background: #5C3A21;
-    color: #FFF7EC;
-    border-radius: 50px;
-    padding: 12px 34px;
-    font-weight: 600;
-    display: block;
-    margin: 20px auto 0;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    text-align: center;
-}
-
-.btn-save:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    background: #7A4A2B;
-}
-
+/* Back button */
 .back-btn {
     display: inline-block;
     margin-bottom: 25px;
@@ -84,6 +37,72 @@
 }
 .back-btn:hover { background: #4A2A18; }
 
+/* Avatar upload */
+.avatar-upload {
+    position: relative;
+    width: 160px;
+    margin: 0 auto 10px;
+}
+
+.avatar-preview {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #FFFDF9;
+    border: 4px solid #D6BFA6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-edit {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 44px;
+    height: 44px;
+    background: #5C3A21;
+    color: #FFF7EC;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.avatar-edit:hover {
+    transform: scale(1.1);
+    background: #7A4A2B;
+}
+
+/* Save button */
+.btn-save {
+    background: #5C3A21;
+    color: #FFF7EC;
+    border-radius: 50px;
+    padding: 12px 34px;
+    font-weight: 600;
+    display: block;
+    margin: 20px auto 0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-align: center;
+    border: none;
+}
+
+.btn-save:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    background: #7A4A2B;
+}
 </style>
 
 <div class="edit-profile-page py-5">
@@ -91,27 +110,39 @@
 
         <a href="javascript:history.back()" class="back-btn">← Back</a>
 
-        <h2 class="text-main fw-bold mb-4">Edit Profile</h2>
+        <h2 class="text-main fw-bold mb-4 text-center">Edit Profile</h2>
 
         <div class="profile-form-card">
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
 
                 <!-- Profile Image -->
-                <div class="mb-4">
-                    <label class="form-label fw-semibold text-main">Profile Image</label>
-                    <div class="file-upload">
-                        {% if request.user.profile_image %}
-                            <img id="image-preview" src="{{ request.user.profile_image.url }}" alt="Profile Preview">
-                        {% else %}
-                            <img id="image-preview" style="display:none;">
-                        {% endif %}
-                        <p class="text-muted-soft mb-1">Drag & drop or click to choose</p>
-                        <input type="file" name="profile_image" id="id_profile_image">
-                        {% if form.profile_image.errors %}
-                            <div class="text-danger small mt-2">{{ form.profile_image.errors.0 }}</div>
-                        {% endif %}
+                <div class="mb-4 text-center">
+                    <label class="form-label fw-semibold text-main d-block mb-3">
+                        Profile Image
+                    </label>
+
+                    <div class="avatar-upload">
+                        <div class="avatar-preview">
+                            {% if request.user.profile_image %}
+                                <img id="image-preview" src="{{ request.user.profile_image.url }}" alt="Profile Image">
+                            {% else %}
+                                <img id="image-preview" style="display:none;">
+                            {% endif %}
+                        </div>
+
+                        <label for="id_profile_image" class="avatar-edit">
+                            <i class="fas fa-camera"></i>
+                        </label>
+
+                        <input type="file" name="profile_image" id="id_profile_image" hidden>
                     </div>
+
+                    {% if form.profile_image.errors %}
+                        <div class="text-danger small mt-2">
+                            {{ form.profile_image.errors.0 }}
+                        </div>
+                    {% endif %}
                 </div>
 
                 <!-- Name -->
@@ -119,7 +150,9 @@
                     <label class="form-label fw-semibold text-main">Name</label>
                     {{ form.name }}
                     {% if form.name.errors %}
-                        <div class="text-danger small mt-1">{{ form.name.errors.0 }}</div>
+                        <div class="text-danger small mt-1">
+                            {{ form.name.errors.0 }}
+                        </div>
                     {% endif %}
                 </div>
 
@@ -128,11 +161,15 @@
                     <label class="form-label fw-semibold text-main">Bio</label>
                     {{ form.bio }}
                     {% if form.bio.errors %}
-                        <div class="text-danger small mt-1">{{ form.bio.errors.0 }}</div>
+                        <div class="text-danger small mt-1">
+                            {{ form.bio.errors.0 }}
+                        </div>
                     {% endif %}
                 </div>
 
-                <button type="submit" class="btn-save">Save Changes</button>
+                <button type="submit" class="btn-save">
+                    Save Changes
+                </button>
             </form>
         </div>
 
@@ -150,7 +187,7 @@ imageInput.addEventListener('change', function () {
         reader.onload = function (e) {
             imagePreview.src = e.target.result;
             imagePreview.style.display = 'block';
-        }
+        };
         reader.readAsDataURL(file);
     }
 });
