@@ -1,0 +1,33 @@
+{% extends "masterss.html" %}
+
+{% block title %}All Artworks | Paletra{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <!-- Back Button -->
+    <a href="{% url 'client_dashboard' %}" class="btn btn-secondary mb-3">
+        ← Back
+    </a>
+
+    <h2 class="text-primary-color mb-4">All Artworks</h2>
+
+    <div class="row">
+        {% for artwork in artworks %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <img src="{{ artwork.image.url }}"
+                     class="card-img-top rounded"
+                     alt="{{ artwork.title }}"
+                     style="height:250px; object-fit:cover; width:100%;">
+                <div class="card-body">
+                    <p class="text-muted small">By {{ artwork.artist.name }}</p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No artworks available yet.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
