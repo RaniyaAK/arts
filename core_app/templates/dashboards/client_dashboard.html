@@ -5,67 +5,67 @@
 {% block content %}
 <div class="container py-5">
 
-    <h2 class="text-primary-color mb-4">
-        Welcome, {{ request.user.name }} 👤
-    </h2>
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary-color">
+            Welcome, {{ request.user.name }} 👤
+        </h2>
 
-    <!-- Search Artists (LIVE FILTER – SINGLE BOX) -->
+        <!-- My Commissions Button -->
+        <a href="{% url 'client_commissions' %}"
+           class="btn btn-outline-dark rounded-pill">
+            My Commissions
+        </a>
+    </div>
+
+    <!-- Search Artists -->
     <div class="mb-4">
         <div class="d-flex align-items-center px-3"
-             style="
-                border: 1px solid #ced4da;
-                border-radius: 30px;
-                background: #fff;
-             ">
+             style="border:1px solid #ced4da;border-radius:30px;background:#fff;">
             <i class="fas fa-search text-muted me-2"></i>
-
             <input type="text"
                    id="artistSearch"
                    class="form-control border-0 shadow-none"
-                   placeholder="Search artists by name..."
-                   style="border-radius: 30px;">
+                   placeholder="Search artists by name...">
         </div>
     </div>
 
     <!-- Featured Artists -->
     <h4 class="text-primary-color mb-3">Featured Artists</h4>
 
-    <!-- No Artists Message -->
     <p id="noArtistsMsg" class="text-muted" style="display:none;">
         No artists found.
     </p>
 
     <div class="d-flex flex-wrap mb-5" id="artistContainer">
         {% for artist in featured_artists %}
-        <div class="artist-card mb-4 me-3" style="width: 180px;">
+        <div class="artist-card mb-4 me-3" style="width:180px;">
             <div class="card shadow-sm rounded-4 p-3 text-center"
-                 style="
-                    transition: transform 0.2s, box-shadow 0.2s;
-                    height: 270px;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                 ">
-                
+                 style="height:280px;display:flex;flex-direction:column;justify-content:center;">
+
                 <div class="mb-3">
                     {% if artist.profile_image %}
                         <img src="{{ artist.profile_image.url }}"
-                             alt="{{ artist.name }}"
                              class="rounded-circle"
-                             style="width:80px; height:80px; object-fit:cover;">
+                             style="width:80px;height:80px;object-fit:cover;">
                     {% else %}
                         <i class="fas fa-user fa-3x text-primary-color"></i>
                     {% endif %}
                 </div>
 
-                <!-- ✅ CLICKABLE ARTIST NAME -->
-                <h6 class="fw-semibold artist-name">
+                <h6 class="fw-semibold artist-name mb-2">
                     <a href="{% url 'artist_profile' artist.id %}"
                        class="text-decoration-none text-dark">
                         {{ artist.name }}
                     </a>
                 </h6>
-                
+
+                <!-- 🎨 Request Button -->
+                <a href="{% url 'request_commission' artist.id %}"
+                   class="btn btn-sm bg-primary-color text-cream rounded-pill mt-2">
+                    Request
+                </a>
+
             </div>
         </div>
         {% endfor %}
@@ -73,17 +73,17 @@
 
     <!-- Latest Artworks -->
     <h4 class="text-primary-color mb-3">Latest Artworks</h4>
+
     <div class="row">
         {% for artwork in artworks %}
         <div class="col-md-4 mb-4">
-            <div class="card shadow-sm h-100">
+            <div class="card shadow-sm h-100 rounded-4">
                 <img src="{{ artwork.image.url }}"
-                     class="card-img-top rounded"
-                     alt="{{ artwork.title }}"
-                     style="height:250px; object-fit:cover; width:100%;">
+                     class="card-img-top rounded-4"
+                     style="height:250px;object-fit:cover;">
 
                 <div class="card-body">
-                    <p class="text-muted small">
+                    <p class="text-muted small mb-0">
                         By {{ artwork.artist.name }}
                     </p>
                 </div>
@@ -94,16 +94,17 @@
         {% endfor %}
     </div>
 
-    <!-- See All Artworks Button -->
+    <!-- See All -->
     <div class="text-end mt-3">
-        <a href="{% url 'all_artworks' %}" class="btn bg-primary-color text-cream">
+        <a href="{% url 'all_artworks' %}"
+           class="btn bg-primary-color text-cream rounded-pill">
             See All →
         </a>
     </div>
 
 </div>
 
-<!-- 🔍 LIVE CARD FILTER SCRIPT -->
+<!-- 🔍 Live Filter Script -->
 <script>
 const searchInput = document.getElementById('artistSearch');
 const artistCards = document.querySelectorAll('.artist-card');
@@ -114,11 +115,7 @@ searchInput.addEventListener('input', function () {
     let visibleCount = 0;
 
     artistCards.forEach(card => {
-        const artistName = card
-            .querySelector('.artist-name')
-            .innerText
-            .toLowerCase();
-
+        const artistName = card.querySelector('.artist-name').innerText.toLowerCase();
         if (artistName.includes(searchValue)) {
             card.style.display = 'inline-block';
             visibleCount++;
@@ -131,7 +128,6 @@ searchInput.addEventListener('input', function () {
 });
 </script>
 
-<!-- Optional hover effect -->
 <style>
 .artist-card .card:hover {
     transform: translateY(-5px);

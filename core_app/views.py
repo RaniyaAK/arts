@@ -9,11 +9,13 @@ from django.db.models import Q
 from .forms import RegisterForm, LoginForm, ForgotPasswordForm, ResetPasswordForm
 from .forms import ArtworkForm, ProfileCompletionForm 
 from .forms import ProfileEditForm
+from .forms import CommissionRequestForm
 
 from .models import Artwork, Activity
-
+from .models import Commission
 
 User = get_user_model()
+
 
 def home(request):
     return render(request, 'home.html')
@@ -150,13 +152,20 @@ def artist_dashboard(request):
     if request.user.role != 'artist':
         return redirect('login')
 
+    # Artist's own artworks
     artworks = Artwork.objects.filter(artist=request.user).order_by('-created_at')
+
+    # Recent activities
     activities = Activity.objects.filter(user=request.user).order_by('-created_at')[:10]
+
+    # 🔹 Commissions requested to this artist
+    commissions = Commission.objects.filter(artist=request.user).order_by('-created_at')
 
     return render(request, 'dashboards/artist_dashboard.html', {
         'artworks': artworks,
         'activities': activities,
         'numbers': range(1, 4),
+        'commissions': commissions,  # ✅ Pass commissions here
     })
 
 
@@ -253,8 +262,6 @@ def all_artworks(request):
     artworks = Artwork.objects.all().order_by('-created_at')
     return render(request, 'client_dashboard/all_artworks.html', {'artworks': artworks})
 
-from django.shortcuts import render, get_object_or_404
-from .models import User, Artwork   # adjust model names if needed
 
 def artist_profile(request, artist_id):
     artist = get_object_or_404(User, id=artist_id, role='artist')
@@ -265,3 +272,59 @@ def artist_profile(request, artist_id):
         'artworks': artworks,
     })
 
+
+
+@login_required
+def request_commission(request, artist_id):
+    artist = get_object_or_404(User, id=artist_id)
+
+    if request.method == 'POST':
+        form = CommissionRequestForm(request.POST, request.FILES)
+        if form.is_valid():
+            commission = form.save(commit=False)
+            commission.client = request.user
+            commission.artist = artist
+            commission.save()
+            return redirect('my_commissions')
+    else:
+        form = CommissionRequestForm()
+
+    return render(request, 'client_dashboard/request_commission.html', {
+        'form': form,
+        'artist': artist
+    })
+
+
+@login_required
+def client_commissions(request):
+    commissions = Commission.objects.filter(client=request.user).order_by('-created_at')
+    return render(request, 'client_dashboard/client_commissions.html', {
+        'commissions': commissions
+    })
+
+
+@login_required
+def artist_commissions(request):
+    commissions = Commission.objects.filter(artist=request.user).order_by('-created_at')
+    return render(request, 'artist_dashboard/artist_commissions.html', {
+        'commissions': commissions
+    })
+
+@login_required
+def update_commission_status(request, commission_id, status):
+    commission = get_object_or_404(Commission, id=commission_id, artist=request.user)
+    commission.status = status
+    commission.save()
+    return redirect('artist_commissions')
+
+@login_required
+def upload_final_artwork(request, commission_id):
+    commission = get_object_or_404(Commission, id=commission_id, artist=request.user)
+
+    if request.method == 'POST':
+        commission.final_artwork = request.FILES['final_artwork']
+        commission.status = 'completed'
+        commission.save()
+        return redirect('artist_commissions')
+
+    return render(request, 'artist_dashboard/upload_final_artwork.html', {'commission': commission})

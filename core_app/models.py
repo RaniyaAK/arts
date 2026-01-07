@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import User
 
 class User(AbstractUser):
     ROLE_CHOICES = [
@@ -56,3 +57,31 @@ class Activity(models.Model):
 
     def __str__(self):
         return f"{self.artwork_title} - {self.action}"
+    
+
+
+
+class Commission(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('accepted', 'Accepted'),
+        ('in_progress', 'In Progress'),
+        ('completed', 'Completed'),
+        ('rejected', 'Rejected'),
+    ]
+
+    client = models.ForeignKey(User, on_delete=models.CASCADE, related_name='client_commissions')
+    artist = models.ForeignKey(User, on_delete=models.CASCADE, related_name='artist_commissions')
+
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    reference_image = models.ImageField(upload_to='commission_references/', blank=True, null=True)
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    final_artwork = models.ImageField(upload_to='completed_artworks/', blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.title} - {self.client.username}"
+

@@ -1,0 +1,60 @@
+{% extends "masterss.html" %}
+{% block title %}Request Commission{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <!-- 🔙 BACK BUTTON -->
+    <div class="mb-4">
+        <a href="{% url 'artist_profile' artist.id %}"
+           class="btn btn-outline-secondary rounded-pill">
+            ← Back
+        </a>
+    </div>
+
+    <!-- 👤 ARTIST PROFILE CARD -->
+    <div class="card mb-4 p-3 shadow-sm rounded-4">
+        <div class="d-flex align-items-center">
+            {% if artist.profile_image %}
+                <img src="{{ artist.profile_image.url }}"
+                     class="rounded-circle me-3"
+                     style="width:60px; height:60px; object-fit:cover;">
+            {% else %}
+                <i class="fas fa-user-circle fa-3x text-muted me-3"></i>
+            {% endif %}
+
+            <div>
+                <h5 class="mb-0">{{ artist.name }}</h5>
+                <small class="text-muted">Artist</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- <h3 class="mb-4">Request Artwork from {{ artist.name }}</h3> -->
+
+    <!-- 🖌️ COMMISSION FORM -->
+    <form method="POST" enctype="multipart/form-data"
+          class="card p-4 shadow-sm rounded-4">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label class="form-label">Artwork Title</label>
+            {{ form.title }}
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            {{ form.description }}
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Reference Image (optional)</label>
+            {{ form.reference_image }}
+        </div>
+
+        <button type="submit" class="btn bg-primary-color text-cream">
+            Submit Request
+        </button>
+    </form>
+</div>
+{% endblock %}

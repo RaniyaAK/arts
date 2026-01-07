@@ -30,8 +30,12 @@ urlpatterns = [
     path('artist/<int:artist_id>/', views.artist_profile, name='artist_profile'),
 
 
+    path('request-commission/<int:artist_id>/', views.request_commission, name='request_commission'),
+    path('client-commissions/', views.client_commissions, name='client_commissions'),
 
-
+    path('artist/commissions/', views.artist_commissions, name='artist_commissions'),
+    path('commission/<int:commission_id>/<str:status>/', views.update_commission_status, name='update_commission_status'),
+    path('commission/upload/<int:commission_id>/', views.upload_final_artwork, name='upload_final_artwork'),
 
 
 
