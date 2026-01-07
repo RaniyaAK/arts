@@ -8,14 +8,14 @@ class User(AbstractUser):
         ('artist', 'Artist'),
         ('client', 'Client'),
     ]
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES)
 
-    # Profile completion fields
+    email = models.EmailField(unique=True)  # ✅ ADD THIS
+
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     name = models.CharField(max_length=150, blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
     profile_image = models.ImageField(upload_to='profiles/', blank=True, null=True)
-    is_profile_complete = models.BooleanField(default=False)  # ✅ flag for profile
-
+    is_profile_complete = models.BooleanField(default=False)
 
 # Artwork Model
 CATEGORY_CHOICES = [

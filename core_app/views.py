@@ -1,22 +1,21 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from .forms import RegisterForm, LoginForm, ForgotPasswordForm, ResetPasswordForm
-from .forms import ArtworkForm, ProfileCompletionForm  # <-- new form
+from .forms import ArtworkForm, ProfileCompletionForm 
 from .models import Artwork, Activity
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.views.decorators.cache import never_cache
+from .forms import ProfileEditForm
+
 
 User = get_user_model()
-
 
 def home(request):
     return render(request, 'home.html')
 
 
-# -------------------------------
 # Profile Completion
-# -------------------------------
 @login_required
 def complete_profile(request):
     if request.user.is_profile_complete:
@@ -101,37 +100,43 @@ def logout_view(request):
     return redirect('login')
 
 
-# Forgot & Reset Password
 def forgot_password(request):
     if request.method == 'POST':
         email = request.POST.get('email')
-        try:
-            user = User.objects.get(email=email)
-            return redirect('reset_password', email=user.email)
-        except User.DoesNotExist:
-            pass
+        user = User.objects.filter(email=email).first()
+        if not user:
+            return render(request, 'forgot_password.html', {
+                'error': 'Email not found'
+            })
+
+        return redirect('reset_password', email=user.email)
+
     return render(request, 'forgot_password.html')
 
 
 def reset_password(request, email):
+    user = User.objects.filter(email=email).first()
+    if not user:
+        return redirect('forgot_password')
+
     if request.method == 'POST':
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
+
         if password == confirm_password:
-            try:
-                user = User.objects.get(email=email)
-                user.set_password(password)
-                user.save()
-                login(request, user)
-                if not user.is_profile_complete:
-                    return redirect('complete_profile')
-                if user.role == 'artist':
-                    return redirect('artist_dashboard')
-                elif user.role == 'client':
-                    return redirect('client_dashboard')
-            except User.DoesNotExist:
-                pass
+            user.set_password(password)
+            user.save()
+            login(request, user)
+
+            if not user.is_profile_complete:
+                return redirect('complete_profile')
+            if user.role == 'artist':
+                return redirect('artist_dashboard')
+            elif user.role == 'client':
+                return redirect('client_dashboard')
+
     return render(request, 'reset_password.html')
+
 
 
 # -------------------------------
@@ -196,9 +201,7 @@ def delete_artwork(request, artwork_id):
         'artwork': artwork
     })
 
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from .forms import ProfileEditForm
+
 
 @login_required
 def edit_profile(request):
