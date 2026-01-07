@@ -1,33 +1,177 @@
 {% extends "masterss.html" %}
 
-{% block title %}Complete Profile | Paletra{% endblock %}
+{% block body_class %}no-navbar{% endblock %}
+{% load static %}
 
 {% block content %}
-<div class="container py-5" style="max-width: 500px;">
-    <h2 class="mb-4 text-center">Complete Your Profile</h2>
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
-        
-        <div class="mb-3">
-            {{ form.name.label_tag }} 
-            {{ form.name }}
-            {{ form.name.errors }}
-        </div>
+<style>
+body {
+    background-color: #F4EFE8;
+}
 
-        <div class="mb-3">
-            {{ form.bio.label_tag }} 
-            {{ form.bio }}
-            {{ form.bio.errors }}
-        </div>
+/* Center container */
+.profile-wrapper {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-        <div class="mb-3">
-            {{ form.profile_image.label_tag }}
-            {{ form.profile_image }}
-            {{ form.profile_image.errors }}
-        </div>
+/* Card styling */
+.profile-card {
+    background: linear-gradient(180deg, #FFF8EE, #F3E8D9);
+    border-radius: 26px;
+    padding: 32px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
 
-        <button type="submit" class="btn btn-primary w-100">Save Profile</button>
-    </form>
+/* Avatar container */
+.profile-upload {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px auto;
+    cursor: pointer;
+}
+
+/* Round avatar image */
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #5C3A21;
+    display: block;
+}
+
+/* Camera icon outside avatar */
+.camera-icon {
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    background: #CFAF5D;
+    color: #3E2A20;
+    border-radius: 50%;
+    padding: 8px;
+    font-size: 0.9rem;
+    border: 2px solid #FFF8E7;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s ease;
+}
+
+.camera-icon:hover {
+    transform: scale(1.1);
+}
+
+/* Unified form field styles with rectangle & slightly rounded corners */
+.profile-card input[type="text"],
+.profile-card textarea {
+    width: 100%;
+    border-radius: 10px; /* slightly more rounded */
+    border: 1px solid #D2C2A8;
+    padding: 12px 18px;
+    background-color: #FFFDF8;
+    transition: border 0.25s ease, box-shadow 0.25s ease;
+    font-family: "Segoe UI", sans-serif;
+    text-align: left;
+    font-size: 0.95rem;
+    color: #4B3326;
+    display: block;
+}
+
+.profile-card textarea {
+    resize: none;
+}
+
+.profile-card input[type="text"]:focus,
+.profile-card textarea:focus {
+    border-color: #CFAF5D;
+    box-shadow: 0 0 0 0.15rem rgba(207,175,93,0.25);
+    outline: none;
+}
+
+/* Save button */
+.btn-save {
+    background-color: #6A4632;
+    color: #FFF8E7;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    padding: 10px;
+    transition: all 0.3s ease;
+    border-radius: 30px;
+    border: none;
+}
+
+.btn-save:hover {
+    background-color: #CFAF5D;
+    color: #3E2A20;
+}
+
+/* Hide default file input */
+.profile-card input[type="file"] {
+    display: none;
+}
+</style>
+
+<div class="container profile-wrapper">
+    <div class="profile-card">
+
+        <h4 class="mb-4 text-primary-color fw-semibold text-center">Complete Your Profile</h4>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <!-- Avatar Upload -->
+            <div class="profile-upload" onclick="document.getElementById('id_profile_image').click();">
+                <img id="image-preview"
+                     src="{% if form.instance.profile_image %}{{ form.instance.profile_image.url }}{% else %}{% static 'default-head.png' %}{% endif %}"
+                     alt=""
+                     class="avatar-img">
+                <i class="fas fa-camera camera-icon"></i>
+                {{ form.profile_image }}
+            </div>
+
+            <!-- Name -->
+            <div class="mb-3">
+                {{ form.name.label_tag }}
+                {{ form.name }}
+                {{ form.name.errors }}
+            </div>
+
+            <!-- Bio / Description -->
+            <div class="mb-3">
+                {{ form.bio.label_tag }}
+                {{ form.bio }}
+                {{ form.bio.errors }}
+            </div>
+
+            <!-- Save Button -->
+            <div class="d-grid mt-3">
+                <button type="submit" class="btn btn-save">Save Profile</button>
+            </div>
+        </form>
+    </div>
 </div>
+
+<!-- Live preview script -->
+<script>
+const fileInput = document.getElementById('id_profile_image');
+const preview = document.getElementById('image-preview');
+
+fileInput.addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+
 {% endblock %}

@@ -245,3 +245,10 @@ def delete_artwork(request, artwork_id):
 # ________________________________________________________________________________________________________________________
 
 
+@login_required
+def all_artworks(request):
+    if request.user.role != 'client':
+        return redirect('login')
+
+    artworks = Artwork.objects.all().order_by('-created_at')
+    return render(request, 'client_dashboard/all_artworks.html', {'artworks': artworks})

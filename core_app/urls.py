@@ -25,6 +25,8 @@ urlpatterns = [
     path('artwork/<int:artwork_id>/delete/', views.delete_artwork, name='delete_artwork'),
     path('edit-profile/', views.edit_profile, name='edit_profile'),
 
+    path('all_artworks/', views.all_artworks, name='all_artworks'), 
+
 
 
 

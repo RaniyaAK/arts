@@ -9,8 +9,7 @@ class User(AbstractUser):
         ('client', 'Client'),
     ]
 
-    email = models.EmailField(unique=True)  # ✅ ADD THIS
-
+    email = models.EmailField(unique=True) 
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     name = models.CharField(max_length=150, blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
