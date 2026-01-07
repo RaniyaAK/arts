@@ -5,23 +5,57 @@
 {% block content %}
 <div class="container py-5">
 
-    <h2 class="text-primary-color mb-4">Welcome, {{ request.user.name }} 👤</h2>
+    <h2 class="text-primary-color mb-4">
+        Welcome, {{ request.user.name }} 👤
+    </h2>
+
+    <!-- Search Artists (LIVE FILTER – SINGLE BOX) -->
+    <div class="mb-4">
+        <div class="d-flex align-items-center px-3"
+             style="
+                border: 1px solid #ced4da;
+                border-radius: 30px;
+                background: #fff;
+             ">
+            <i class="fas fa-search text-muted me-2"></i>
+
+            <input type="text"
+                   id="artistSearch"
+                   class="form-control border-0 shadow-none"
+                   placeholder="Search artists by name..."
+                   style="border-radius: 30px;">
+        </div>
+    </div>
 
     <!-- Featured Artists -->
     <h4 class="text-primary-color mb-3">Featured Artists</h4>
-    <div class="row mb-5">
+
+    <!-- No Artists Message -->
+    <p id="noArtistsMsg" class="text-muted" style="display:none;">
+        No artists found.
+    </p>
+
+    <div class="row mb-5" id="artistContainer">
         {% for artist in featured_artists %}
-        <div class="col-md-3 mb-4">
-            <div class="card shadow-sm h-100 text-center p-3">
-                <div class="mb-2">
-                    <i class="fas fa-user fa-3x text-primary-color"></i>
+        <div class="col-md-3 mb-4 artist-card">
+            <div class="card h-100 shadow-sm rounded-4 p-3 text-center"
+                 style="transition: transform 0.2s, box-shadow 0.2s;">
+                
+                <div class="mb-3">
+                    {% if artist.profile_image %}
+                        <img src="{{ artist.profile_image.url }}"
+                             alt="{{ artist.name }}"
+                             class="rounded-circle"
+                             style="width:80px; height:80px; object-fit:cover;">
+                    {% else %}
+                        <i class="fas fa-user fa-3x text-primary-color"></i>
+                    {% endif %}
                 </div>
-                <h6 class="fw-semibold">{{ artist.name }}</h6>
-                <a href="#" class="btn btn-outline-primary btn-sm mt-2">View Artworks</a>
+
+                <h6 class="fw-semibold artist-name">{{ artist.name }}</h6>
+                
             </div>
         </div>
-        {% empty %}
-        <p>No featured artists yet.</p>
         {% endfor %}
     </div>
 
@@ -31,14 +65,15 @@
         {% for artwork in artworks %}
         <div class="col-md-4 mb-4">
             <div class="card shadow-sm h-100">
-                <!-- IMAGE STYLING UPDATED -->
-                <img src="{{ artwork.image.url }}" 
-                     class="card-img-top rounded" 
-                     alt="{{ artwork.title }}" 
+                <img src="{{ artwork.image.url }}"
+                     class="card-img-top rounded"
+                     alt="{{ artwork.title }}"
                      style="height:250px; object-fit:cover; width:100%;">
 
                 <div class="card-body">
-                    <p class="text-muted small"> | By {{ artwork.artist.username }}</p>
+                    <p class="text-muted small">
+                        By {{ artwork.artist.name }}
+                    </p>
                 </div>
             </div>
         </div>
@@ -47,10 +82,42 @@
         {% endfor %}
     </div>
 
-    <!-- View All Artworks -->
-    <div class="text-center mt-4">
-        <a href="#" class="btn bg-primary-color text-cream">Browse All Artworks</a>
-    </div>
-
 </div>
+
+<!-- 🔍 LIVE CARD FILTER SCRIPT -->
+<script>
+const searchInput = document.getElementById('artistSearch');
+const artistCards = document.querySelectorAll('.artist-card');
+const noArtistsMsg = document.getElementById('noArtistsMsg');
+
+searchInput.addEventListener('input', function () {
+    const searchValue = this.value.toLowerCase();
+    let visibleCount = 0;
+
+    artistCards.forEach(card => {
+        const artistName = card
+            .querySelector('.artist-name')
+            .innerText
+            .toLowerCase();
+
+        if (artistName.includes(searchValue)) {
+            card.style.display = 'block';
+            visibleCount++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    noArtistsMsg.style.display = visibleCount === 0 ? 'block' : 'none';
+});
+</script>
+
+<!-- Optional hover effect -->
+<style>
+.artist-card .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+</style>
+
 {% endblock %}

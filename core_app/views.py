@@ -1,12 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from .forms import RegisterForm, LoginForm, ForgotPasswordForm, ResetPasswordForm
-from .forms import ArtworkForm, ProfileCompletionForm 
-from .models import Artwork, Activity
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.views.decorators.cache import never_cache
+from django.http import JsonResponse
+from django.db.models import Q
+
+from .forms import RegisterForm, LoginForm, ForgotPasswordForm, ResetPasswordForm
+from .forms import ArtworkForm, ProfileCompletionForm 
 from .forms import ProfileEditForm
+
+from .models import Artwork, Activity
 
 
 User = get_user_model()
@@ -137,11 +141,10 @@ def reset_password(request, email):
 
     return render(request, 'reset_password.html')
 
+#  ________________________________________________________________________________________________________________________
 
 
-# -------------------------------
 # Artwork Views (unchanged)
-# -------------------------------
 @login_required
 def artist_dashboard(request):
     if request.user.role != 'artist':
@@ -164,9 +167,47 @@ def client_dashboard(request):
     if not request.user.is_profile_complete:
         return redirect('complete_profile')
 
+    # 🔍 Search logic
+    search_query = request.GET.get('search', '')
+
+    if search_query:
+        featured_artists = User.objects.filter(
+            role='artist',
+            name__icontains=search_query
+        )
+    else:
+        featured_artists = User.objects.filter(role='artist')
+
     artworks = Artwork.objects.all().order_by('-created_at')[:6]
-    featured_artists = User.objects.filter(role='artist')
-    return render(request, 'dashboards/client_dashboard.html', {'artworks': artworks, 'featured_artists': featured_artists})
+
+    return render(
+        request,
+        'dashboards/client_dashboard.html',
+        {
+            'artworks': artworks,
+            'featured_artists': featured_artists
+        }
+    )
+
+# ____________________________________________________________________________________________________________________
+
+
+@login_required
+def edit_profile(request):
+    user = request.user
+    if request.method == 'POST':
+        form = ProfileEditForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('artist_dashboard' if user.role=='artist' else 'client_dashboard')
+    else:
+        form = ProfileEditForm(instance=user)
+
+    return render(request, 'edit_profile.html', {'form': form})
+
+
+# __________________________________________________________________________________________________________________________
+
 
 @login_required
 def add_artworks(request):
@@ -201,17 +242,6 @@ def delete_artwork(request, artwork_id):
         'artwork': artwork
     })
 
+# ________________________________________________________________________________________________________________________
 
 
-@login_required
-def edit_profile(request):
-    user = request.user
-    if request.method == 'POST':
-        form = ProfileEditForm(request.POST, request.FILES, instance=user)
-        if form.is_valid():
-            form.save()
-            return redirect('artist_dashboard' if user.role=='artist' else 'client_dashboard')
-    else:
-        form = ProfileEditForm(instance=user)
-
-    return render(request, 'edit_profile.html', {'form': form})
