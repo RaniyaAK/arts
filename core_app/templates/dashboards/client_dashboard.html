@@ -58,7 +58,13 @@
                     {% endif %}
                 </div>
 
-                <h6 class="fw-semibold artist-name">{{ artist.name }}</h6>
+                <!-- ✅ CLICKABLE ARTIST NAME -->
+                <h6 class="fw-semibold artist-name">
+                    <a href="{% url 'artist_profile' artist.id %}"
+                       class="text-decoration-none text-dark">
+                        {{ artist.name }}
+                    </a>
+                </h6>
                 
             </div>
         </div>
@@ -88,15 +94,12 @@
         {% endfor %}
     </div>
 
-
-<!-- See All Artworks Button -->
+    <!-- See All Artworks Button -->
     <div class="text-end mt-3">
         <a href="{% url 'all_artworks' %}" class="btn bg-primary-color text-cream">
             See All →
         </a>
     </div>
-
- 
 
 </div>
 

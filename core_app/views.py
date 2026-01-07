@@ -252,3 +252,16 @@ def all_artworks(request):
 
     artworks = Artwork.objects.all().order_by('-created_at')
     return render(request, 'client_dashboard/all_artworks.html', {'artworks': artworks})
+
+from django.shortcuts import render, get_object_or_404
+from .models import User, Artwork   # adjust model names if needed
+
+def artist_profile(request, artist_id):
+    artist = get_object_or_404(User, id=artist_id, role='artist')
+    artworks = Artwork.objects.filter(artist=artist)
+
+    return render(request, 'artist_dashboard/artist_profile.html', {
+        'artist': artist,
+        'artworks': artworks,
+    })
+

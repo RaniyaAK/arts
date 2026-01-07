@@ -27,6 +27,9 @@ urlpatterns = [
 
     path('all_artworks/', views.all_artworks, name='all_artworks'), 
 
+    path('artist/<int:artist_id>/', views.artist_profile, name='artist_profile'),
+
+
 
 
 
