@@ -1,0 +1,12 @@
+{% extends "masterss.html" %}
+{% block content %}
+<div class="container py-5">
+    <h4>Upload Final Artwork</h4>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="final_artwork" required>
+        <button class="btn btn-success mt-3">Upload</button>
+    </form>
+</div>
+{% endblock %}

@@ -5,29 +5,40 @@
 {% block content %}
 <div class="container py-5">
 
-    <div class="text-center mb-4">
+    <!-- Artist Info -->
+    <div class="text-center mb-5">
         {% if artist.profile_image %}
             <img src="{{ artist.profile_image.url }}"
                  class="rounded-circle mb-3"
                  style="width:120px; height:120px; object-fit:cover;">
         {% endif %}
+
         <h3 class="text-primary-color">{{ artist.name }}</h3>
         <p class="text-muted">{{ artist.bio }}</p>
+
+        <!-- 🎨 COMMISSION BUTTON -->
+        {% if request.user.is_authenticated and request.user != artist %}
+            <a href="{% url 'request_commission' artist.id %}"
+               class="btn bg-primary-color text-cream mt-3 px-4 py-2 rounded-pill">
+                Request Commission 🎨
+            </a>
+        {% endif %}
     </div>
 
+    <!-- Artist Artworks -->
     <h4 class="text-primary-color mb-3">Artworks</h4>
 
     <div class="row">
         {% for artwork in artworks %}
         <div class="col-md-4 mb-4">
-            <div class="card shadow-sm">
+            <div class="card shadow-sm rounded-4">
                 <img src="{{ artwork.image.url }}"
-                     class="card-img-top"
+                     class="card-img-top rounded-4"
                      style="height:250px; object-fit:cover;">
             </div>
         </div>
         {% empty %}
-        <p>No artworks uploaded yet.</p>
+        <p class="text-muted">No artworks uploaded yet.</p>
         {% endfor %}
     </div>
 

@@ -24,29 +24,24 @@
     <!-- ARTWORK GALLERY -->
     <h4 class="text-primary-color mb-3">My Sample Artworks</h4>
 
-    <div class="row row-cols-1 row-cols-md-3 g-4">
+    <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
         {% for artwork in artworks %}
         <div class="col">
             <div class="card h-100 shadow-sm text-center artwork-card">
 
-                <!-- IMAGE -->
                 <img src="{{ artwork.image.url }}"
                      class="card-img-top"
-                     alt="Sample Artwork"
                      style="height:250px; object-fit:cover;">
 
                 <div class="card-body">
-
-                    <!-- UPLOAD DATE -->
                     <p class="text-muted small mb-2">
                         Uploaded on {{ artwork.created_at|date:"d M Y" }}
                     </p>
 
-                    <!-- DELETE BUTTON -->
-                    <a href="{% url 'delete_artwork' artwork.id %}" class="btn btn-outline-danger btn-sm mt-2">
+                    <a href="{% url 'delete_artwork' artwork.id %}"
+                       class="btn btn-outline-danger btn-sm mt-2">
                         Delete
                     </a>
-
                 </div>
             </div>
         </div>
@@ -59,27 +54,33 @@
         {% endfor %}
     </div>
 
+    <!-- BUTTON TO VIEW COMMISSION REQUESTS -->
+    <div class="text-center mb-5">
+        <a href="{% url 'artist_commissions' %}" class="btn btn-primary rounded-pill px-4 py-2">
+            View Commission Requests
+        </a>
+    </div>
+
 </div>
 
 <style>
-/* Card hover effect */
 .artwork-card:hover {
-    box-shadow: 0 12px 25px rgba(92, 58, 33, 0.25); 
+    box-shadow: 0 12px 25px rgba(92, 58, 33, 0.25);
     transform: translateY(-3px);
     transition: all 0.3s ease;
     background-color: #FFF7EC;
 }
 
-/* Delete button theme */
 .btn-outline-danger {
-    border-color: #8B5E3C; 
+    border-color: #8B5E3C;
     color: #8B5E3C;
 }
 
 .btn-outline-danger:hover {
-    background-color: #8B5E3C; 
-    color: #FFF8E7; 
+    background-color: #8B5E3C;
+    color: #FFF8E7;
     border-color: #8B5E3C;
 }
 </style>
+
 {% endblock %}

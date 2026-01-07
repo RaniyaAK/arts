@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+
 from .models import User, Artwork
+from .models import Commission
 
 
 class RegisterForm(UserCreationForm):
@@ -51,8 +53,7 @@ class ProfileCompletionForm(forms.ModelForm):
             'bio': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Short bio', 'rows': 3}),
         }
 
-from django import forms
-from .models import User
+
 
 class ProfileEditForm(forms.ModelForm):
     class Meta:
@@ -62,3 +63,10 @@ class ProfileEditForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Your Name'}),
             'bio': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Short bio', 'rows': 3}),
         }
+
+
+
+class CommissionRequestForm(forms.ModelForm):
+    class Meta:
+        model = Commission
+        fields = ['title', 'description', 'reference_image']

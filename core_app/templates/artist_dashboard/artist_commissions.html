@@ -1,0 +1,81 @@
+{% extends "masterss.html" %}
+
+{% block title %}Commission Requests | Paletra{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <!-- BACK BUTTON TOP-LEFT -->
+    <div class="mb-4">
+        <a href="{% url 'artist_dashboard' %}" class="btn btn-secondary btn-sm">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+    <h3 class="mb-4 text-center">Commission Requests</h3>
+
+    {% if commissions %}
+        {% for c in commissions %}
+        <div class="card mb-4 shadow-sm rounded-4 p-3">
+
+            <!-- CLIENT INFO -->
+            <div class="d-flex align-items-center mb-2">
+                {% if c.client.profile_image %}
+                    <img src="{{ c.client.profile_image.url }}"
+                         alt="{{ c.client.name }}"
+                         class="rounded-circle me-2"
+                         style="width:50px; height:50px; object-fit:cover;">
+                {% else %}
+                    <i class="fas fa-user-circle fa-2x text-primary-color me-2"></i>
+                {% endif %}
+                <h6 class="mb-0">{{ c.client.name }}</h6>
+            </div>
+
+            <!-- UNDERLINE / PARTITION -->
+            <hr style="border-top: 2px solid #8B5E3C; margin-bottom: 10px;">
+
+            <!-- COMMISSION TITLE & DESCRIPTION -->
+            <h6 class="mb-1">{{ c.title }}</h6>
+            <p class="text-muted small mb-2">{{ c.description }}</p>
+
+            <!-- REFERENCE IMAGE -->
+            {% if c.reference_image %}
+                <div class="mb-2">
+                    <img src="{{ c.reference_image.url }}"
+                         alt="Reference Image"
+                         class="img-fluid rounded"
+                         style="max-height:200px; object-fit:cover;">
+                </div>
+            {% endif %}
+
+            <!-- STATUS BADGE -->
+            <span class="badge bg-secondary mb-2">{{ c.status|title }}</span>
+
+            <!-- ACTION BUTTONS -->
+            {% if c.status == 'pending' %}
+                <div class="mt-2">
+                    <a href="{% url 'update_commission_status' c.id 'accepted' %}" class="btn btn-success btn-sm">
+                        Accept
+                    </a>
+                    <a href="{% url 'update_commission_status' c.id 'rejected' %}" class="btn btn-danger btn-sm">
+                        Reject
+                    </a>
+                </div>
+            {% endif %}
+
+            {% if c.status == 'accepted' %}
+                <div class="mt-2">
+                    <a href="{% url 'upload_final_artwork' c.id %}" class="btn btn-primary btn-sm">
+                        Upload Final Artwork
+                    </a>
+                </div>
+            {% endif %}
+
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-muted">No commission requests yet.</p>
+    {% endif %}
+
+</div>
+{% endblock %}
