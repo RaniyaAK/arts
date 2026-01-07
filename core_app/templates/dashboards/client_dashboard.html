@@ -45,11 +45,15 @@
 
                 <div class="mb-3">
                     {% if artist.profile_image %}
-                        <img src="{{ artist.profile_image.url }}"
-                             class="rounded-circle"
-                             style="width:80px;height:80px;object-fit:cover;">
+                        <a href="{% url 'artist_profile' artist.id %}">
+                            <img src="{{ artist.profile_image.url }}"
+                                 class="rounded-circle"
+                                 style="width:80px;height:80px;object-fit:cover;">
+                        </a>
                     {% else %}
-                        <i class="fas fa-user fa-3x text-primary-color"></i>
+                        <a href="{% url 'artist_profile' artist.id %}">
+                            <i class="fas fa-user fa-3x text-primary-color"></i>
+                        </a>
                     {% endif %}
                 </div>
 
@@ -78,14 +82,33 @@
         {% for artwork in artworks %}
         <div class="col-md-4 mb-4">
             <div class="card shadow-sm h-100 rounded-4">
+
                 <img src="{{ artwork.image.url }}"
                      class="card-img-top rounded-4"
                      style="height:250px;object-fit:cover;">
 
-                <div class="card-body">
-                    <p class="text-muted small mb-0">
-                        By {{ artwork.artist.name }}
-                    </p>
+                <div class="card-body d-flex align-items-center">
+                    
+                    <!-- Artist Info -->
+                    {% if artwork.artist.profile_image %}
+                        <a href="{% url 'artist_profile' artwork.artist.id %}">
+                            <img src="{{ artwork.artist.profile_image.url }}"
+                                 class="rounded-circle me-2"
+                                 style="width:35px; height:35px; object-fit:cover;">
+                        </a>
+                    {% else %}
+                        <a href="{% url 'artist_profile' artwork.artist.id %}">
+                            <i class="fas fa-user-circle fa-lg text-primary-color me-2"></i>
+                        </a>
+                    {% endif %}
+
+                    <div>
+                        <a href="{% url 'artist_profile' artwork.artist.id %}"
+                           class="text-decoration-none text-dark small">
+                            By {{ artwork.artist.name }}
+                        </a>
+                    </div>
+
                 </div>
             </div>
         </div>

@@ -4,7 +4,7 @@
 {% block content %}
 <div class="container py-5">
 
-    <!-- 🔙 BACK BUTTON (NEW) -->
+    <!-- 🔙 BACK BUTTON -->
     <div class="mb-4">
         <a href="{% url 'client_dashboard' %}" class="btn btn-outline-secondary rounded-pill">
             ← Back
@@ -32,13 +32,26 @@
             </div>
         </div>
 
+        <!-- COMMISSION TITLE & DESCRIPTION -->
         <h5 class="mt-2">{{ commission.title }}</h5>
         <p class="text-muted">{{ commission.description }}</p>
 
+        <!-- REFERENCE IMAGE -->
+        {% if commission.reference_image %}
+        <div class="mb-2">
+            <img src="{{ commission.reference_image.url }}"
+                 alt="Reference Image"
+                 class="img-fluid rounded"
+                 style="max-height:250px; object-fit:cover;">
+        </div>
+        {% endif %}
+
+        <!-- STATUS BADGE -->
         <span class="badge bg-secondary">
             {{ commission.status|title }}
         </span>
 
+        <!-- DOWNLOAD FINAL ARTWORK -->
         {% if commission.status == 'completed' and commission.final_artwork %}
         <div class="mt-2">
             <a href="{{ commission.final_artwork.url }}"
