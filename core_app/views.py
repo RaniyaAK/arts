@@ -12,6 +12,7 @@ from .forms import RegisterForm, LoginForm, ForgotPasswordForm, ResetPasswordFor
 from .forms import ArtworkForm, ProfileCompletionForm 
 from .forms import ProfileEditForm
 from .forms import CommissionRequestForm
+from .forms import SetAdvanceAmountForm
 
 from .models import Artwork, Activity
 from .models import Commission
@@ -357,3 +358,65 @@ def upload_final_artwork(request, commission_id):
         return redirect('artist_commissions')
 
     return render(request, 'artist_dashboard/upload_final_artwork.html', {'commission': commission})
+
+
+from django.utils import timezone
+from django.contrib import messages
+
+@login_required
+def set_advance_amount(request, commission_id):
+    commission = get_object_or_404(
+        Commission,
+        id=commission_id,
+        artist=request.user
+    )
+
+    if request.method == "POST":
+        amount = request.POST.get("advance_amount")
+
+        if amount:
+            commission.advance_amount = amount
+            commission.status = "accepted"
+            commission.accepted_at = timezone.now()
+            commission.save()
+
+            messages.success(request, "Advance amount set successfully.")
+            return redirect("artist_commissions")
+
+    return render(
+        request,
+        "artist_dashboard/set_advance_amount.html",
+        {"commission": commission}
+    )
+
+@login_required
+def set_advance_amount(request, commission_id):
+    commission = get_object_or_404(Commission, id=commission_id, artist=request.user)
+
+    if request.method == "POST":
+        form = SetAdvanceAmountForm(request.POST, instance=commission)
+        if form.is_valid():
+            commission = form.save(commit=False)
+            commission.status = 'accepted'   # Artist has accepted + requested advance
+            commission.accepted_at = timezone.now()
+            commission.save()
+            return redirect('artist_commissions')
+    else:
+        form = SetAdvanceAmountForm(instance=commission)
+
+    return render(request, 'artist_dashboard/set_advance_amount.html', {'form': form, 'commission': commission})
+
+@login_required
+def pay_advance(request, commission_id):
+    commission = get_object_or_404(Commission, id=commission_id, client=request.user)
+
+    if request.method == "POST":
+        # Here you will integrate Razorpay payment flow
+        # Once payment is successful:
+        commission.advance_paid = True
+        commission.status = 'advance_paid'
+        commission.advance_paid_at = timezone.now()
+        commission.save()
+        return redirect('client_commissions')
+
+    return render(request, 'client_dashboard/pay_advance.html', {'commission': commission})

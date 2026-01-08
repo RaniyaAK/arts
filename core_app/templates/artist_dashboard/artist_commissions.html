@@ -33,7 +33,6 @@
             <div class="d-flex align-items-center mb-2">
                 {% if c.client.profile_image %}
                     <img src="{{ c.client.profile_image.url }}"
-                         alt="{{ c.client.name }}"
                          class="rounded-circle me-2"
                          style="width:50px; height:50px; object-fit:cover;">
                 {% else %}
@@ -55,11 +54,9 @@
 
             <!-- REFERENCE IMAGE -->
             {% if c.reference_image %}
-                <div class="mb-2">
-                    <img src="{{ c.reference_image.url }}"
-                         class="img-fluid rounded"
-                         style="max-height:200px; object-fit:cover;">
-                </div>
+                <img src="{{ c.reference_image.url }}"
+                     class="img-fluid rounded mb-2"
+                     style="max-height:200px; object-fit:cover;">
             {% endif %}
 
             <!-- STATUS BADGE -->
@@ -79,13 +76,16 @@
                 {% endif %}
             </div>
 
-            <!-- REJECTION REASON -->
-            {% if c.status == 'rejected' and c.rejection_reason %}
-                <div class="mb-2">
-                    <small class="text-danger">
-                        Reason: {{ c.rejection_reason }}
-                    </small>
-                </div>
+            <!-- ADVANCE PAYMENT INFO -->
+            {% if c.advance_amount %}
+                <p class="small text-muted mb-2">
+                    <strong>Advance Amount:</strong> ₹{{ c.advance_amount }}
+                    {% if c.advance_paid %}
+                        <span class="text-success">(Paid)</span>
+                    {% else %}
+                        <span class="text-warning">(Pending)</span>
+                    {% endif %}
+                </p>
             {% endif %}
 
             <!-- ACTION BUTTONS -->
@@ -101,12 +101,29 @@
                         Reject
                     </a>
 
-                {% elif c.status == 'accepted' %}
+                {% elif c.status == 'accepted' and not c.advance_amount %}
+                    <!-- ARTIST SETS ADVANCE -->
+                    <form method="post"
+                          action="{% url 'set_advance_amount' c.id %}"
+                          class="d-flex gap-2 align-items-center">
+                        {% csrf_token %}
+                        <input type="number"
+                               name="advance_amount"
+                               class="form-control form-control-sm"
+                               placeholder="Advance ₹"
+                               min="1"
+                               required>
+                        <button class="btn btn-warning btn-sm">
+                            Request Advance
+                        </button>
+                    </form>
+
+                {% elif c.status == 'accepted' and c.advance_amount and not c.advance_paid %}
                     <span class="text-muted small">
-                        Waiting for advance payment from client
+                        Waiting for client to pay advance ₹{{ c.advance_amount }}
                     </span>
 
-                {% elif c.status == 'advance_paid' %}
+                {% elif c.status == 'advance_paid' or (c.advance_amount and c.advance_paid) %}
                     <a href="{% url 'update_commission_status' c.id 'in_progress' %}"
                        class="btn btn-info btn-sm text-dark">
                         Start Work
@@ -124,7 +141,6 @@
                     </span>
 
                 {% endif %}
-
             </div>
 
         </div>

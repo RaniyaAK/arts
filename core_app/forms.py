@@ -100,3 +100,12 @@ class CommissionRequestForm(forms.ModelForm):
             )
 
         return required_date
+    
+
+class SetAdvanceAmountForm(forms.ModelForm):
+    class Meta:
+        model = Commission
+        fields = ['advance_amount']
+        widgets = {
+            'advance_amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Advance ₹', 'min': 1})
+        }
