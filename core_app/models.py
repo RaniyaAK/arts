@@ -61,7 +61,6 @@ class Activity(models.Model):
     def __str__(self):
         return f"{self.artwork_title} - {self.action}"
 
-
 class Commission(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
@@ -78,17 +77,11 @@ class Commission(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     reference_image = models.ImageField(upload_to='commission_references/', blank=True, null=True)
-
-    # ✅ REQUIRED DATE
     required_date = models.DateField()
 
-    # ✅ ADVANCE PAYMENT (ADDED)
-    advance_amount = models.DecimalField(
-        max_digits=8,
-        decimal_places=2,
-        blank=True,
-        null=True
-    )
+    # ✅ NEW FIELDS
+    advance_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    advance_paid = models.BooleanField(default=False)  # True when client completes payment
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
 

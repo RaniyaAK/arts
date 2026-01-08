@@ -36,10 +36,17 @@ urlpatterns = [
     path('artist/commissions/', views.artist_commissions, name='artist_commissions'),
     path('commission/<int:commission_id>/<str:status>/', views.update_commission_status, name='update_commission_status'),
     path('commission/upload/<int:commission_id>/', views.upload_final_artwork, name='upload_final_artwork'),
+    path("commission/<int:commission_id>/set-advance/",views.set_advance_amount,name="set_advance_amount"),
 
-
-
+    path('artist/commissions/', views.artist_commissions, name='artist_commissions'),
+    path('artist/commission/<int:commission_id>/set_advance/', views.set_advance_amount, name='set_advance_amount'),
+    path('client/commission/<int:commission_id>/pay_advance/', views.pay_advance, name='pay_advance'),
+    path('artist/commission/<int:commission_id>/update/<str:status>/', views.update_commission_status, name='update_commission_status'),
 ]
+
+
+
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

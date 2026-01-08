@@ -1,0 +1,27 @@
+<!-- <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<button id="rzp-button">Pay ₹{{ commission.advance_amount }}</button>
+<script>
+var options = {
+    "key": "{{ RAZORPAY_KEY }}", // from settings
+    "amount": {{ commission.advance_amount|floatformat:2 }} * 100, // in paise
+    "currency": "INR",
+    "name": "Paletra Art Commission",
+    "description": "Advance Payment",
+    "handler": function (response){
+        // Call Django view via AJAX to mark advance_paid
+        fetch("{% url 'pay_advance' commission.id %}", {
+            method: "POST",
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({razorpay_payment_id: response.razorpay_payment_id})
+        }).then(res=>location.reload());
+    }
+};
+var rzp1 = new Razorpay(options);
+document.getElementById('rzp-button').onclick = function(e){
+    rzp1.open();
+    e.preventDefault();
+}
+</script> -->
