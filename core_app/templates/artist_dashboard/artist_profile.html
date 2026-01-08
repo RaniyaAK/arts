@@ -5,6 +5,13 @@
 {% block content %}
 <div class="container py-5">
 
+    <!-- ⬅ Back Button -->
+    <a href="{% url 'client_dashboard' %}"
+    class="btn btn-outline-dark rounded-pill">
+        ← Back
+    </a>
+
+
     <!-- Artist Info -->
     <div class="text-center mb-5">
         {% if artist.profile_image %}
