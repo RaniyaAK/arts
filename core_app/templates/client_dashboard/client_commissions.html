@@ -21,11 +21,17 @@
         {% if commission.accepted_at %}
             | Accepted: {{ commission.accepted_at|date:"M d, Y" }}
         {% endif %}
-        {% if commission.rejected_at %}
-            | Rejected: {{ commission.rejected_at|date:"M d, Y" }}
+        {% if commission.advance_paid_at %}
+            | Advance Paid: {{ commission.advance_paid_at|date:"M d, Y" }}
+        {% endif %}
+        {% if commission.in_progress_at %}
+            | In Progress: {{ commission.in_progress_at|date:"M d, Y" }}
         {% endif %}
         {% if commission.completed_at %}
             | Completed: {{ commission.completed_at|date:"M d, Y" }}
+        {% endif %}
+        {% if commission.rejected_at %}
+            | Rejected: {{ commission.rejected_at|date:"M d, Y" }}
         {% endif %}
     </div>
 
@@ -40,13 +46,11 @@
             {% else %}
                 <i class="fas fa-user-circle fa-2x text-muted me-3"></i>
             {% endif %}
-
             <div>
                 <strong>{{ commission.artist.name }}</strong>
             </div>
         </div>
 
-        <!-- 🔽 DIVIDER -->
         <hr class="my-3">
 
         <!-- COMMISSION TITLE & DESCRIPTION -->
@@ -64,17 +68,43 @@
         {% endif %}
 
         <!-- STATUS BADGE -->
-        <div class="mt-2">
+        <div class="mt-2 mb-2">
             {% if commission.status == 'completed' %}
                 <span class="badge bg-success">Completed ✓</span>
+            {% elif commission.status == 'in_progress' %}
+                <span class="badge bg-info text-dark">In Progress</span>
+            {% elif commission.status == 'advance_paid' %}
+                <span class="badge bg-warning text-dark">Advance Paid</span>
             {% elif commission.status == 'accepted' %}
                 <span class="badge bg-primary">Accepted</span>
             {% elif commission.status == 'rejected' %}
                 <span class="badge bg-danger">Rejected ✕</span>
             {% else %}
-                <span class="badge bg-warning text-dark">Pending</span>
+                <span class="badge bg-secondary">Pending</span>
             {% endif %}
         </div>
+
+        <!-- ADVANCE PAYMENT INFO -->
+        {% if commission.advance_amount %}
+        <div class="mb-2">
+            <strong>Advance Requested:</strong> ₹{{ commission.advance_amount }}
+            {% if commission.advance_paid %}
+                <span class="text-success">(Paid)</span>
+            {% else %}
+                <span class="text-warning">(Pending)</span>
+            {% endif %}
+        </div>
+
+        <!-- PAY ADVANCE BUTTON (Razorpay placeholder) -->
+        {% if not commission.advance_paid %}
+            <form method="POST" action="{% url 'pay_advance' commission.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-warning btn-sm rounded-pill">
+                    Pay Advance ₹{{ commission.advance_amount }}
+                </button>
+            </form>
+        {% endif %}
+        {% endif %}
 
         <!-- REJECTED REASON -->
         {% if commission.status == 'rejected' and commission.rejection_reason %}
@@ -102,7 +132,8 @@
     </div>
 
     {% empty %}
-    <p>No commission requests yet.</p>
+    <p class="text-muted text-center">No commission requests yet.</p>
     {% endfor %}
+
 </div>
 {% endblock %}
