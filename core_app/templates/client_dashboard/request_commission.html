@@ -25,36 +25,82 @@
 
             <div>
                 <h5 class="mb-0">{{ artist.name }}</h5>
-                <small class="text-muted">Artist</small>
+
+                {% if artist.bio %}
+                    <small class="text-muted d-block mt-1">
+                        {{ artist.bio|truncatechars:120 }}
+                    </small>
+                {% endif %}
             </div>
         </div>
     </div>
-
-    <!-- <h3 class="mb-4">Request Artwork from {{ artist.name }}</h3> -->
 
     <!-- 🖌️ COMMISSION FORM -->
     <form method="POST" enctype="multipart/form-data"
           class="card p-4 shadow-sm rounded-4">
         {% csrf_token %}
 
+        <!-- TITLE -->
         <div class="mb-3">
             <label class="form-label">Artwork Title</label>
             {{ form.title }}
+            {% if form.title.errors %}
+                <div class="text-danger small">
+                    {{ form.title.errors.0 }}
+                </div>
+            {% endif %}
         </div>
 
+        <!-- DESCRIPTION -->
         <div class="mb-3">
             <label class="form-label">Description</label>
             {{ form.description }}
+            {% if form.description.errors %}
+                <div class="text-danger small">
+                    {{ form.description.errors.0 }}
+                </div>
+            {% endif %}
         </div>
 
+        <!-- REQUIRED DATE -->
+        <div class="mb-3">
+            <label class="form-label">Required Date</label>
+            {{ form.required_date }}
+            {% if form.required_date.errors %}
+                <div class="text-danger small">
+                    {{ form.required_date.errors.0 }}
+                </div>
+            {% endif %}
+            <small class="text-muted">
+                Select a future date for delivery.
+            </small>
+        </div>
+
+        <!-- REFERENCE IMAGE -->
         <div class="mb-3">
             <label class="form-label">Reference Image (optional)</label>
             {{ form.reference_image }}
+            {% if form.reference_image.errors %}
+                <div class="text-danger small">
+                    {{ form.reference_image.errors.0 }}
+                </div>
+            {% endif %}
         </div>
 
-        <button type="submit" class="btn bg-primary-color text-cream">
+        <button type="submit"
+                class="btn bg-primary-color text-cream rounded-pill px-4">
             Submit Request
         </button>
     </form>
+
 </div>
+
+<!-- 📅 FRONTEND FUTURE DATE RESTRICTION -->
+<script>
+    const dateInput = document.querySelector('input[type="date"]');
+    if (dateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+    }
+</script>
 {% endblock %}

@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.utils import timezone
 
 from .models import User, Artwork
 from .models import Commission
@@ -65,8 +66,37 @@ class ProfileEditForm(forms.ModelForm):
         }
 
 
+class CommissionRequestForm(forms.ModelForm):
+    class Meta:
+        model = Commission
+        fields = ['title', 'description', 'reference_image', 'required_date']
+        widgets = {
+            'required_date': forms.DateInput(
+                attrs={'type': 'date', 'class': 'form-control'}
+            )
+        }
 
 class CommissionRequestForm(forms.ModelForm):
     class Meta:
         model = Commission
-        fields = ['title', 'description', 'reference_image']
+        fields = ['title', 'description', 'reference_image', 'required_date']
+        widgets = {
+            'required_date': forms.DateInput(
+                attrs={
+                    'type': 'date',
+                    'class': 'form-control',
+                }
+            )
+        }
+
+    # ✅ FUTURE DATE VALIDATION
+    def clean_required_date(self):
+        required_date = self.cleaned_data.get('required_date')
+        today = timezone.now().date()
+
+        if required_date <= today:
+            raise forms.ValidationError(
+                "Required date must be a future date."
+            )
+
+        return required_date

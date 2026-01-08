@@ -4,18 +4,20 @@ from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import User
 
+
 class User(AbstractUser):
     ROLE_CHOICES = [
         ('artist', 'Artist'),
         ('client', 'Client'),
     ]
 
-    email = models.EmailField(unique=True) 
+    email = models.EmailField(unique=True)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     name = models.CharField(max_length=150, blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
     profile_image = models.ImageField(upload_to='profiles/', blank=True, null=True)
     is_profile_complete = models.BooleanField(default=False)
+
 
 # Artwork Model
 CATEGORY_CHOICES = [
@@ -25,6 +27,7 @@ CATEGORY_CHOICES = [
     ('Sketch', 'Sketch'),
     ('Other', 'Other'),
 ]
+
 
 class Artwork(models.Model):
     artist = models.ForeignKey(
@@ -57,14 +60,13 @@ class Activity(models.Model):
 
     def __str__(self):
         return f"{self.artwork_title} - {self.action}"
-    
-
 
 
 class Commission(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('accepted', 'Accepted'),
+        ('advance_paid', 'Advance Paid'),
         ('in_progress', 'In Progress'),
         ('completed', 'Completed'),
         ('rejected', 'Rejected'),
@@ -77,11 +79,28 @@ class Commission(models.Model):
     description = models.TextField()
     reference_image = models.ImageField(upload_to='commission_references/', blank=True, null=True)
 
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
-    final_artwork = models.ImageField(upload_to='completed_artworks/', blank=True, null=True)
+    # ✅ REQUIRED DATE
+    required_date = models.DateField()
 
+    # ✅ ADVANCE PAYMENT (ADDED)
+    advance_amount = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        blank=True,
+        null=True
+    )
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+
+    # DATE TRACKING
     created_at = models.DateTimeField(auto_now_add=True)
+    accepted_at = models.DateTimeField(blank=True, null=True)
+    advance_paid_at = models.DateTimeField(blank=True, null=True)
+    in_progress_at = models.DateTimeField(blank=True, null=True)
+    completed_at = models.DateTimeField(blank=True, null=True)
+    rejected_at = models.DateTimeField(blank=True, null=True)
+
+    rejection_reason = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.title} - {self.client.username}"
-

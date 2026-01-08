@@ -5,6 +5,8 @@ from django.http import HttpResponseForbidden
 from django.views.decorators.cache import never_cache
 from django.http import JsonResponse
 from django.db.models import Q
+from django.utils import timezone
+
 
 from .forms import RegisterForm, LoginForm, ForgotPasswordForm, ResetPasswordForm
 from .forms import ArtworkForm, ProfileCompletionForm 
@@ -13,6 +15,7 @@ from .forms import CommissionRequestForm
 
 from .models import Artwork, Activity
 from .models import Commission
+
 
 User = get_user_model()
 
@@ -285,7 +288,7 @@ def request_commission(request, artist_id):
             commission.client = request.user
             commission.artist = artist
             commission.save()
-            return redirect('my_commissions')
+            return redirect('client_commissions')
     else:
         form = CommissionRequestForm()
 
@@ -310,12 +313,37 @@ def artist_commissions(request):
         'commissions': commissions
     })
 
+
+
 @login_required
 def update_commission_status(request, commission_id, status):
     commission = get_object_or_404(Commission, id=commission_id, artist=request.user)
-    commission.status = status
+    now = timezone.now()
+
+    if status == 'accepted':
+        commission.status = 'accepted'
+        commission.accepted_at = now
+
+    elif status == 'advance_paid':
+        commission.status = 'advance_paid'
+        commission.advance_paid_at = now
+
+    elif status == 'in_progress':
+        commission.status = 'in_progress'
+        commission.in_progress_at = now
+
+    elif status == 'completed':
+        commission.status = 'completed'
+        commission.completed_at = now
+
+    elif status == 'rejected':
+        commission.status = 'rejected'
+        commission.rejected_at = now
+        commission.rejection_reason = request.GET.get('reason', '')
+
     commission.save()
     return redirect('artist_commissions')
+
 
 @login_required
 def upload_final_artwork(request, commission_id):
@@ -324,6 +352,7 @@ def upload_final_artwork(request, commission_id):
     if request.method == 'POST':
         commission.final_artwork = request.FILES['final_artwork']
         commission.status = 'completed'
+        commission.completed_at = timezone.now()
         commission.save()
         return redirect('artist_commissions')
 
