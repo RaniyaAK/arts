@@ -3,22 +3,62 @@
 {% block title %}Commission Requests | Paletra{% endblock %}
 
 {% block content %}
+<style>
+    .commission-card {
+        border-radius: 20px;
+        border: none;
+        background: #ffffff;
+    }
+
+    .client-img {
+        width: 48px;
+        height: 48px;
+        object-fit: cover;
+    }
+
+    .reference-img {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 14px;
+        border: 1px solid #e5e5e5;
+        background: #f9f9f9;
+    }
+
+    .timeline {
+        font-size: 12px;
+        color: #888;
+    }
+
+    .badge {
+        padding: 6px 12px;
+        border-radius: 50px;
+        font-size: 12px;
+    }
+
+    .divider {
+        border-top: 1.5px solid #e0c9b2;
+        margin: 10px 0;
+    }
+</style>
+
 <div class="container py-5">
 
     <!-- BACK BUTTON -->
     <div class="mb-4">
-        <a href="{% url 'artist_dashboard' %}" class="btn btn-secondary btn-sm">
+        <a href="{% url 'artist_dashboard' %}"
+           class="btn btn-outline-secondary btn-sm rounded-pill">
             ← Back to Dashboard
         </a>
     </div>
 
-    <h3 class="mb-4 text-center">Commission Requests</h3>
+    <h3 class="mb-4 text-center fw-semibold">Commission Requests</h3>
 
     {% if commissions %}
         {% for c in commissions %}
 
-        <!-- DATES / TIMELINE -->
-        <div class="mb-1 text-end small text-muted">
+        <!-- TIMELINE -->
+        <div class="timeline text-end mb-1">
             Requested: {{ c.created_at|date:"M d, Y" }}
             {% if c.accepted_at %} | Accepted: {{ c.accepted_at|date:"M d, Y" }}{% endif %}
             {% if c.advance_paid_at %} | Advance Paid: {{ c.advance_paid_at|date:"M d, Y" }}{% endif %}
@@ -27,35 +67,38 @@
             {% if c.rejected_at %} | Rejected: {{ c.rejected_at|date:"M d, Y" }}{% endif %}
         </div>
 
-        <div class="card mb-4 shadow-sm rounded-4 p-3">
+        <div class="card commission-card shadow-sm p-4 mb-4">
 
             <!-- CLIENT INFO -->
-            <div class="d-flex align-items-center mb-2">
+            <div class="d-flex align-items-center gap-2">
                 {% if c.client.profile_image %}
                     <img src="{{ c.client.profile_image.url }}"
-                         class="rounded-circle me-2"
-                         style="width:50px; height:50px; object-fit:cover;">
+                         class="rounded-circle client-img">
                 {% else %}
-                    <i class="fas fa-user-circle fa-2x text-primary-color me-2"></i>
+                    <i class="fas fa-user-circle fa-2x text-secondary"></i>
                 {% endif %}
-                <h6 class="mb-0">{{ c.client.name }}</h6>
+                <h6 class="mb-0 fw-semibold">{{ c.client.name }}</h6>
             </div>
 
-            <hr style="border-top: 2px solid #8B5E3C;">
+            <div class="divider"></div>
 
             <!-- COMMISSION DETAILS -->
-            <h6 class="mb-1">{{ c.title }}</h6>
+            <h6 class="fw-semibold mb-1">{{ c.title }}</h6>
             <p class="text-muted small mb-2">{{ c.description }}</p>
 
-            <p class="small mb-2">
-                <strong>Required Date:</strong> {{ c.required_date|date:"M d, Y" }}
+            <p class="small mb-3">
+                <strong>Required Date:</strong>
+                {{ c.required_date|date:"M d, Y" }}
             </p>
 
             <!-- REFERENCE IMAGE -->
             {% if c.reference_image %}
-                <img src="{{ c.reference_image.url }}"
-                     class="img-fluid rounded mb-2"
-                     style="max-height:200px; object-fit:cover;">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <img src="{{ c.reference_image.url }}" class="reference-img">
+                    <small class="text-muted">
+                        Reference image provided by client
+                    </small>
+                </div>
             {% endif %}
 
             <!-- STATUS BADGE -->
@@ -75,10 +118,10 @@
                 {% endif %}
             </div>
 
-            <!-- ADVANCE PAYMENT INFO -->
+            <!-- ADVANCE INFO -->
             {% if c.advance_amount %}
                 <p class="small text-muted mb-2">
-                    <strong>Advance Amount:</strong> ₹{{ c.advance_amount }}
+                    <strong>Advance:</strong> ₹{{ c.advance_amount }}
                     {% if c.status == 'advance_paid' %}
                         <span class="text-success">(Paid)</span>
                     {% else %}
@@ -93,41 +136,62 @@
                 {% if c.status == 'pending' %}
                     <a href="{% url 'update_commission_status' c.id 'accepted' %}"
                        class="btn btn-success btn-sm">Accept</a>
+
                     <a href="{% url 'update_commission_status' c.id 'rejected' %}"
                        class="btn btn-danger btn-sm">Reject</a>
 
                 {% elif c.status == 'accepted' and not c.advance_amount %}
-                    <form method="post" action="{% url 'set_advance_amount' c.id %}" class="d-flex gap-2 align-items-center">
+                    <form method="post"
+                          action="{% url 'set_advance_amount' c.id %}"
+                          class="d-flex gap-2">
                         {% csrf_token %}
-                        <input type="number" name="advance_amount" class="form-control form-control-sm"
-                               placeholder="Advance ₹" min="1" required>
-                        <button class="btn btn-warning btn-sm">Request Advance</button>
+                        <input type="number"
+                               name="advance_amount"
+                               class="form-control form-control-sm"
+                               placeholder="Advance ₹"
+                               min="1"
+                               required>
+                        <button class="btn btn-warning btn-sm">
+                            Request Advance
+                        </button>
                     </form>
 
-                {% elif c.status == 'accepted' and c.advance_amount and c.status != 'advance_paid' %}
-                    <span class="text-muted small">
-                        Waiting for client to pay advance ₹{{ c.advance_amount }}
+                {% elif c.status == 'accepted' and c.advance_amount and not c.advance_paid %}
+                    <span class="small text-muted">
+                        Waiting for client to pay advance via PayPal
                     </span>
 
                 {% elif c.status == 'advance_paid' %}
                     <a href="{% url 'update_commission_status' c.id 'in_progress' %}"
-                       class="btn btn-info btn-sm text-dark">Start Work</a>
+                       class="btn btn-info btn-sm text-dark">
+                        Start Work
+                    </a>
 
                 {% elif c.status == 'in_progress' %}
                     <a href="{% url 'update_commission_status' c.id 'completed' %}"
-                       class="btn btn-success btn-sm">Mark as Completed</a>
+                       class="btn btn-success btn-sm">
+                        Mark as Completed
+                    </a>
 
                 {% elif c.status == 'completed' %}
-                    <span class="text-success small">Work delivered successfully</span>
+                    <span class="text-success small">
+                        Work delivered successfully
+                    </span>
+
+                {% elif c.status == 'rejected' %}
+                    <span class="text-danger small">
+                        Commission was rejected
+                    </span>
 
                 {% endif %}
-
             </div>
 
         </div>
         {% endfor %}
     {% else %}
-        <p class="text-muted text-center">No commission requests yet.</p>
+        <p class="text-muted text-center">
+            No commission requests yet.
+        </p>
     {% endif %}
 
 </div>

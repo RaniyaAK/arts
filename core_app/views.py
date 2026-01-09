@@ -6,7 +6,9 @@ from django.views.decorators.cache import never_cache
 from django.http import JsonResponse
 from django.db.models import Q
 from django.utils import timezone
-
+from django.contrib import messages
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
 
 from .forms import RegisterForm, LoginForm, ForgotPasswordForm, ResetPasswordForm
 from .forms import ArtworkForm, ProfileCompletionForm 
@@ -16,6 +18,18 @@ from .forms import SetAdvanceAmountForm
 
 from .models import Artwork, Activity
 from .models import Commission
+
+import razorpay
+
+import paypalrestsdk
+from django.shortcuts import redirect
+from django.conf import settings
+
+paypalrestsdk.configure({
+    "mode": settings.PAYPAL_MODE,
+    "client_id": settings.PAYPAL_CLIENT_ID,
+    "client_secret": settings.PAYPAL_CLIENT_SECRET
+})
 
 
 User = get_user_model()
@@ -124,33 +138,42 @@ def forgot_password(request):
     return render(request, 'forgot_password.html')
 
 
+# ------------------------ Reset Password Fix ------------------------
 def reset_password(request, email):
     user = User.objects.filter(email=email).first()
     if not user:
+        messages.error(request, "Invalid email.")
         return redirect('forgot_password')
 
     if request.method == 'POST':
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
 
-        if password == confirm_password:
-            user.set_password(password)
-            user.save()
-            login(request, user)
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+            return render(request, 'reset_password.html')
 
-            if not user.is_profile_complete:
-                return redirect('complete_profile')
-            if user.role == 'artist':
-                return redirect('artist_dashboard')
-            elif user.role == 'client':
-                return redirect('client_dashboard')
+        user.set_password(password)
+        user.save()
+        login(request, user)
+
+        if not user.is_profile_complete:
+            return redirect('complete_profile')
+        if user.role == 'artist':
+            return redirect('artist_dashboard')
+        elif user.role == 'client':
+            return redirect('client_dashboard')
 
     return render(request, 'reset_password.html')
-
 #  ________________________________________________________________________________________________________________________
 
+from django.db.models import Sum
 
-# Artwork Views (unchanged)
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
+from .models import Artwork, Activity, Commission
+
 @login_required
 def artist_dashboard(request):
     if request.user.role != 'artist':
@@ -162,15 +185,20 @@ def artist_dashboard(request):
     # Recent activities
     activities = Activity.objects.filter(user=request.user).order_by('-created_at')[:10]
 
-    # 🔹 Commissions requested to this artist
+    # Commissions requested to this artist
     commissions = Commission.objects.filter(artist=request.user).order_by('-created_at')
+
+    # ✅ Total revenue: sum of advance_amount for commissions where advance_paid=True
+    total_revenue = commissions.filter(advance_paid=True).aggregate(total=Sum('advance_amount'))['total'] or 0
 
     return render(request, 'dashboards/artist_dashboard.html', {
         'artworks': artworks,
         'activities': activities,
         'numbers': range(1, 4),
-        'commissions': commissions,  # ✅ Pass commissions here
+        'commissions': commissions,
+        'total_revenue': total_revenue,  # Pass revenue to template
     })
+
 
 
 @login_required
@@ -221,7 +249,7 @@ def edit_profile(request):
 
 # __________________________________________________________________________________________________________________________
 
-
+# ------------------------ Add Artwork ------------------------
 @login_required
 def add_artworks(request):
     if request.method == 'POST':
@@ -231,9 +259,10 @@ def add_artworks(request):
             artwork.artist = request.user
             artwork.save()
 
+            # Log activity with actual artwork title
             Activity.objects.create(
                 user=request.user,
-                artwork_title='Sample Artwork',
+                artwork_title=artwork.title,
                 action='added'
             )
 
@@ -288,7 +317,11 @@ def request_commission(request, artist_id):
             commission = form.save(commit=False)
             commission.client = request.user
             commission.artist = artist
+            # Set default advance amount if empty
+            if not commission.advance_amount:
+                commission.advance_amount = 0  # or some default like 500
             commission.save()
+            messages.success(request, "Commission requested successfully!")
             return redirect('client_commissions')
     else:
         form = CommissionRequestForm()
@@ -316,54 +349,125 @@ def artist_commissions(request):
 
 
 
+# ------------------------ Update Commission Status ------------------------
 @login_required
 def update_commission_status(request, commission_id, status):
     commission = get_object_or_404(Commission, id=commission_id, artist=request.user)
     now = timezone.now()
 
+    # Enforce workflow order:
+    # pending → accepted → advance_paid → in_progress → completed
+    # rejected can happen from pending or accepted only
     if status == 'accepted':
+        if commission.status != 'pending':
+            messages.error(request, "Cannot accept this commission at this stage.")
+            return redirect('artist_commissions')
         commission.status = 'accepted'
         commission.accepted_at = now
 
     elif status == 'advance_paid':
+        if commission.status != 'accepted':
+            messages.error(request, "Cannot mark advance as paid before accepting the commission.")
+            return redirect('artist_commissions')
         commission.status = 'advance_paid'
         commission.advance_paid_at = now
 
     elif status == 'in_progress':
+        if commission.status != 'advance_paid':
+            messages.error(request, "Cannot start work before advance is paid.")
+            return redirect('artist_commissions')
         commission.status = 'in_progress'
         commission.in_progress_at = now
 
     elif status == 'completed':
+        if commission.status != 'in_progress':
+            messages.error(request, "Cannot complete work before starting it.")
+            return redirect('artist_commissions')
         commission.status = 'completed'
         commission.completed_at = now
 
     elif status == 'rejected':
+        if commission.status not in ['pending', 'accepted']:
+            messages.error(request, "Cannot reject a commission at this stage.")
+            return redirect('artist_commissions')
         commission.status = 'rejected'
         commission.rejected_at = now
-        commission.rejection_reason = request.GET.get('reason', '')
+        # Get reason from POST to match form submission
+        commission.rejection_reason = request.POST.get('reason', '')
 
     commission.save()
+    messages.success(request, f"Commission status updated to {commission.status}.")
     return redirect('artist_commissions')
 
+@login_required
+def pay_advance(request, commission_id):
+    commission = get_object_or_404(Commission, id=commission_id, client=request.user)
+    
+    if not commission.advance_amount or commission.advance_paid:
+        messages.info(request, "Advance already paid or not set.")
+        return redirect("client_commissions")
+
+    payment = paypalrestsdk.Payment({
+        "intent": "sale",
+        "payer": {"payment_method": "paypal"},
+        "redirect_urls": {
+            "return_url": request.build_absolute_uri(f"/commission/paypal/success/{commission.id}/"),
+            "cancel_url": request.build_absolute_uri("/client-commissions/")
+        },
+        "transactions": [{
+            "item_list": {
+                "items": [{
+                    "name": commission.title,
+                    "sku": f"commission_{commission.id}",
+                    "price": str(commission.advance_amount),
+                    "currency": "USD",
+
+                    "quantity": 1
+                }]
+            },
+            "amount": {
+            "total": str(commission.advance_amount),
+            "currency": "USD"
+
+            },
+            "description": f"Advance payment for commission {commission.title}"
+        }]
+    })
+
+    if payment.create():
+        for link in payment.links:
+            if link.rel == "approval_url":
+                return redirect(link.href)
+    else:
+        messages.error(request, "Error creating PayPal payment.")
+        return redirect("client_commissions")
 
 @login_required
-def upload_final_artwork(request, commission_id):
-    commission = get_object_or_404(Commission, id=commission_id, artist=request.user)
+def paypal_success(request, commission_id):
+    commission = get_object_or_404(Commission, id=commission_id, client=request.user)
+    payment_id = request.GET.get('paymentId')
+    payer_id = request.GET.get('PayerID')
 
-    if request.method == 'POST':
-        commission.final_artwork = request.FILES['final_artwork']
-        commission.status = 'completed'
-        commission.completed_at = timezone.now()
+    payment = paypalrestsdk.Payment.find(payment_id)
+
+    if payment.execute({"payer_id": payer_id}):
+        commission.advance_paid = True
+        commission.status = "advance_paid"
+        commission.advance_paid_at = timezone.now()
         commission.save()
-        return redirect('artist_commissions')
+        messages.success(request, "Advance payment successful via PayPal!")
+    else:
+        messages.error(request, "Payment failed. Please try again.")
 
-    return render(request, 'artist_dashboard/upload_final_artwork.html', {'commission': commission})
+    return redirect("client_commissions")
 
 
-from django.utils import timezone
-from django.contrib import messages
+
+from django.views.decorators.http import require_POST
+
 
 @login_required
+@require_POST
 def set_advance_amount(request, commission_id):
     commission = get_object_or_404(
         Commission,
@@ -371,52 +475,16 @@ def set_advance_amount(request, commission_id):
         artist=request.user
     )
 
-    if request.method == "POST":
-        amount = request.POST.get("advance_amount")
+    advance_amount = request.POST.get("advance_amount")
 
-        if amount:
-            commission.advance_amount = amount
-            commission.status = "accepted"
-            commission.accepted_at = timezone.now()
-            commission.save()
-
-            messages.success(request, "Advance amount set successfully.")
-            return redirect("artist_commissions")
-
-    return render(
-        request,
-        "artist_dashboard/set_advance_amount.html",
-        {"commission": commission}
-    )
-
-@login_required
-def set_advance_amount(request, commission_id):
-    commission = get_object_or_404(Commission, id=commission_id, artist=request.user)
-
-    if request.method == "POST":
-        form = SetAdvanceAmountForm(request.POST, instance=commission)
-        if form.is_valid():
-            commission = form.save(commit=False)
-            commission.status = 'accepted'   # Artist has accepted + requested advance
-            commission.accepted_at = timezone.now()
-            commission.save()
-            return redirect('artist_commissions')
-    else:
-        form = SetAdvanceAmountForm(instance=commission)
-
-    return render(request, 'artist_dashboard/set_advance_amount.html', {'form': form, 'commission': commission})
-
-@login_required
-def pay_advance(request, commission_id):
-    commission = get_object_or_404(Commission, id=commission_id, client=request.user)
-
-    if request.method == "POST":
-        # Here you will integrate Razorpay payment flow
-        # Once payment is successful:
-        commission.advance_paid = True
-        commission.status = 'advance_paid'
-        commission.advance_paid_at = timezone.now()
+    if advance_amount:
+        commission.advance_amount = advance_amount
         commission.save()
-        return redirect('client_commissions')
 
-    return render(request, 'client_dashboard/pay_advance.html', {'commission': commission})
+        messages.success(request, "Advance amount requested successfully.")
+    else:
+        messages.error(request, "Please enter a valid advance amount.")
+
+    return redirect("artist_commissions")
+
+
