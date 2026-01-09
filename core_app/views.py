@@ -108,11 +108,12 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            # No profile check here — only after registration
             if user.role == 'artist':
                 return redirect('artist_dashboard')
             elif user.role == 'client':
                 return redirect('client_dashboard')
+        else:
+            messages.error(request, "Invalid username or password.")
 
     return render(request, 'login.html', {'form': form})
 
