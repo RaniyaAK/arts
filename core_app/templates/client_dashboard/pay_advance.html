@@ -1,27 +1,43 @@
-<!-- <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<button id="rzp-button">Pay ₹{{ commission.advance_amount }}</button>
-<script>
-var options = {
-    "key": "{{ RAZORPAY_KEY }}", // from settings
-    "amount": {{ commission.advance_amount|floatformat:2 }} * 100, // in paise
-    "currency": "INR",
-    "name": "Paletra Art Commission",
-    "description": "Advance Payment",
-    "handler": function (response){
-        // Call Django view via AJAX to mark advance_paid
-        fetch("{% url 'pay_advance' commission.id %}", {
-            method: "POST",
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
-                'Content-Type': 'application/json'
+@login_required
+def pay_advance_paypal(request, commission_id):
+    commission = get_object_or_404(Commission, id=commission_id, client=request.user)
+    
+    if not commission.advance_amount or commission.advance_paid:
+        messages.info(request, "Advance already paid or not set.")
+        return redirect("client_commissions")
+
+    payment = paypalrestsdk.Payment({
+        "intent": "sale",
+        "payer": {
+            "payment_method": "paypal"
+        },
+        "redirect_urls": {
+            "return_url": request.build_absolute_uri(f"/commission/paypal/success/{commission.id}/"),
+            "cancel_url": request.build_absolute_uri("/client-commissions/")
+        },
+        "transactions": [{
+            "item_list": {
+                "items": [{
+                    "name": commission.title,
+                    "sku": f"commission_{commission.id}",
+                    "price": str(commission.advance_amount),
+                    "currency": "INR",
+                    "quantity": 1
+                }]
             },
-            body: JSON.stringify({razorpay_payment_id: response.razorpay_payment_id})
-        }).then(res=>location.reload());
-    }
-};
-var rzp1 = new Razorpay(options);
-document.getElementById('rzp-button').onclick = function(e){
-    rzp1.open();
-    e.preventDefault();
-}
-</script> -->
+            "amount": {
+                "total": str(commission.advance_amount),
+                "currency": "INR"
+            },
+            "description": f"Advance payment for commission {commission.title}"
+        }]
+    })
+
+    if payment.create():
+        # Redirect user to PayPal approval URL
+        for link in payment.links:
+            if link.rel == "approval_url":
+                return redirect(link.href)
+    else:
+        messages.error(request, "Error creating PayPal payment.")
+        return redirect("client_commissions")

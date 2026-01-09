@@ -66,15 +66,6 @@ class ProfileEditForm(forms.ModelForm):
         }
 
 
-class CommissionRequestForm(forms.ModelForm):
-    class Meta:
-        model = Commission
-        fields = ['title', 'description', 'reference_image', 'required_date']
-        widgets = {
-            'required_date': forms.DateInput(
-                attrs={'type': 'date', 'class': 'form-control'}
-            )
-        }
 
 class CommissionRequestForm(forms.ModelForm):
     class Meta:
@@ -109,3 +100,9 @@ class SetAdvanceAmountForm(forms.ModelForm):
         widgets = {
             'advance_amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Advance ₹', 'min': 1})
         }
+
+    def clean_advance_amount(self):
+        amount = self.cleaned_data.get('advance_amount')
+        if amount is None or amount <= 0:
+            raise forms.ValidationError("Advance amount must be greater than zero.")
+        return amount

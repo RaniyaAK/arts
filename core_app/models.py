@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.contrib.auth.models import User
 
 
 class User(AbstractUser):
@@ -61,6 +60,7 @@ class Activity(models.Model):
     def __str__(self):
         return f"{self.artwork_title} - {self.action}"
 
+
 class Commission(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
@@ -71,6 +71,13 @@ class Commission(models.Model):
         ('rejected', 'Rejected'),
     ]
 
+    # ✅ STATUS FIELD (FIX)
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='pending'
+    )
+
     client = models.ForeignKey(User, on_delete=models.CASCADE, related_name='client_commissions')
     artist = models.ForeignKey(User, on_delete=models.CASCADE, related_name='artist_commissions')
 
@@ -79,11 +86,14 @@ class Commission(models.Model):
     reference_image = models.ImageField(upload_to='commission_references/', blank=True, null=True)
     required_date = models.DateField()
 
-    # ✅ NEW FIELDS
-    advance_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    advance_paid = models.BooleanField(default=False)  # True when client completes payment
-
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    # 💰 PAYMENT
+    advance_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0.00,
+        validators=[MinValueValidator(0)]
+    )
+    advance_paid = models.BooleanField(default=False)
 
     # DATE TRACKING
     created_at = models.DateTimeField(auto_now_add=True)

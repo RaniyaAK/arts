@@ -124,3 +124,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+
+
+PAYPAL_MODE = 'sandbox'  # 'live' when ready for production
+PAYPAL_CLIENT_ID = 'ARAw_K-RAZovaIHtm9-LENWenEzMXfeRCHYee2uAnv-2MTE2FYr3zlt-ycdrVJul5Rd6x4GxI_7Lj6pV'
+PAYPAL_CLIENT_SECRET = 'EENKMWMlVzVOp22ICxOeUEs3GVIgY5px6B4lxeNuCaJKYI0nD5SE5VzwL7afmILeMHPOnVlG8l8oWkfO'
+
