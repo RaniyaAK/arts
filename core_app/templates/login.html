@@ -106,10 +106,12 @@ body {
 
                 <h4 class="text-center mb-4 login-title">Sign in to Paletra</h4>
 
-                <!-- Show Django messages -->
+                <!-- Show only error messages -->
                 {% if messages %}
                     {% for message in messages %}
-                        <div class="alert">{{ message }}</div>
+                        {% if message.tags == 'error' %}
+                            <div class="alert">{{ message }}</div>
+                        {% endif %}
                     {% endfor %}
                 {% endif %}
 
