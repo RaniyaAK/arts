@@ -1,106 +1,150 @@
 {% extends "masterss.html" %}
 {% block title %}Request Commission{% endblock %}
+{% load widget_tweaks %}
 
 {% block content %}
 <div class="container py-5">
 
-    <!-- 🔙 BACK BUTTON -->
+    <!-- BACK BUTTON -->
     <div class="mb-4">
-        <a href="{% url 'artist_profile' artist.id %}"
-           class="btn btn-outline-secondary rounded-pill">
+        <a href="{% url 'artist_profile' artist.id %}" class="btn btn-outline-secondary rounded-pill">
             ← Back
         </a>
     </div>
 
-    <!-- 👤 ARTIST PROFILE CARD -->
-    <div class="card mb-4 p-3 shadow-sm rounded-4">
-        <div class="d-flex align-items-center">
-            {% if artist.profile_image %}
-                <img src="{{ artist.profile_image.url }}"
-                     class="rounded-circle me-3"
-                     style="width:60px; height:60px; object-fit:cover;">
-            {% else %}
-                <i class="fas fa-user-circle fa-3x text-muted me-3"></i>
+    <!-- ARTIST INFO LEFT-ALIGNED -->
+    <div class="d-flex align-items-center mb-4">
+        {% if artist.profile_image %}
+            <img src="{{ artist.profile_image.url }}" class="rounded-circle me-3" style="width:60px; height:60px; object-fit:cover;">
+        {% else %}
+            <i class="fas fa-user-circle fa-3x text-muted me-3"></i>
+        {% endif %}
+        <div>
+            <h5 class="mb-0">{{ artist.name }}</h5>
+            {% if artist.bio %}
+                <small class="text-muted">{{ artist.bio|truncatechars:120 }}</small>
             {% endif %}
-
-            <div>
-                <h5 class="mb-0">{{ artist.name }}</h5>
-
-                {% if artist.bio %}
-                    <small class="text-muted d-block mt-1">
-                        {{ artist.bio|truncatechars:120 }}
-                    </small>
-                {% endif %}
-            </div>
         </div>
     </div>
 
-    <!-- 🖌️ COMMISSION FORM -->
-    <form method="POST" enctype="multipart/form-data"
-          class="card p-4 shadow-sm rounded-4">
+    <!-- COMMISSION FORM -->
+    <form method="POST" enctype="multipart/form-data" class="card p-4 shadow-sm rounded-4 bg-light">
         {% csrf_token %}
 
         <!-- TITLE -->
         <div class="mb-3">
-            <label class="form-label">Artwork Title</label>
-            {{ form.title }}
+            <label class="form-label fw-semibold">Artwork Title</label>
+            {{ form.title|add_class:"form-control" }}
             {% if form.title.errors %}
-                <div class="text-danger small">
-                    {{ form.title.errors.0 }}
-                </div>
+                <div class="text-danger small">{{ form.title.errors.0 }}</div>
             {% endif %}
         </div>
 
         <!-- DESCRIPTION -->
         <div class="mb-3">
-            <label class="form-label">Description</label>
-            {{ form.description }}
+            <label class="form-label fw-semibold">Description</label>
+            {{ form.description|add_class:"form-control" }}
             {% if form.description.errors %}
-                <div class="text-danger small">
-                    {{ form.description.errors.0 }}
-                </div>
+                <div class="text-danger small">{{ form.description.errors.0 }}</div>
             {% endif %}
         </div>
 
         <!-- REQUIRED DATE -->
         <div class="mb-3">
-            <label class="form-label">Required Date</label>
-            {{ form.required_date }}
+            <label class="form-label fw-semibold">Required Date</label>
+            {{ form.required_date|add_class:"form-control" }}
             {% if form.required_date.errors %}
-                <div class="text-danger small">
-                    {{ form.required_date.errors.0 }}
-                </div>
+                <div class="text-danger small">{{ form.required_date.errors.0 }}</div>
             {% endif %}
-            <small class="text-muted">
-                Select a future date for delivery.
-            </small>
+            <small class="text-muted">Select a future date for delivery.</small>
         </div>
 
         <!-- REFERENCE IMAGE -->
         <div class="mb-3">
-            <label class="form-label">Reference Image (optional)</label>
-            {{ form.reference_image }}
+            <label class="form-label fw-semibold">Reference Image (optional)</label>
+            <div class="mb-2 d-flex justify-content-start">
+                <img id="preview-image" src="#" alt="Reference Preview"
+                     class="img-fluid rounded shadow-sm"
+                     style="max-height:250px; display:none; object-fit:cover;">
+            </div>
+            {{ form.reference_image|add_class:"form-control" }}
             {% if form.reference_image.errors %}
-                <div class="text-danger small">
-                    {{ form.reference_image.errors.0 }}
-                </div>
+                <div class="text-danger small">{{ form.reference_image.errors.0 }}</div>
             {% endif %}
         </div>
 
-        <button type="submit"
-                class="btn bg-primary-color text-cream rounded-pill px-4">
+        <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 mt-2">
             Submit Request
         </button>
     </form>
-
 </div>
 
-<!-- 📅 FRONTEND FUTURE DATE RESTRICTION -->
 <script>
+    // Restrict date to future
     const dateInput = document.querySelector('input[type="date"]');
     if (dateInput) {
         const today = new Date().toISOString().split('T')[0];
         dateInput.setAttribute('min', today);
     }
+
+    // Image preview
+    const fileInput = document.querySelector('input[type="file"][name="reference_image"]');
+    const preview = document.getElementById('preview-image');
+
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
 </script>
+
+<style>
+    body { background-color: #F4EFE8; }
+
+    .card.bg-light {
+        background: #FFF8EE;
+        border-radius: 20px;
+        padding: 32px;
+    }
+
+    .form-control {
+        border-radius: 30px;
+        border: 1px solid #D2C2A8;
+        padding: 10px 16px;
+        background-color: #FFFDF8;
+        transition: border 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .form-control:focus {
+        border-color: #CFAF5D;
+        box-shadow: 0 0 0 0.15rem rgba(207,175,93,0.25);
+        outline: none;
+    }
+
+    .btn-primary {
+        background-color: #6A4632;
+        color: #FFF8E7;
+        font-weight: 600;
+        letter-spacing: 0.4px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #CFAF5D;
+        color: #3E2A20;
+    }
+
+    #preview-image {
+        border-radius: 12px;
+        border: 1px solid #ddd;
+    }
+</style>
 {% endblock %}
