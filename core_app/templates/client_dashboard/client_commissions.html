@@ -76,7 +76,7 @@
             </div>
 
             <!-- ADVANCE PAYMENT INFO & BUTTON -->
-            {% if commission.advance_amount|floatformat > 0 %}
+                {% if commission.advance_amount > 0 %}
                 <div class="mb-2">
                     <strong>Advance Requested:</strong> ₹{{ commission.advance_amount }}
                     {% if commission.advance_paid %}
