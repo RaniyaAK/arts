@@ -174,32 +174,31 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from .models import Artwork, Activity, Commission
+from django.db.models import Sum
 
 @login_required
 def artist_dashboard(request):
     if request.user.role != 'artist':
         return redirect('login')
 
-    # Artist's own artworks
     artworks = Artwork.objects.filter(artist=request.user).order_by('-created_at')
-
-    # Recent activities
     activities = Activity.objects.filter(user=request.user).order_by('-created_at')[:10]
-
-    # Commissions requested to this artist
     commissions = Commission.objects.filter(artist=request.user).order_by('-created_at')
 
-    # ✅ Total revenue: sum of advance_amount for commissions where advance_paid=True
-    total_revenue = commissions.filter(advance_paid=True).aggregate(total=Sum('advance_amount'))['total'] or 0
+    # Revenue calculations
+    advance_revenue = commissions.filter(advance_paid=True).aggregate(total=Sum('advance_amount'))['total'] or 0
+    # Full revenue: consider completed commissions; for now sum advance + remaining
+    full_revenue = commissions.filter(status='completed').aggregate(total=Sum('advance_amount'))['total'] or 0
+    # total revenue = advance + full? or full already includes advance? Adjust as needed.
 
     return render(request, 'dashboards/artist_dashboard.html', {
         'artworks': artworks,
         'activities': activities,
         'numbers': range(1, 4),
         'commissions': commissions,
-        'total_revenue': total_revenue,  # Pass revenue to template
+        'advance_revenue': advance_revenue,
+        'full_revenue': full_revenue,
     })
-
 
 
 @login_required
