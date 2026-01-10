@@ -1,0 +1,35 @@
+{% extends "masterss.html" %}
+{% block title %}Artist Notifications{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <h3 class="mb-4 text-center">🔔 Notifications</h3>
+
+    {% if notifications %}
+        {% for n in notifications %}
+            <div class="card mb-3 shadow-sm rounded-4 p-3
+                {% if not n.is_read %}border-start border-4 border-primary{% endif %}">
+                
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="mb-1 fw-semibold">{{ n.message }}</p>
+                        <small class="text-muted">
+                            {{ n.created_at|date:"M d, Y · h:i A" }}
+                        </small>
+                    </div>
+
+                    {% if n.notification_type == 'commission_request' %}
+                        <span class="badge bg-info text-dark">Request</span>
+                    {% elif n.notification_type == 'advance_paid' %}
+                        <span class="badge bg-success">Payment</span>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-muted text-center">No notifications yet.</p>
+    {% endif %}
+
+</div>
+{% endblock %}

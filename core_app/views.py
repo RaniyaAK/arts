@@ -16,14 +16,17 @@ from .forms import ProfileEditForm
 from .forms import CommissionRequestForm
 from .forms import SetAdvanceAmountForm
 
-from .models import Artwork, Activity
-from .models import Commission
+from .models import Artwork, Activity, Commission
 
-import razorpay
+from .models import Notification
+
+
 
 import paypalrestsdk
-from django.shortcuts import redirect
-from django.conf import settings
+from django.views.decorators.http import require_POST
+from django.db.models import Sum
+
+
 
 paypalrestsdk.configure({
     "mode": settings.PAYPAL_MODE,
@@ -168,13 +171,6 @@ def reset_password(request, email):
     return render(request, 'reset_password.html')
 #  ________________________________________________________________________________________________________________________
 
-from django.db.models import Sum
-
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.db.models import Sum
-from .models import Artwork, Activity, Commission
-from django.db.models import Sum
 
 @login_required
 def artist_dashboard(request):
@@ -348,56 +344,68 @@ def artist_commissions(request):
     })
 
 
-
-# ------------------------ Update Commission Status ------------------------
 @login_required
 def update_commission_status(request, commission_id, status):
-    commission = get_object_or_404(Commission, id=commission_id, artist=request.user)
+    commission = get_object_or_404(
+        Commission,
+        id=commission_id,
+        artist=request.user
+    )
     now = timezone.now()
 
-    # Enforce workflow order:
-    # pending → accepted → advance_paid → in_progress → completed
-    # rejected can happen from pending or accepted only
+    # ---------------- WORKFLOW RULES ----------------
     if status == 'accepted':
         if commission.status != 'pending':
-            messages.error(request, "Cannot accept this commission at this stage.")
+            messages.error(request, "Cannot accept at this stage.")
             return redirect('artist_commissions')
         commission.status = 'accepted'
         commission.accepted_at = now
 
-    elif status == 'advance_paid':
-        if commission.status != 'accepted':
-            messages.error(request, "Cannot mark advance as paid before accepting the commission.")
+    elif status == 'rejected':
+        if commission.status not in ['pending', 'accepted']:
+            messages.error(request, "Cannot reject at this stage.")
             return redirect('artist_commissions')
-        commission.status = 'advance_paid'
-        commission.advance_paid_at = now
+        commission.status = 'rejected'
+        commission.rejected_at = now
+        commission.rejection_reason = request.POST.get('reason', '')
 
     elif status == 'in_progress':
         if commission.status != 'advance_paid':
-            messages.error(request, "Cannot start work before advance is paid.")
+            messages.error(request, "Advance must be paid before starting work.")
             return redirect('artist_commissions')
         commission.status = 'in_progress'
         commission.in_progress_at = now
 
     elif status == 'completed':
         if commission.status != 'in_progress':
-            messages.error(request, "Cannot complete work before starting it.")
+            messages.error(request, "Work must be in progress first.")
             return redirect('artist_commissions')
         commission.status = 'completed'
         commission.completed_at = now
 
-    elif status == 'rejected':
-        if commission.status not in ['pending', 'accepted']:
-            messages.error(request, "Cannot reject a commission at this stage.")
+    elif status == 'shipping':
+        if commission.status != 'completed':
+            messages.error(request, "Work must be completed before shipping.")
             return redirect('artist_commissions')
-        commission.status = 'rejected'
-        commission.rejected_at = now
-        # Get reason from POST to match form submission
-        commission.rejection_reason = request.POST.get('reason', '')
+        commission.status = 'shipping'
+        commission.shipping_at = now
+
+    elif status == 'delivered':
+        if commission.status != 'shipping':
+            messages.error(request, "Artwork must be shipped before delivery.")
+            return redirect('artist_commissions')
+        commission.status = 'delivered'
+        commission.delivered_at = now
+
+    else:
+        messages.error(request, "Invalid status.")
+        return redirect('artist_commissions')
 
     commission.save()
-    messages.success(request, f"Commission status updated to {commission.status}.")
+    messages.success(request, f"Commission marked as {commission.status}.")
     return redirect('artist_commissions')
+
+
 
 @login_required
 def pay_advance(request, commission_id):
@@ -463,9 +471,6 @@ def paypal_success(request, commission_id):
 
 
 
-from django.views.decorators.http import require_POST
-
-
 @login_required
 @require_POST
 def set_advance_amount(request, commission_id):
@@ -488,3 +493,23 @@ def set_advance_amount(request, commission_id):
     return redirect("artist_commissions")
 
 
+@login_required
+def artist_notifications(request):
+    notifications = Notification.objects.filter(
+        receiver=request.user
+    ).order_by('-created_at')
+
+    return render(request, 'notifications/artist_notifications.html', {
+        'notifications': notifications
+    })
+
+
+@login_required
+def client_notifications(request):
+    notifications = Notification.objects.filter(
+        receiver=request.user
+    ).order_by('-created_at')
+
+    return render(request, 'notifications/client_notifications.html', {
+        'notifications': notifications
+    })
