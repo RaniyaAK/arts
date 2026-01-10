@@ -1,4 +1,6 @@
 {% extends "masterss.html" %}
+{% load static %}
+
 {% block title %}Artist Notifications{% endblock %}
 
 {% block content %}
@@ -9,7 +11,8 @@
     {% if notifications %}
         {% for n in notifications %}
             <div class="card mb-3 shadow-sm rounded-4 p-3
-                {% if not n.is_read %}border-start border-4 border-primary{% endif %}">
+                {% if not n.is_read %}border-start border-4 border-primary{% endif %}"
+                data-id="{{ n.id }}">
                 
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
@@ -32,4 +35,31 @@
     {% endif %}
 
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const cards = document.querySelectorAll('.card[data-id]');
+    const csrfToken = '{{ csrf_token }}';
+
+    cards.forEach(card => {
+        const notifId = card.dataset.id;
+
+        // Mark unread notifications as read
+        if (card.classList.contains('border-start')) {
+            fetch("{% url 'mark_notification_read' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({ id: notifId })
+            }).then(response => {
+                if(response.ok){
+                    card.classList.remove('border-start', 'border-4', 'border-primary');
+                }
+            });
+        }
+    });
+});
+</script>
 {% endblock %}

@@ -300,9 +300,6 @@ def artist_profile(request, artist_id):
         'artist': artist,
         'artworks': artworks,
     })
-
-
-
 @login_required
 def request_commission(request, artist_id):
     artist = get_object_or_404(User, id=artist_id)
@@ -313,12 +310,23 @@ def request_commission(request, artist_id):
             commission = form.save(commit=False)
             commission.client = request.user
             commission.artist = artist
-            # Set default advance amount if empty
             if not commission.advance_amount:
-                commission.advance_amount = 0  # or some default like 500
+                commission.advance_amount = 0
             commission.save()
+
+            # 🔔 Create notification for artist
+            Notification.objects.create(
+                receiver=artist,
+                commission=commission,
+                message=f"{request.user.get_full_name() or request.user.username} requested a commission: {commission.title}",
+                notification_type='commission_request'
+            )
+
             messages.success(request, "Commission requested successfully!")
             return redirect('client_commissions')
+        else:
+            # Debug: print errors if form fails
+            print("Form errors:", form.errors)
     else:
         form = CommissionRequestForm()
 
@@ -326,7 +334,6 @@ def request_commission(request, artist_id):
         'form': form,
         'artist': artist
     })
-
 
 @login_required
 def client_commissions(request):
@@ -342,7 +349,6 @@ def artist_commissions(request):
     return render(request, 'artist_dashboard/artist_commissions.html', {
         'commissions': commissions
     })
-
 
 @login_required
 def update_commission_status(request, commission_id, status):
@@ -361,6 +367,14 @@ def update_commission_status(request, commission_id, status):
         commission.status = 'accepted'
         commission.accepted_at = now
 
+        # Notify client
+        Notification.objects.create(
+            receiver=commission.client,
+            commission=commission,
+            message=f"Your commission '{commission.title}' has been accepted by {request.user.get_full_name() or request.user.username}",
+            notification_type='accepted'
+        )
+
     elif status == 'rejected':
         if commission.status not in ['pending', 'accepted']:
             messages.error(request, "Cannot reject at this stage.")
@@ -368,6 +382,14 @@ def update_commission_status(request, commission_id, status):
         commission.status = 'rejected'
         commission.rejected_at = now
         commission.rejection_reason = request.POST.get('reason', '')
+
+        # Notify client
+        Notification.objects.create(
+            receiver=commission.client,
+            commission=commission,
+            message=f"Your commission '{commission.title}' has been rejected by {request.user.get_full_name() or request.user.username}",
+            notification_type='rejected'
+        )
 
     elif status == 'in_progress':
         if commission.status != 'advance_paid':
@@ -390,12 +412,28 @@ def update_commission_status(request, commission_id, status):
         commission.status = 'shipping'
         commission.shipping_at = now
 
+        # Notify client
+        Notification.objects.create(
+            receiver=commission.client,
+            commission=commission,
+            message=f"Your commission '{commission.title}' has been shipped by {request.user.get_full_name() or request.user.username}",
+            notification_type='shipping'
+        )
+
     elif status == 'delivered':
         if commission.status != 'shipping':
             messages.error(request, "Artwork must be shipped before delivery.")
             return redirect('artist_commissions')
         commission.status = 'delivered'
         commission.delivered_at = now
+
+        # Notify client
+        Notification.objects.create(
+            receiver=commission.client,
+            commission=commission,
+            message=f"Your commission '{commission.title}' has been delivered",
+            notification_type='delivered'
+        )
 
     else:
         messages.error(request, "Invalid status.")
@@ -464,12 +502,17 @@ def paypal_success(request, commission_id):
         commission.advance_paid_at = timezone.now()
         commission.save()
         messages.success(request, "Advance payment successful via PayPal!")
+
+        # 🔔 Notify artist
+        Notification.objects.create(
+            receiver=commission.artist,
+            message=f"Advance payment received for commission: {commission.title}",
+            notification_type='advance_paid'
+        )
     else:
         messages.error(request, "Payment failed. Please try again.")
 
     return redirect("client_commissions")
-
-
 
 @login_required
 @require_POST
@@ -513,3 +556,22 @@ def client_notifications(request):
     return render(request, 'notifications/client_notifications.html', {
         'notifications': notifications
     })
+
+
+import json
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+
+@login_required
+@require_POST
+def mark_notification_read(request):
+    data = json.loads(request.body)
+    notif_id = data.get('id')
+    if notif_id:
+        notif = Notification.objects.filter(id=notif_id, receiver=request.user, is_read=False).first()
+        if notif:
+            notif.is_read = True
+            notif.save()
+            return JsonResponse({'status': 'ok'})
+    return JsonResponse({'status': 'error'}, status=400)

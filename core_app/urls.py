@@ -49,6 +49,16 @@ urlpatterns = [
 
     path( "artist/commission/<int:commission_id>/set-advance/",views.set_advance_amount,name="set_advance_amount"),
 
+    path('notifications/mark-read/', views.mark_notification_read, name='mark_notification_read'),
+
+
+    # Artist notifications
+    path('artist-notifications/', views.artist_notifications, name='artist_notifications'),
+
+    # Client notifications
+    path('client-notifications/', views.client_notifications, name='client_notifications'),
+
+
 
     # path('artist/revenue/', views.artist_revenue, name='artist_revenue'),
 
