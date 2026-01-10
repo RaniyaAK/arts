@@ -16,23 +16,35 @@
             <!-- Notifications Dropdown -->
             <div class="dropdown">
                 <button class="btn btn-outline-secondary position-relative rounded-pill dropdown-toggle"
-                        type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        type="button"
+                        id="notificationDropdown"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+
                     <i class="fas fa-bell"></i>
-                    {% if unread_count > 0 %}
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            {{ unread_count }}
-                        </span>
-                    {% endif %}
+
+                    <!-- 🔴 UNREAD COUNT BADGE (AJAX) -->
+                    <span id="notification-count"
+                          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                          style="display:none;">
+                    </span>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="notificationDropdown"
+
+                <ul class="dropdown-menu dropdown-menu-end p-2"
+                    aria-labelledby="notificationDropdown"
                     style="width:300px; max-height:400px; overflow-y:auto;">
+
                     {% for notif in request.user.notifications.all|dictsortreversed:"created_at" %}
                         <li class="border-bottom mb-1 pb-1">
-                            <small class="text-muted">{{ notif.created_at|date:"M d, Y H:i" }}</small>
+                            <small class="text-muted">
+                                {{ notif.created_at|date:"M d, Y H:i" }}
+                            </small>
                             <div>{{ notif.message }}</div>
                         </li>
                     {% empty %}
-                        <li class="text-center text-muted">No notifications</li>
+                        <li class="text-center text-muted">
+                            No notifications
+                        </li>
                     {% endfor %}
                 </ul>
             </div>
@@ -91,7 +103,6 @@
                     </a>
                 </h6>
 
-                <!--  Request Button -->
                 <a href="{% url 'request_commission' artist.id %}"
                    class="btn btn-sm bg-primary-color text-cream rounded-pill mt-2">
                     Request
@@ -115,8 +126,7 @@
                      style="height:250px;object-fit:cover;">
 
                 <div class="card-body d-flex align-items-center">
-                    
-                    <!-- Artist Info -->
+
                     {% if artwork.artist.profile_image %}
                         <a href="{% url 'artist_profile' artwork.artist.id %}">
                             <img src="{{ artwork.artist.profile_image.url }}"
@@ -153,6 +163,39 @@
     </div>
 
 </div>
+
+<!-- 🔔 NOTIFICATION SCRIPT -->
+<script>
+function fetchUnreadCount() {
+    fetch("{% url 'unread_notification_count' %}")
+        .then(response => response.json())
+        .then(data => {
+            const badge = document.getElementById("notification-count");
+
+            if (data.count > 0) {
+                badge.style.display = "inline-block";
+                badge.textContent = data.count;
+            } else {
+                badge.style.display = "none";
+            }
+        });
+}
+
+document.getElementById("notificationDropdown")
+    .addEventListener("shown.bs.dropdown", function () {
+        fetch("{% url 'mark_notification_read' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            }
+        }).then(() => fetchUnreadCount());
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    fetchUnreadCount();
+    setInterval(fetchUnreadCount, 10000);
+});
+</script>
 
 <script>
 const searchInput = document.getElementById('artistSearch');
