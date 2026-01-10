@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
+import uuid
 
 
 
@@ -69,17 +70,20 @@ class Commission(models.Model):
         ('accepted', 'Accepted'),
         ('advance_paid', 'Advance Paid'),
         ('in_progress', 'In Progress'),
-        ('shipped', 'Shipped'),        # ✅ NEW
-        ('delivered', 'Delivered'),    # ✅ NEW
+        ('shipped', 'Shipped'),
+        ('delivered', 'Delivered'),
         ('completed', 'Completed'),
         ('rejected', 'Rejected'),
     ]
 
-    status = models.CharField(
+    commission_id = models.CharField(
         max_length=20,
-        choices=STATUS_CHOICES,
-        default='pending'
+        null=True,
+        editable=False,
+        blank=True
     )
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
 
     client = models.ForeignKey(User, on_delete=models.CASCADE, related_name='client_commissions')
     artist = models.ForeignKey(User, on_delete=models.CASCADE, related_name='artist_commissions')
@@ -89,7 +93,6 @@ class Commission(models.Model):
     reference_image = models.ImageField(upload_to='commission_references/', blank=True, null=True)
     required_date = models.DateField()
 
-    # 💰 PAYMENT
     advance_amount = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -98,21 +101,25 @@ class Commission(models.Model):
     )
     advance_paid = models.BooleanField(default=False)
 
-    # DATE TRACKING
     created_at = models.DateTimeField(auto_now_add=True)
     accepted_at = models.DateTimeField(blank=True, null=True)
     advance_paid_at = models.DateTimeField(blank=True, null=True)
     in_progress_at = models.DateTimeField(blank=True, null=True)
-    shipped_at = models.DateTimeField(blank=True, null=True)      # ✅ NEW
-    delivered_at = models.DateTimeField(blank=True, null=True)    # ✅ NEW
+    shipped_at = models.DateTimeField(blank=True, null=True)
+    delivered_at = models.DateTimeField(blank=True, null=True)
     completed_at = models.DateTimeField(blank=True, null=True)
     rejected_at = models.DateTimeField(blank=True, null=True)
 
     rejection_reason = models.TextField(blank=True, null=True)
 
+    def save(self, *args, **kwargs):
+        if not self.commission_id:
+            self.commission_id = f"PAL-{uuid.uuid4().hex[:6].upper()}"
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"{self.title} - {self.client.username}"
-    
+        return f"{self.commission_id} - {self.title}"
+
 
     
 class Notification(models.Model):
