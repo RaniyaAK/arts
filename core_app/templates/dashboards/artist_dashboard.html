@@ -6,6 +6,41 @@
 {% block content %}
 <div class="container py-5">
 
+    <!-- Header with Notifications -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary-color">
+            Welcome, {{ request.user.name }} 👤
+        </h2>
+
+        <div class="d-flex align-items-center gap-3">
+
+            <!-- Notifications Dropdown -->
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary position-relative rounded-pill dropdown-toggle"
+                        type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-bell"></i>
+                    {% if unread_count > 0 %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            {{ unread_count }}
+                        </span>
+                    {% endif %}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="notificationDropdown"
+                    style="width:300px; max-height:400px; overflow-y:auto;">
+                    {% for notif in request.user.notifications.all|dictsortreversed:"created_at" %}
+                        <li class="border-bottom mb-1 pb-1">
+                            <small class="text-muted">{{ notif.created_at|date:"M d, Y H:i" }}</small>
+                            <div>{{ notif.message }}</div>
+                        </li>
+                    {% empty %}
+                        <li class="text-center text-muted">No notifications</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
     <!-- INFO NOTE -->
     <div class="alert alert-light border mb-4">
         <strong>Note:</strong>
@@ -21,23 +56,20 @@
         </a>
     </div>
 
-    
-
     <div class="row mb-4">
-    <div class="col-md-6">
-        <div class="card p-3 rounded-4 shadow-sm bg-light">
-            <h6>Advance Revenue</h6>
-            <h4>₹{{ advance_revenue }}</h4>
+        <div class="col-md-6">
+            <div class="card p-3 rounded-4 shadow-sm bg-light">
+                <h6>Advance Revenue</h6>
+                <h4>₹{{ advance_revenue }}</h4>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card p-3 rounded-4 shadow-sm bg-light">
+                <h6>Full Revenue</h6>
+                <h4>₹{{ full_revenue }}</h4>
+            </div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="card p-3 rounded-4 shadow-sm bg-light">
-            <h6>Full Revenue</h6>
-            <h4>₹{{ full_revenue }}</h4>
-        </div>
-    </div>
-</div>
-
 
     <!-- ARTWORK GALLERY -->
     <h4 class="text-primary-color mb-3">My Sample Artworks</h4>
