@@ -58,6 +58,9 @@ urlpatterns = [
     # Client notifications
     path('client-notifications/', views.client_notifications, name='client_notifications'),
 
+    path('notifications/unread-count/', views.unread_notification_count, name='unread_notification_count'),
+
+
 
 
     # path('artist/revenue/', views.artist_revenue, name='artist_revenue'),

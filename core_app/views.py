@@ -563,15 +563,22 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
+
+@login_required
+def unread_notification_count(request):
+    count = Notification.objects.filter(
+        receiver=request.user,
+        is_read=False
+    ).count()
+    return JsonResponse({'count': count})
+
 @login_required
 @require_POST
 def mark_notification_read(request):
-    data = json.loads(request.body)
-    notif_id = data.get('id')
-    if notif_id:
-        notif = Notification.objects.filter(id=notif_id, receiver=request.user, is_read=False).first()
-        if notif:
-            notif.is_read = True
-            notif.save()
-            return JsonResponse({'status': 'ok'})
-    return JsonResponse({'status': 'error'}, status=400)
+    Notification.objects.filter(
+        receiver=request.user,
+        is_read=False
+    ).update(is_read=True)
+
+    return JsonResponse({'status': 'ok'})
+
