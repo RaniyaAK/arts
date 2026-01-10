@@ -367,13 +367,14 @@ def update_commission_status(request, commission_id, status):
         commission.status = 'accepted'
         commission.accepted_at = now
 
-        # Notify client
         Notification.objects.create(
             receiver=commission.client,
             commission=commission,
-            message=f"Your commission '{commission.title}' has been accepted by {request.user.get_full_name() or request.user.username}",
+            message=f"Your commission '{commission.title}' ({commission.commission_id}) has been accepted by {request.user.name or request.user.username}",
+                                                                                                             
             notification_type='accepted'
         )
+
 
     elif status == 'rejected':
         if commission.status not in ['pending', 'accepted']:
@@ -383,13 +384,13 @@ def update_commission_status(request, commission_id, status):
         commission.rejected_at = now
         commission.rejection_reason = request.POST.get('reason', '')
 
-        # Notify client
         Notification.objects.create(
             receiver=commission.client,
             commission=commission,
-            message=f"Your commission '{commission.title}' has been rejected by {request.user.get_full_name() or request.user.username}",
+            message=f"Your commission '{commission.title}' ({commission.commission_id}) has been rejected by {request.user.get_full_name() or request.user.username}",
             notification_type='rejected'
         )
+
 
     elif status == 'in_progress':
         if commission.status != 'advance_paid':
@@ -412,13 +413,13 @@ def update_commission_status(request, commission_id, status):
         commission.status = 'shipping'
         commission.shipping_at = now
 
-        # Notify client
         Notification.objects.create(
             receiver=commission.client,
             commission=commission,
-            message=f"Your commission '{commission.title}' has been shipped by {request.user.get_full_name() or request.user.username}",
-            notification_type='shipping'
+            message=f"Your commission '{commission.title}' ({commission.commission_id}) has been shipped ",
+            notification_type='shipped'
         )
+
 
     elif status == 'delivered':
         if commission.status != 'shipping':
@@ -431,9 +432,10 @@ def update_commission_status(request, commission_id, status):
         Notification.objects.create(
             receiver=commission.client,
             commission=commission,
-            message=f"Your commission '{commission.title}' has been delivered",
+            message=f"Your commission '{commission.title}' ({commission.commission_id}) has been delivered",
             notification_type='delivered'
         )
+
 
     else:
         messages.error(request, "Invalid status.")
@@ -506,9 +508,10 @@ def paypal_success(request, commission_id):
         # 🔔 Notify artist
         Notification.objects.create(
             receiver=commission.artist,
-            message=f"Advance payment received for commission: {commission.title}",
+            message=f"Advance payment received for commission: {commission.title} ({commission.commission_id})",
             notification_type='advance_paid'
         )
+
     else:
         messages.error(request, "Payment failed. Please try again.")
 
