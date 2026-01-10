@@ -17,23 +17,36 @@
             <!-- Notifications Dropdown -->
             <div class="dropdown">
                 <button class="btn btn-outline-secondary position-relative rounded-pill dropdown-toggle"
-                        type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        type="button"
+                        id="notificationDropdown"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+
                     <i class="fas fa-bell"></i>
-                    {% if unread_count > 0 %}
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            {{ unread_count }}
-                        </span>
-                    {% endif %}
+
+                    <!-- 🔴 UNREAD COUNT BADGE (AJAX ONLY) -->
+                    <span id="notification-count"
+                          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                          style="display:none;">
+                    </span>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="notificationDropdown"
+
+                <!-- Notifications List -->
+                <ul class="dropdown-menu dropdown-menu-end p-2"
+                    aria-labelledby="notificationDropdown"
                     style="width:300px; max-height:400px; overflow-y:auto;">
+
                     {% for notif in request.user.notifications.all|dictsortreversed:"created_at" %}
                         <li class="border-bottom mb-1 pb-1">
-                            <small class="text-muted">{{ notif.created_at|date:"M d, Y H:i" }}</small>
+                            <small class="text-muted">
+                                {{ notif.created_at|date:"M d, Y H:i" }}
+                            </small>
                             <div>{{ notif.message }}</div>
                         </li>
                     {% empty %}
-                        <li class="text-center text-muted">No notifications</li>
+                        <li class="text-center text-muted">
+                            No notifications
+                        </li>
                     {% endfor %}
                 </ul>
             </div>
@@ -51,11 +64,13 @@
 
     <!-- ADD NEW ARTWORK BUTTON -->
     <div class="mb-4 text-center">
-        <a href="{% url 'add_artworks' %}" class="btn bg-primary-color text-cream rounded-pill px-4">
+        <a href="{% url 'add_artworks' %}"
+           class="btn bg-primary-color text-cream rounded-pill px-4">
             Add Sample Artwork
         </a>
     </div>
 
+    <!-- REVENUE -->
     <div class="row mb-4">
         <div class="col-md-6">
             <div class="card p-3 rounded-4 shadow-sm bg-light">
@@ -78,7 +93,6 @@
         {% for artwork in artworks %}
         <div class="col">
             <div class="card h-100 shadow-sm text-center artwork-card">
-
                 <img src="{{ artwork.image.url }}"
                      class="card-img-top"
                      style="height:250px; object-fit:cover;">
@@ -104,9 +118,10 @@
         {% endfor %}
     </div>
 
-    <!-- BUTTON TO VIEW COMMISSION REQUESTS -->
+    <!-- COMMISSIONS -->
     <div class="text-center mb-5">
-        <a href="{% url 'artist_commissions' %}" class="btn btn-primary rounded-pill px-4 py-2">
+        <a href="{% url 'artist_commissions' %}"
+           class="btn btn-primary rounded-pill px-4 py-2">
             View Commission Requests
         </a>
     </div>
@@ -132,5 +147,40 @@
     border-color: #8B5E3C;
 }
 </style>
+
+<script>
+function fetchUnreadCount() {
+    fetch("{% url 'unread_notification_count' %}")
+        .then(response => response.json())
+        .then(data => {
+            const badge = document.getElementById("notification-count");
+
+            if (data.count > 0) {
+                badge.style.display = "inline-block";
+                badge.textContent = data.count;
+            } else {
+                badge.style.display = "none";
+            }
+        });
+}
+
+// Mark notifications as read ONLY when dropdown actually opens
+document.getElementById("notificationDropdown")
+    .addEventListener("shown.bs.dropdown", function () {
+        fetch("{% url 'mark_notification_read' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            }
+        }).then(() => {
+            fetchUnreadCount();
+        });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    fetchUnreadCount();
+    setInterval(fetchUnreadCount, 10000);
+});
+</script>
 
 {% endblock %}
