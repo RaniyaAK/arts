@@ -63,7 +63,9 @@
             {% if c.accepted_at %} | Accepted: {{ c.accepted_at|date:"M d, Y" }}{% endif %}
             {% if c.advance_paid_at %} | Advance Paid: {{ c.advance_paid_at|date:"M d, Y" }}{% endif %}
             {% if c.in_progress_at %} | In Progress: {{ c.in_progress_at|date:"M d, Y" }}{% endif %}
-            {% if c.completed_at %} | Completed: {{ c.completed_at|date:"M d, Y" }}{% endif %}
+            {% if c.completed_at %} | Work Completed: {{ c.completed_at|date:"M d, Y" }}{% endif %}
+            {% if c.shipping_at %} | Shipping: {{ c.shipping_at|date:"M d, Y" }}{% endif %}
+            {% if c.delivered_at %} | Delivered: {{ c.delivered_at|date:"M d, Y" }}{% endif %}
             {% if c.rejected_at %} | Rejected: {{ c.rejected_at|date:"M d, Y" }}{% endif %}
         </div>
 
@@ -103,16 +105,27 @@
 
             <!-- STATUS BADGE -->
             <div class="mb-2">
-                {% if c.status == 'completed' %}
+                {% if c.status == 'delivered' %}
                     <span class="badge bg-success">Delivered ✓</span>
+
+                {% elif c.status == 'shipping' %}
+                    <span class="badge bg-warning text-dark">Shipping</span>
+
+                {% elif c.status == 'completed' %}
+                    <span class="badge bg-success">Work Completed</span>
+
                 {% elif c.status == 'in_progress' %}
                     <span class="badge bg-info text-dark">In Progress</span>
+
                 {% elif c.status == 'advance_paid' %}
                     <span class="badge bg-warning text-dark">Advance Paid</span>
+
                 {% elif c.status == 'accepted' %}
                     <span class="badge bg-primary">Accepted</span>
+
                 {% elif c.status == 'rejected' %}
                     <span class="badge bg-danger">Rejected ✕</span>
+
                 {% else %}
                     <span class="badge bg-secondary">Pending</span>
                 {% endif %}
@@ -122,7 +135,7 @@
             {% if c.advance_amount %}
                 <p class="small text-muted mb-2">
                     <strong>Advance:</strong> ₹{{ c.advance_amount }}
-                    {% if c.status == 'advance_paid' %}
+                    {% if c.status in 'advance_paid,in_progress,completed,shipping,delivered' %}
                         <span class="text-success">(Paid)</span>
                     {% else %}
                         <span class="text-warning">(Pending)</span>
@@ -170,12 +183,24 @@
                 {% elif c.status == 'in_progress' %}
                     <a href="{% url 'update_commission_status' c.id 'completed' %}"
                        class="btn btn-success btn-sm">
-                        Mark as Completed
+                        Mark Work Completed
                     </a>
 
                 {% elif c.status == 'completed' %}
+                    <a href="{% url 'update_commission_status' c.id 'shipping' %}"
+                       class="btn btn-warning btn-sm">
+                        Start Shipping
+                    </a>
+
+                {% elif c.status == 'shipping' %}
+                    <a href="{% url 'update_commission_status' c.id 'delivered' %}"
+                       class="btn btn-primary btn-sm">
+                        Mark as Delivered
+                    </a>
+
+                {% elif c.status == 'delivered' %}
                     <span class="text-success small">
-                        Work delivered successfully
+                        Commission delivered successfully 🎉
                     </span>
 
                 {% elif c.status == 'rejected' %}

@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils import timezone
+
 
 
 class User(AbstractUser):
@@ -67,11 +69,12 @@ class Commission(models.Model):
         ('accepted', 'Accepted'),
         ('advance_paid', 'Advance Paid'),
         ('in_progress', 'In Progress'),
+        ('shipped', 'Shipped'),        # ✅ NEW
+        ('delivered', 'Delivered'),    # ✅ NEW
         ('completed', 'Completed'),
         ('rejected', 'Rejected'),
     ]
 
-    # ✅ STATUS FIELD (FIX)
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
@@ -100,6 +103,8 @@ class Commission(models.Model):
     accepted_at = models.DateTimeField(blank=True, null=True)
     advance_paid_at = models.DateTimeField(blank=True, null=True)
     in_progress_at = models.DateTimeField(blank=True, null=True)
+    shipped_at = models.DateTimeField(blank=True, null=True)      # ✅ NEW
+    delivered_at = models.DateTimeField(blank=True, null=True)    # ✅ NEW
     completed_at = models.DateTimeField(blank=True, null=True)
     rejected_at = models.DateTimeField(blank=True, null=True)
 
@@ -107,3 +112,41 @@ class Commission(models.Model):
 
     def __str__(self):
         return f"{self.title} - {self.client.username}"
+    
+
+    
+class Notification(models.Model):
+    NOTIFICATION_TYPES = [
+        ('commission_request', 'Commission Request'),
+        ('advance_paid', 'Advance Paid'),
+        ('accepted', 'Accepted'),
+        ('rejected', 'Rejected'),
+        ('shipped', 'Shipped'),
+    ]
+
+    receiver = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='notifications'
+    )
+
+    commission = models.ForeignKey(
+        Commission,
+        on_delete=models.CASCADE,
+        related_name='notifications',
+        null=True,
+        blank=True
+    )
+
+    notification_type = models.CharField(
+        max_length=30,
+        choices=NOTIFICATION_TYPES
+    )
+
+    message = models.CharField(max_length=255)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.notification_type} → {self.receiver.username}"
+    

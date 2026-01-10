@@ -22,7 +22,9 @@
             {% if commission.accepted_at %} | Accepted: {{ commission.accepted_at|date:"M d, Y" }}{% endif %}
             {% if commission.advance_paid_at %} | Advance Paid: {{ commission.advance_paid_at|date:"M d, Y" }}{% endif %}
             {% if commission.in_progress_at %} | In Progress: {{ commission.in_progress_at|date:"M d, Y" }}{% endif %}
-            {% if commission.completed_at %} | Completed: {{ commission.completed_at|date:"M d, Y" }}{% endif %}
+            {% if commission.completed_at %} | Work Completed: {{ commission.completed_at|date:"M d, Y" }}{% endif %}
+            {% if commission.shipping_at %} | Shipping: {{ commission.shipping_at|date:"M d, Y" }}{% endif %}
+            {% if commission.delivered_at %} | Delivered: {{ commission.delivered_at|date:"M d, Y" }}{% endif %}
             {% if commission.rejected_at %} | Rejected: {{ commission.rejected_at|date:"M d, Y" }}{% endif %}
         </div>
 
@@ -60,23 +62,34 @@
 
             <!-- STATUS BADGE -->
             <div class="mt-2 mb-2">
-                {% if commission.status == 'completed' %}
-                    <span class="badge bg-success">Completed ✓</span>
+                {% if commission.status == 'delivered' %}
+                    <span class="badge bg-success">Delivered ✓</span>
+
+                {% elif commission.status == 'shipping' %}
+                    <span class="badge bg-warning text-dark">Shipping</span>
+
+                {% elif commission.status == 'completed' %}
+                    <span class="badge bg-success">Work Completed</span>
+
                 {% elif commission.status == 'in_progress' %}
                     <span class="badge bg-info text-dark">In Progress</span>
+
                 {% elif commission.status == 'advance_paid' %}
                     <span class="badge bg-warning text-dark">Advance Paid</span>
+
                 {% elif commission.status == 'accepted' %}
                     <span class="badge bg-primary">Accepted</span>
+
                 {% elif commission.status == 'rejected' %}
                     <span class="badge bg-danger">Rejected ✕</span>
+
                 {% else %}
                     <span class="badge bg-secondary">Pending</span>
                 {% endif %}
             </div>
 
             <!-- ADVANCE PAYMENT INFO & BUTTON -->
-                {% if commission.advance_amount > 0 %}
+            {% if commission.advance_amount > 0 %}
                 <div class="mb-2">
                     <strong>Advance Requested:</strong> ₹{{ commission.advance_amount }}
                     {% if commission.advance_paid %}
@@ -86,20 +99,29 @@
                     {% endif %}
                 </div>
 
-                {% if not commission.advance_paid %}
-                    {% if commission.status == 'accepted' or commission.status == 'pending' %}
-                        <a href="{% url 'pay_advance' commission.id %}"
-                           class="btn btn-warning btn-sm rounded-pill">
-                            Pay Advance ₹{{ commission.advance_amount }}
-                        </a>
-                    {% endif %}
+                {% if not commission.advance_paid and commission.status == 'accepted' %}
+                    <a href="{% url 'pay_advance' commission.id %}"
+                       class="btn btn-warning btn-sm rounded-pill">
+                        Pay Advance ₹{{ commission.advance_amount }}
+                    </a>
                 {% endif %}
+            {% endif %}
+
+            <!-- FINAL DELIVERY MESSAGE -->
+            {% if commission.status == 'delivered' %}
+                <div class="mt-2">
+                    <small class="text-success">
+                        🎉 Your artwork has been delivered successfully!
+                    </small>
+                </div>
             {% endif %}
 
             <!-- REJECTION REASON -->
             {% if commission.status == 'rejected' and commission.rejection_reason %}
                 <div class="mt-1">
-                    <small class="text-danger">Reason: {{ commission.rejection_reason }}</small>
+                    <small class="text-danger">
+                        Reason: {{ commission.rejection_reason }}
+                    </small>
                 </div>
             {% endif %}
 
