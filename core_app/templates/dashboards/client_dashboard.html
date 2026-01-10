@@ -11,11 +11,38 @@
             Welcome, {{ request.user.name }} 👤
         </h2>
 
-        <!-- My Commissions Button -->
-        <a href="{% url 'client_commissions' %}"
-           class="btn btn-outline-dark rounded-pill">
-            My Commissions
-        </a>
+        <div class="d-flex align-items-center gap-3">
+
+            <!-- Notifications Dropdown -->
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary position-relative rounded-pill dropdown-toggle"
+                        type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-bell"></i>
+                    {% if unread_count > 0 %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            {{ unread_count }}
+                        </span>
+                    {% endif %}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="notificationDropdown"
+                    style="width:300px; max-height:400px; overflow-y:auto;">
+                    {% for notif in request.user.notifications.all|dictsortreversed:"created_at" %}
+                        <li class="border-bottom mb-1 pb-1">
+                            <small class="text-muted">{{ notif.created_at|date:"M d, Y H:i" }}</small>
+                            <div>{{ notif.message }}</div>
+                        </li>
+                    {% empty %}
+                        <li class="text-center text-muted">No notifications</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- My Commissions Button -->
+            <a href="{% url 'client_commissions' %}"
+               class="btn btn-outline-dark rounded-pill">
+                My Commissions
+            </a>
+        </div>
     </div>
 
     <!-- Search Artists -->
