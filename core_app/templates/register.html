@@ -79,9 +79,15 @@
                         <div class="mb-3">
                             <label class="form-label fw-semibold">I am a:</label>
                             <select name="role" class="form-control" required>
-                                <option value="" {% if not role %}selected{% endif %}>Select role</option>
-                                <option value="artist" {% if role == "artist" %}selected{% endif %}>Artist</option>
-                                <option value="client" {% if role == "client" %}selected{% endif %}>Client</option>
+                                {% if request.GET.role == "artist" %}
+                                    <option value="artist" selected>Creator</option>
+                                {% elif request.GET.role == "client" %}
+                                    <option value="client" selected>Dreamer</option>
+                                {% else %}
+                                    <option value="" selected>Select role</option>
+                                    <option value="artist">Creator</option>
+                                    <option value="client">Dreamer</option>
+                                {% endif %}
                             </select>
                         </div>
 
