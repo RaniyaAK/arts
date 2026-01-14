@@ -80,7 +80,6 @@ class CommissionRequestForm(forms.ModelForm):
             )
         }
 
-    # ✅ FUTURE DATE VALIDATION
     def clean_required_date(self):
         required_date = self.cleaned_data.get('required_date')
         today = timezone.now().date()
@@ -93,16 +92,22 @@ class CommissionRequestForm(forms.ModelForm):
         return required_date
     
 
-class SetAdvanceAmountForm(forms.ModelForm):
+class SetTotalPriceForm(forms.ModelForm):
     class Meta:
         model = Commission
-        fields = ['advance_amount']
+        fields = ['total_price']
         widgets = {
-            'advance_amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Advance ₹', 'min': 1})
+            'total_price': forms.NumberInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'Total price ₹',
+                    'min': 1
+                }
+            )
         }
 
-    def clean_advance_amount(self):
-        amount = self.cleaned_data.get('advance_amount')
-        if amount is None or amount <= 0:
-            raise forms.ValidationError("Advance amount must be greater than zero.")
-        return amount
+    def clean_total_price(self):
+        price = self.cleaned_data.get('total_price')
+        if price <= 0:
+            raise forms.ValidationError("Total price must be greater than zero.")
+        return price

@@ -93,6 +93,14 @@ class Commission(models.Model):
     reference_image = models.ImageField(upload_to='commission_references/', blank=True, null=True)
     required_date = models.DateField()
 
+    total_price = models.DecimalField(
+    max_digits=10,
+    decimal_places=2,
+    default=0.00,
+    validators=[MinValueValidator(0)]
+)
+
+
     advance_amount = models.DecimalField(
         max_digits=10,
         decimal_places=2,

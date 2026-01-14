@@ -16,7 +16,6 @@ from .forms import RegisterForm, LoginForm, ForgotPasswordForm, ResetPasswordFor
 from .forms import ArtworkForm, ProfileCompletionForm 
 from .forms import ProfileEditForm
 from .forms import CommissionRequestForm
-from .forms import SetAdvanceAmountForm
 
 from .models import Artwork, Activity, Commission
 from .models import Notification
@@ -515,24 +514,31 @@ def paypal_success(request, commission_id):
 
     return redirect("client_commissions")
 
+
 @login_required
 @require_POST
-def set_advance_amount(request, commission_id):
+def set_total_price(request, commission_id):
     commission = get_object_or_404(
         Commission,
         id=commission_id,
         artist=request.user
     )
 
-    advance_amount = request.POST.get("advance_amount")
+    total_price = request.POST.get("total_price")
 
-    if advance_amount:
-        commission.advance_amount = advance_amount
+    if total_price:
+        total_price = float(total_price)
+
+        commission.total_price = total_price
+        commission.advance_amount = round(total_price * 0.30, 2)  # ✅ 20% auto
         commission.save()
 
-        messages.success(request, "Advance amount requested successfully.")
+        messages.success(
+            request,
+            f"Total price set. Advance automatically calculated as ₹{commission.advance_amount}"
+        )
     else:
-        messages.error(request, "Please enter a valid advance amount.")
+        messages.error(request, "Please enter a valid total price.")
 
     return redirect("artist_commissions")
 
