@@ -9,6 +9,8 @@ from django.utils import timezone
 from django.contrib import messages
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
+import json
+from django.views.decorators.http import require_POST
 
 from .forms import RegisterForm, LoginForm, ForgotPasswordForm, ResetPasswordForm
 from .forms import ArtworkForm, ProfileCompletionForm 
@@ -17,15 +19,11 @@ from .forms import CommissionRequestForm
 from .forms import SetAdvanceAmountForm
 
 from .models import Artwork, Activity, Commission
-
 from .models import Notification
-
-
 
 import paypalrestsdk
 from django.views.decorators.http import require_POST
 from django.db.models import Sum
-
 
 
 paypalrestsdk.configure({
@@ -559,12 +557,6 @@ def client_notifications(request):
     return render(request, 'notifications/client_notifications.html', {
         'notifications': notifications
     })
-
-
-import json
-from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
 
 
 @login_required

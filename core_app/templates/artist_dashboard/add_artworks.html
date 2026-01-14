@@ -1,133 +1,248 @@
 {% extends "masterss.html" %}
-
-{% block nav_links %}
-  <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-  <li class="nav-item"><a class="nav-link" href="#workflow">Workflow</a></li>
-
-  {% if not request.user.is_authenticated %}
-    <li class="nav-item">
-      <a class="nav-link" href="{% url 'login' %}">Login</a>
-    </li>
-  {% endif %}
-{% endblock %}
-
-{% block title %}Paletra | Digital Art Commission System{% endblock %}
+{% load static %}
+{% block title %}Add New Artwork | Paletra{% endblock %}
 
 {% block content %}
 
-<!-- ================= HERO ================= -->
-<div class="text-center py-5">
-    <h1 class="fw-bold" style="color:#5c3a21;">
-        Digital Art Commission Management System
-    </h1>
+<style>
+.add-art-page {
+    background: #FFF7EC;
+    min-height: 100vh;
+}
 
-    <p class="mt-3" style="max-width:760px;margin:auto;color:#7a5a3a;line-height:1.7;">
-        Paletra is a role-based web application that connects artists and clients
-        for managing custom digital art commissions.
-        The system focuses on commission requests, progress tracking,
-        advance payments, and structured delivery.
-    </p>
+.text-main {
+    color: #5C3A21;
+}
+.text-muted-soft {
+    color: #8A6A4F;
+}
 
-    <a href="{% url 'register' %}"
-       class="btn bg-primary-color px-4 py-2 rounded-pill mt-4">
-        Get Started
-    </a>
-</div>
+.art-form-card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.08);
+}
 
-<!-- ================= ROLES ================= -->
-<div class="container mt-5 text-center">
-    <h2 style="color:#5c3a21;">System Roles</h2>
+/* INPUTS - consistent full width block */
+.art-form-card input,
+.art-form-card textarea,
+.art-form-card select {
+    display: block;
+    width: 100%;
+    border-radius: 14px;
+    border: 1px solid #E2D2BF;
+    padding: 12px 16px;
+    background: #FFFDF9;
+    box-sizing: border-box;
+}
 
-    <div class="row justify-content-center mt-4">
+.art-form-card input:focus,
+.art-form-card textarea:focus,
+.art-form-card select:focus {
+    border-color: #B98B5E;
+    box-shadow: 0 0 0 0.15rem rgba(185,139,94,0.25);
+    outline: none;
+}
 
-        <div class="col-md-4 mb-4">
-            <div class="p-4 bg-white rounded shadow">
-                <h4>Artist</h4>
-                <p class="text-muted">
-                    Artists upload sample artworks to showcase their style,
-                    receive commission requests from clients,
-                    request advance payments, and update commission progress
-                    until delivery.
+/* FILE INPUT */
+.file-upload {
+    border: 2px dashed #D6BFA6;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    background: #FFFDF9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* IMAGE PREVIEW INSIDE FILE UPLOAD */
+.file-upload img {
+    max-height: 200px;
+    width: auto;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    display: none;
+}
+
+/* BUTTON */
+.btn-art {
+    background: #5C3A21;
+    color: #FFF7EC;
+    border-radius: 50px;
+    padding: 12px 34px;
+    font-weight: 600;
+    display: block;
+    margin: 0 auto;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-art:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    background: #7A4A2B;
+}
+
+/* INSTRUCTIONS BOX */
+.preview-box {
+    background: #FFF9F1;
+    border-radius: 18px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid #E6D6C3;
+}
+
+/* BACK BUTTON */
+.back-btn {
+    display: inline-block;
+    margin-bottom: 25px;
+    background: #5C3A21;
+    color: #FFF7EC;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+.back-btn:hover {
+    background: #4A2A18;
+}
+</style>
+
+<div class="add-art-page py-5">
+  <div class="container">
+
+    <!-- BACK BUTTON -->
+    <a href="javascript:history.back()" class="back-btn">← Back</a>
+
+    <!-- HEADER -->
+    <div class="mb-5">
+        <h2 class="text-main fw-bold">
+            Add New Artwork 🎨
+        </h2>
+        <p class="text-muted-soft">
+            Upload your work and share its story.
+        </p>
+    </div>
+
+    <div class="row g-5">
+
+        <!-- INSTRUCTIONS / NOTE (LEFT) -->
+        <div class="col-md-5 order-md-1">
+            <div class="preview-box">
+                <h5 class="text-main mb-3">
+                    Before you publish
+                </h5>
+                <p class="text-muted-soft small">
+                    • Upload high-quality images  
+                    <br>
+                    • Keep descriptions personal  
+                    <br>
+                    • Let the artwork speak  
                 </p>
             </div>
         </div>
 
-        <div class="col-md-4 mb-4">
-            <div class="p-4 bg-white rounded shadow">
-                <h4>Client</h4>
-                <p class="text-muted">
-                    Clients browse artist profiles and sample artworks,
-                    submit commission requests with requirements,
-                    pay advance amounts, track progress,
-                    and receive completed digital artwork.
-                </p>
+        <!-- FORM / UPLOAD (RIGHT) -->
+        <div class="col-md-7 order-md-2">
+            <div class="art-form-card">
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <!-- TITLE -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-main">Artwork Title</label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                          <div class="text-danger small mt-1">{{ form.title.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- DESCRIPTION -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-main">Description</label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                          <div class="text-danger small mt-1">{{ form.description.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- CATEGORY -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-main">Category</label>
+                        {{ form.category }}
+                        {% if form.category.errors %}
+                          <div class="text-danger small mt-1">{{ form.category.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- PRICE -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-main">Price (₹)</label>
+                        {{ form.price }}
+                        {% if form.price.errors %}
+                          <div class="text-danger small mt-1">{{ form.price.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- IMAGE UPLOAD -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-main">Upload Artwork</label>
+
+                        <div class="file-upload">
+                            <!-- IMAGE PREVIEW INSIDE FILE UPLOAD -->
+                            <img id="image-preview" alt="Preview">
+
+                            <p class="text-muted-soft mb-2">
+                                Drag & drop your image here
+                            </p>
+                            <p class="small text-muted-soft">
+                                or click to browse
+                            </p>
+                            {{ form.image }}
+                            {% if form.image.errors %}
+                              <div class="text-danger small mt-1">{{ form.image.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- SUBMIT -->
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-art">
+                            Publish Artwork
+                        </button>
+                    </div>
+
+                </form>
+
             </div>
         </div>
 
     </div>
+
+  </div>
 </div>
 
-<!-- ================= WORKFLOW ================= -->
-<div id="workflow" class="container mt-5 text-center">
-    <h2 style="color:#5c3a21;">Commission Workflow</h2>
+<script>
+  const imageInput = document.querySelector('input[type="file"]');
+  const imagePreview = document.getElementById('image-preview');
 
-    <div class="row justify-content-center mt-4">
-
-        <div class="col-md-3 mb-3">
-            <div class="p-3 bg-white rounded shadow">
-                <h6>Step 1</h6>
-                <p class="small text-muted">
-                    Client selects an artist and submits a commission request
-                    with description and reference image.
-                </p>
-            </div>
-        </div>
-
-        <div class="col-md-3 mb-3">
-            <div class="p-3 bg-white rounded shadow">
-                <h6>Step 2</h6>
-                <p class="small text-muted">
-                    Artist reviews the request and accepts or rejects it.
-                    Artist can request an advance payment.
-                </p>
-            </div>
-        </div>
-
-        <div class="col-md-3 mb-3">
-            <div class="p-3 bg-white rounded shadow">
-                <h6>Step 3</h6>
-                <p class="small text-muted">
-                    Client pays advance via PayPal.
-                    Artist starts work and updates commission status.
-                </p>
-            </div>
-        </div>
-
-        <div class="col-md-3 mb-3">
-            <div class="p-3 bg-white rounded shadow">
-                <h6>Step 4</h6>
-                <p class="small text-muted">
-                    Artwork is completed, shipped digitally,
-                    and marked as delivered.
-                </p>
-            </div>
-        </div>
-
-    </div>
-</div>
-
-<!-- ================= ABOUT ================= -->
-<div id="about" class="container mt-5 text-center pb-5">
-    <h2 style="color:#5c3a21;">About the Project</h2>
-
-    <p class="mt-3" style="max-width:800px;margin:auto;color:#7a5a3a;line-height:1.7;">
-        This project is developed using Django framework and follows
-        a role-based architecture.
-        The application demonstrates authentication,
-        profile management, commission workflows,
-        payment integration, notifications,
-        and dashboard-based user interaction.
-    </p>
-</div>
+  imageInput.addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        imagePreview.src = e.target.result;
+        imagePreview.style.display = 'block';
+      }
+      reader.readAsDataURL(file);
+    } else {
+      imagePreview.src = '';
+      imagePreview.style.display = 'none';
+    }
+  });
+</script>
 
 {% endblock %}
