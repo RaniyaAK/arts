@@ -583,3 +583,80 @@ def mark_notification_read(request):
 
     return JsonResponse({'status': 'ok'})
 
+@login_required
+@require_POST
+def pay_balance_choice(request, commission_id):
+    commission = get_object_or_404(
+        Commission,
+        id=commission_id,
+        client=request.user
+    )
+
+    method = request.POST.get('method')
+
+    if commission.status != 'completed':
+        messages.error(request, "Balance payment not allowed at this stage.")
+        return redirect('client_commissions')
+
+    remaining = commission.total_price - commission.advance_amount
+    if remaining <= 0:
+        messages.info(request, "No balance amount remaining.")
+        return redirect('client_commissions')
+
+    if method == 'online':
+        return redirect('pay_balance_online', commission_id=commission.id)
+
+    elif method == 'offline':
+        # Assume offline payment will be collected before delivery
+        commission.balance_paid = True
+        commission.balance_paid_at = timezone.now()
+        commission.save()
+
+        messages.success(
+            request,
+            "Offline payment selected. Artist will collect payment before delivery."
+        )
+
+        return redirect('client_commissions')
+
+    messages.error(request, "Invalid payment method.")
+    return redirect('client_commissions')
+@login_required
+def pay_balance_online(request, commission_id):
+    commission = get_object_or_404(
+        Commission,
+        id=commission_id,
+        client=request.user
+    )
+
+    remaining = commission.total_price - commission.advance_amount
+
+    if remaining <= 0:
+        messages.info(request, "No balance remaining.")
+        return redirect('client_commissions')
+
+    payment = paypalrestsdk.Payment({
+        "intent": "sale",
+        "payer": {"payment_method": "paypal"},
+        "redirect_urls": {
+            "return_url": request.build_absolute_uri(
+                f"/commission/paypal/success/{commission.id}/"
+            ),
+            "cancel_url": request.build_absolute_uri("/client-commissions/")
+        },
+        "transactions": [{
+            "amount": {
+                "total": str(remaining),
+                "currency": "USD"
+            },
+            "description": f"Balance payment for commission {commission.title}"
+        }]
+    })
+
+    if payment.create():
+        for link in payment.links:
+            if link.rel == "approval_url":
+                return redirect(link.href)
+
+    messages.error(request, "Unable to initiate balance payment.")
+    return redirect('client_commissions')

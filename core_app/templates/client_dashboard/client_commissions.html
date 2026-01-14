@@ -107,6 +107,31 @@
                 {% endif %}
             {% endif %}
 
+            <!-- 💰 BALANCE PAYMENT CHOICE AFTER WORK COMPLETED -->
+            {% if commission.status == 'completed' and commission.total_price > commission.advance_amount and not commission.balance_paid %}
+            <div class="mt-3 p-3 border rounded bg-light">
+                <h6>Choose payment method for remaining balance (₹{{ commission.total_price|floatformat:2|add:"-commission.advance_amount"|floatformat:2 }}):</h6>
+                <form method="post" action="{% url 'pay_balance_choice' commission.id %}">
+                    {% csrf_token %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="method" id="online" value="online" required>
+                        <label class="form-check-label" for="online">
+                            Online Payment (Pay via PayPal)
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="method" id="offline" value="offline" required>
+                        <label class="form-check-label" for="offline">
+                            Offline Payment (Pay manually)
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm mt-2">
+                        Confirm Payment Method
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+
             <!-- FINAL DELIVERY MESSAGE -->
             {% if commission.status == 'delivered' %}
                 <div class="mt-2">
