@@ -44,7 +44,6 @@
 
 <div class="container py-5">
 
-    <!-- BACK BUTTON -->
     <div class="mb-4">
         <a href="{% url 'artist_dashboard' %}"
            class="btn btn-outline-secondary btn-sm rounded-pill">
@@ -57,7 +56,6 @@
     {% if commissions %}
         {% for c in commissions %}
 
-        <!-- TIMELINE -->
         <div class="timeline text-end mb-1">
             Requested: {{ c.created_at|date:"M d, Y" }}
             {% if c.accepted_at %} | Accepted: {{ c.accepted_at|date:"M d, Y" }}{% endif %}
@@ -71,11 +69,9 @@
 
         <div class="card commission-card shadow-sm p-4 mb-4">
 
-            <!-- CLIENT INFO -->
             <div class="d-flex align-items-center gap-2">
                 {% if c.client.profile_image %}
-                    <img src="{{ c.client.profile_image.url }}"
-                         class="rounded-circle client-img">
+                    <img src="{{ c.client.profile_image.url }}" class="rounded-circle client-img">
                 {% else %}
                     <i class="fas fa-user-circle fa-2x text-secondary"></i>
                 {% endif %}
@@ -84,7 +80,6 @@
 
             <div class="divider"></div>
 
-            <!-- COMMISSION DETAILS -->
             <h6 class="fw-semibold mb-1">{{ c.title }}</h6>
             <p class="text-muted small mb-2">{{ c.description }}</p>
 
@@ -93,49 +88,37 @@
                 {{ c.required_date|date:"M d, Y" }}
             </p>
 
-            <!-- REFERENCE IMAGE -->
             {% if c.reference_image %}
                 <div class="d-flex align-items-center gap-3 mb-3">
                     <img src="{{ c.reference_image.url }}" class="reference-img">
-                    <small class="text-muted">
-                        Reference image provided by client
-                    </small>
+                    <small class="text-muted">Reference image provided by client</small>
                 </div>
             {% endif %}
 
-            <!-- STATUS BADGE -->
             <div class="mb-2">
                 {% if c.status == 'delivered' %}
                     <span class="badge bg-success">Delivered ✓</span>
-
                 {% elif c.status == 'shipping' %}
                     <span class="badge bg-warning text-dark">Shipping</span>
-
                 {% elif c.status == 'completed' %}
                     <span class="badge bg-success">Work Completed</span>
-
                 {% elif c.status == 'in_progress' %}
                     <span class="badge bg-info text-dark">In Progress</span>
-
                 {% elif c.status == 'advance_paid' %}
                     <span class="badge bg-warning text-dark">Advance Paid</span>
-
                 {% elif c.status == 'accepted' %}
                     <span class="badge bg-primary">Accepted</span>
-
                 {% elif c.status == 'rejected' %}
                     <span class="badge bg-danger">Rejected ✕</span>
-
                 {% else %}
                     <span class="badge bg-secondary">Pending</span>
                 {% endif %}
             </div>
 
-            <!-- ADVANCE INFO -->
             {% if c.advance_amount %}
                 <p class="small text-muted mb-2">
                     <strong>Advance:</strong> ₹{{ c.advance_amount }}
-                    {% if c.status in 'advance_paid,in_progress,completed,shipping,delivered' %}
+                    {% if c.status == 'advance_paid' or c.status == 'in_progress' or c.status == 'completed' or c.status == 'shipping' or c.status == 'delivered' %}
                         <span class="text-success">(Paid)</span>
                     {% else %}
                         <span class="text-warning">(Pending)</span>
@@ -143,7 +126,6 @@
                 </p>
             {% endif %}
 
-            <!-- ACTION BUTTONS -->
             <div class="mt-3 d-flex gap-2 flex-wrap">
 
                 {% if c.status == 'pending' %}
@@ -153,23 +135,23 @@
                     <a href="{% url 'update_commission_status' c.id 'rejected' %}"
                        class="btn btn-danger btn-sm">Reject</a>
 
-                {% elif c.status == 'accepted' and not c.advance_amount %}
+                {% elif c.status == 'accepted' and c.total_price == 0 %}
                     <form method="post"
-                          action="{% url 'set_advance_amount' c.id %}"
+                          action="{% url 'set_total_price' c.id %}"
                           class="d-flex gap-2">
                         {% csrf_token %}
                         <input type="number"
-                               name="advance_amount"
+                               name="total_price"
                                class="form-control form-control-sm"
-                               placeholder="Advance ₹"
+                               placeholder="Total price ₹"
                                min="1"
                                required>
                         <button class="btn btn-warning btn-sm">
-                            Request Advance
+                            Set Price
                         </button>
                     </form>
 
-                {% elif c.status == 'accepted' and c.advance_amount and not c.advance_paid %}
+                {% elif c.status == 'accepted' and c.advance_amount %}
                     <span class="small text-muted">
                         Waiting for client to pay advance via PayPal
                     </span>
