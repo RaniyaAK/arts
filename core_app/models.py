@@ -6,7 +6,6 @@ from django.utils import timezone
 import uuid
 
 
-
 class User(AbstractUser):
     ROLE_CHOICES = [
         ('artist', 'Artist'),
@@ -76,12 +75,14 @@ class Commission(models.Model):
         ('rejected', 'Rejected'),
     ]
 
-    commission_id = models.CharField(
-        max_length=20,
-        null=True,
-        editable=False,
-        blank=True
-    )
+
+    PAYMENT_MODE_CHOICES = [
+        ('online', 'Online'),
+        ('offline', 'Offline'),
+    ]
+
+
+    commission_id = models.CharField(max_length=20,null=True,editable=False,blank=True)
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
 
@@ -93,20 +94,10 @@ class Commission(models.Model):
     reference_image = models.ImageField(upload_to='commission_references/', blank=True, null=True)
     required_date = models.DateField()
 
-    total_price = models.DecimalField(
-    max_digits=10,
-    decimal_places=2,
-    default=0.00,
-    validators=[MinValueValidator(0)]
-)
+    total_price = models.DecimalField(max_digits=10,decimal_places=2,default=0.00,validators=[MinValueValidator(0)])
 
 
-    advance_amount = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        default=0.00,
-        validators=[MinValueValidator(0)]
-    )
+    advance_amount = models.DecimalField(max_digits=10,decimal_places=2,default=0.00,validators=[MinValueValidator(0)])
     advance_paid = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -117,8 +108,12 @@ class Commission(models.Model):
     delivered_at = models.DateTimeField(blank=True, null=True)
     completed_at = models.DateTimeField(blank=True, null=True)
     rejected_at = models.DateTimeField(blank=True, null=True)
-
     rejection_reason = models.TextField(blank=True, null=True)
+
+    payment_mode = models.CharField(max_length=10,choices=PAYMENT_MODE_CHOICES,null=True,blank=True)
+
+    balance_paid = models.BooleanField(default=False)
+    balance_paid_at = models.DateTimeField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.commission_id:
