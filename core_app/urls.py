@@ -48,13 +48,10 @@ urlpatterns = [
     path('commission/set-total-price/<int:commission_id>/',views.set_total_price,name='set_total_price'),
 
 
-
     path('commission/<int:commission_id>/balance-choice/', views.pay_balance_choice, name='pay_balance_choice'),
     path('commission/<int:commission_id>/balance-online/', views.pay_balance_online, name='pay_balance_online'),
 
     path('commission/<int:commission_id>/<str:status>/', views.update_commission_status, name='update_commission_status'),
-
-
 
     # path('artist/revenue/', views.artist_revenue, name='artist_revenue'),
 
