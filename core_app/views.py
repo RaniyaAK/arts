@@ -21,7 +21,6 @@ from .models import Artwork, Activity, Commission
 from .models import Notification
 
 import paypalrestsdk
-from django.views.decorators.http import require_POST
 from django.db.models import Sum
 
 
@@ -82,12 +81,10 @@ def register_view(request):
             return render(request, 'register.html', {'form': form, 'role': role})
 
         user.role = role
-        user.is_profile_complete = False  # ✅ profile not complete yet
+        user.is_profile_complete = False  
         user.save()
 
-        login(request, user)  # automatically log in after registration
-
-        # Redirect **immediately to profile completion**
+        login(request, user)  
         return redirect('complete_profile')
 
     return render(request, 'register.html', {'form': form, 'role': role})
@@ -252,7 +249,6 @@ def add_artworks(request):
             artwork.artist = request.user
             artwork.save()
 
-            # Log activity with actual artwork title
             Activity.objects.create(
                 user=request.user,
                 artwork_title=artwork.title,
@@ -411,7 +407,6 @@ def update_commission_status(request, commission_id, status):
         commission.status = 'shipping'
         commission.shipping_at = now
 
-        # ✅ OFFLINE PAYMENT: assume collected AFTER shipping
         if commission.payment_mode == 'offline' and not commission.balance_paid:
             commission.balance_paid = True
             commission.balance_paid_at = now
@@ -551,7 +546,7 @@ def set_total_price(request, commission_id):
         total_price = float(total_price)
 
         commission.total_price = total_price
-        commission.advance_amount = round(total_price * 0.30, 2)  # ✅ 20% auto
+        commission.advance_amount = round(total_price * 0.30, 2) 
         commission.save()
 
         messages.success(
