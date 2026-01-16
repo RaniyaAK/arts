@@ -36,9 +36,6 @@ urlpatterns = [
     path('commission/paypal/success/<int:commission_id>/', views.paypal_success, name='paypal_success'),
     path("commission/paypal/balance-success/<int:commission_id>/",views.paypal_success_balance,name="paypal_success_balance"),
 
-    
-    
-
 
     path('notifications/mark-read/', views.mark_notification_read, name='mark_notification_read'),
 
@@ -57,8 +54,6 @@ urlpatterns = [
 
     path('commission/<int:commission_id>/<str:status>/', views.update_commission_status, name='update_commission_status'),
     
-
-
     # path('artist/revenue/', views.artist_revenue, name='artist_revenue'),
 
 
