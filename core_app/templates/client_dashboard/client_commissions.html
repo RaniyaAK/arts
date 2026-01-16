@@ -25,7 +25,6 @@
             {% if commission.completed_at %} | Work Completed: {{ commission.completed_at|date:"M d, Y" }}{% endif %}
             {% if commission.shipping_at %} | Shipping: {{ commission.shipping_at|date:"M d, Y" }}{% endif %}
             {% if commission.delivered_at %} | Delivered: {{ commission.delivered_at|date:"M d, Y" }}{% endif %}
-            {% if commission.rejected_at %} | Rejected: {{ commission.rejected_at|date:"M d, Y" }}{% endif %}
         </div>
 
         <div class="card mb-3 shadow-sm rounded-4 p-3">
@@ -39,115 +38,98 @@
                 {% else %}
                     <i class="fas fa-user-circle fa-2x text-muted me-3"></i>
                 {% endif %}
-                <div>
-                    <strong>{{ commission.artist.name }}</strong>
-                </div>
+                <strong>{{ commission.artist.name }}</strong>
             </div>
 
-            <hr class="my-3">
+            <hr>
 
-            <!-- COMMISSION TITLE & DESCRIPTION -->
-            <h5 class="mt-2">{{ commission.title }}</h5>
+            <h5>{{ commission.title }}</h5>
             <p class="text-muted">{{ commission.description }}</p>
 
-            <!-- REFERENCE IMAGE -->
             {% if commission.reference_image %}
-            <div class="mb-2">
-                <img src="{{ commission.reference_image.url }}"
-                     alt="Reference Image"
-                     class="img-fluid rounded"
-                     style="max-height:250px; object-fit:cover;">
-            </div>
+                <img src="{{ commission.reference_image.url }}" class="img-fluid rounded mb-2">
             {% endif %}
 
-            <!-- STATUS BADGE -->
-            <div class="mt-2 mb-2">
-                {% if commission.status == 'delivered' %}
-                    <span class="badge bg-success">Delivered ✓</span>
-
-                {% elif commission.status == 'shipping' %}
-                    <span class="badge bg-warning text-dark">Shipping</span>
-
-                {% elif commission.status == 'completed' %}
-                    <span class="badge bg-success">Work Completed</span>
-
-                {% elif commission.status == 'in_progress' %}
-                    <span class="badge bg-info text-dark">In Progress</span>
-
-                {% elif commission.status == 'advance_paid' %}
-                    <span class="badge bg-warning text-dark">Advance Paid</span>
-
-                {% elif commission.status == 'accepted' %}
-                    <span class="badge bg-primary">Accepted</span>
-
-                {% elif commission.status == 'rejected' %}
-                    <span class="badge bg-danger">Rejected ✕</span>
-
-                {% else %}
-                    <span class="badge bg-secondary">Pending</span>
-                {% endif %}
+            <!-- STATUS -->
+            <div class="mb-2">
+                <span class="badge bg-secondary">{{ commission.status|title }}</span>
             </div>
 
-            <!-- ADVANCE PAYMENT INFO & BUTTON -->
-            {% if commission.advance_amount > 0 %}
-                <div class="mb-2">
-                    <strong>Advance Requested:</strong> ₹{{ commission.advance_amount }}
+            <!-- ADVANCE -->
+            {% if commission.advance_amount %}
+                <p>
+                    <strong>Advance:</strong> ₹{{ commission.advance_amount }}
                     {% if commission.advance_paid %}
                         <span class="text-success">(Paid)</span>
                     {% else %}
                         <span class="text-warning">(Pending)</span>
                     {% endif %}
-                </div>
+                </p>
 
-                {% if not commission.advance_paid and commission.status == 'accepted' %}
+                {% if commission.status == 'accepted' and not commission.advance_paid %}
                     <a href="{% url 'pay_advance' commission.id %}"
-                       class="btn btn-warning btn-sm rounded-pill">
-                        Pay Advance ₹{{ commission.advance_amount }}
+                       class="btn btn-warning btn-sm">
+                        Pay Advance
                     </a>
                 {% endif %}
             {% endif %}
 
-            <!-- 💰 BALANCE PAYMENT CHOICE AFTER WORK COMPLETED -->
-            {% if commission.status == 'completed' and commission.total_price > commission.advance_amount and not commission.balance_paid %}
-            <div class="mt-3 p-3 border rounded bg-light">
-                <h6>Choose payment method for remaining balance (₹{{ commission.total_price|floatformat:2|add:"-commission.advance_amount"|floatformat:2 }}):</h6>
-                <form method="post" action="{% url 'pay_balance_choice' commission.id %}">
-                    {% csrf_token %}
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="method" id="online" value="online" required>
-                        <label class="form-check-label" for="online">
-                            Online Payment (Pay via PayPal)
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="method" id="offline" value="offline" required>
-                        <label class="form-check-label" for="offline">
-                            Offline Payment (Pay manually)
-                        </label>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-sm mt-2">
-                        Confirm Payment Method
-                    </button>
-                </form>
-            </div>
+            <!-- ================= BALANCE PAYMENT ================= -->
+
+            {% if commission.total_price > commission.advance_amount %}
+
+                {% if commission.status == 'completed' %}
+
+                    <!-- STEP 1: Choose payment method -->
+                    {% if not commission.payment_mode %}
+                        <div class="border rounded p-3 bg-light mt-3">
+                            <h6>Choose payment method for remaining balance</h6>
+                            <form method="post" action="{% url 'pay_balance_choice' commission.id %}">
+                                {% csrf_token %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="method" value="online" required>
+                                    <label class="form-check-label">Online (PayPal)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="method" value="offline" required>
+                                    <label class="form-check-label">Offline (after shipping)</label>
+                                </div>
+                                <button class="btn btn-primary btn-sm mt-2">
+                                    Confirm Payment Method
+                                </button>
+                            </form>
+                        </div>
+                    {% endif %}
+
+                    <!-- STEP 2: Pay Now button -->
+                    {% if commission.payment_mode == 'online' and not commission.balance_paid %}
+                        <a href="{% url 'pay_balance_online' commission.id %}"
+                           class="btn btn-success btn-sm mt-2">
+                            Pay Balance Now
+                        </a>
+                    {% endif %}
+
+                {% endif %}
+
+                {% if commission.payment_mode == 'offline' and commission.status == 'shipping' %}
+                    <p class="text-success small mt-2">
+                        Offline payment assumed completed after shipping ✅
+                    </p>
+                {% endif %}
+
+                {% if commission.balance_paid %}
+                    <p class="text-success small mt-2">
+                        Balance payment completed ✅
+                    </p>
+                {% endif %}
+
             {% endif %}
 
-            <!-- FINAL DELIVERY MESSAGE -->
+            <!-- FINAL -->
             {% if commission.status == 'delivered' %}
-                <div class="mt-2">
-                    <small class="text-success">
-                        🎉 Your artwork has been delivered successfully!
-                    </small>
-                </div>
-            {% endif %}
-
-            <!-- REJECTION REASON -->
-            {% if commission.status == 'rejected' and commission.rejection_reason %}
-                <div class="mt-1">
-                    <small class="text-danger">
-                        Reason: {{ commission.rejection_reason }}
-                    </small>
-                </div>
+                <p class="text-success small mt-2">
+                    🎉 Artwork delivered successfully!
+                </p>
             {% endif %}
 
         </div>

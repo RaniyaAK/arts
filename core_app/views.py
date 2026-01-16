@@ -407,21 +407,41 @@ def update_commission_status(request, commission_id, status):
         if commission.status != 'completed':
             messages.error(request, "Work must be completed before shipping.")
             return redirect('artist_commissions')
+
         commission.status = 'shipping'
         commission.shipping_at = now
+
+        # ✅ OFFLINE PAYMENT: assume collected AFTER shipping
+        if commission.payment_mode == 'offline' and not commission.balance_paid:
+            commission.balance_paid = True
+            commission.balance_paid_at = now
+
+            Notification.objects.create(
+                receiver=commission.client,
+                commission=commission,
+                message=f"Offline payment collected for commission '{commission.title}' ({commission.commission_id})",
+                notification_type='balance_paid'
+            )
 
         Notification.objects.create(
             receiver=commission.client,
             commission=commission,
-            message=f"Your commission '{commission.title}' ({commission.commission_id}) has been shipped ",
+            message=f"Your commission '{commission.title}' ({commission.commission_id}) has been shipped",
             notification_type='shipped'
-        )
+    )
 
 
     elif status == 'delivered':
         if commission.status != 'shipping':
             messages.error(request, "Artwork must be shipped before delivery.")
             return redirect('artist_commissions')
+
+        # ✅ Check if balance is fully paid
+        remaining = commission.total_price - commission.advance_amount
+        if remaining > 0 and not commission.balance_paid:
+            messages.error(request, "Cannot mark as delivered. Client has not paid the remaining balance yet.")
+            return redirect('artist_commissions')
+
         commission.status = 'delivered'
         commission.delivered_at = now
 
@@ -432,6 +452,7 @@ def update_commission_status(request, commission_id, status):
             message=f"Your commission '{commission.title}' ({commission.commission_id}) has been delivered",
             notification_type='delivered'
         )
+
 
 
     else:
@@ -573,6 +594,7 @@ def unread_notification_count(request):
     ).count()
     return JsonResponse({'count': count})
 
+
 @login_required
 @require_POST
 def mark_notification_read(request):
@@ -582,6 +604,7 @@ def mark_notification_read(request):
     ).update(is_read=True)
 
     return JsonResponse({'status': 'ok'})
+
 
 @login_required
 @require_POST
@@ -594,6 +617,10 @@ def pay_balance_choice(request, commission_id):
 
     method = request.POST.get('method')
 
+    if commission.balance_paid:
+        messages.info(request, "Balance already paid.")
+        return redirect('client_commissions')
+
     if commission.status != 'completed':
         messages.error(request, "Balance payment not allowed at this stage.")
         return redirect('client_commissions')
@@ -603,24 +630,25 @@ def pay_balance_choice(request, commission_id):
         messages.info(request, "No balance amount remaining.")
         return redirect('client_commissions')
 
+    # ✅ Save payment method
+    commission.payment_mode = method
+    commission.save()
+
     if method == 'online':
         return redirect('pay_balance_online', commission_id=commission.id)
 
     elif method == 'offline':
-        # Assume offline payment will be collected before delivery
-        commission.balance_paid = True
-        commission.balance_paid_at = timezone.now()
+        commission.payment_mode = 'offline'
         commission.save()
 
         messages.success(
             request,
-            "Offline payment selected. Artist will collect payment before delivery."
+            "Offline payment selected. You will pay the artist after shipping."
         )
-
         return redirect('client_commissions')
 
-    messages.error(request, "Invalid payment method.")
-    return redirect('client_commissions')
+
+
 @login_required
 def pay_balance_online(request, commission_id):
     commission = get_object_or_404(
@@ -631,6 +659,16 @@ def pay_balance_online(request, commission_id):
 
     remaining = commission.total_price - commission.advance_amount
 
+    if commission.status != 'completed':
+        messages.error(request, "Balance payment not allowed at this stage.")
+        return redirect('client_commissions')
+
+
+    if commission.balance_paid:
+        messages.info(request, "Balance already paid.")
+        return redirect('client_commissions')
+
+
     if remaining <= 0:
         messages.info(request, "No balance remaining.")
         return redirect('client_commissions')
@@ -640,8 +678,11 @@ def pay_balance_online(request, commission_id):
         "payer": {"payment_method": "paypal"},
         "redirect_urls": {
             "return_url": request.build_absolute_uri(
-                f"/commission/paypal/success/{commission.id}/"
+                f"/commission/paypal/balance-success/{commission.id}/"
             ),
+
+
+
             "cancel_url": request.build_absolute_uri("/client-commissions/")
         },
         "transactions": [{
@@ -660,3 +701,34 @@ def pay_balance_online(request, commission_id):
 
     messages.error(request, "Unable to initiate balance payment.")
     return redirect('client_commissions')
+
+
+@login_required
+def paypal_success_balance(request, commission_id):
+    commission = get_object_or_404(
+        Commission, id=commission_id, client=request.user
+    )
+
+    payment_id = request.GET.get('paymentId')
+    payer_id = request.GET.get('PayerID')
+
+    payment = paypalrestsdk.Payment.find(payment_id)
+
+    if payment.execute({"payer_id": payer_id}):
+        commission.balance_paid = True
+        commission.balance_paid_at = timezone.now()
+        commission.save()
+
+        messages.success(request, "Balance payment successful!")
+
+        Notification.objects.create(
+            receiver=commission.artist,
+            commission=commission,
+            message=f"Balance payment received for '{commission.title}'",
+            notification_type='balance_paid'
+        )
+    else:
+        messages.error(request, "Balance payment failed.")
+
+    return redirect("client_commissions")
+
