@@ -25,6 +25,8 @@
             {% if commission.completed_at %} | Work Completed: {{ commission.completed_at|date:"M d, Y" }}{% endif %}
             {% if commission.shipping_at %} | Shipping: {{ commission.shipping_at|date:"M d, Y" }}{% endif %}
             {% if commission.delivered_at %} | Delivered: {{ commission.delivered_at|date:"M d, Y" }}{% endif %}
+            {% if commission.rejected_at %} | Rejected: {{ commission.rejected_at|date:"M d, Y" }}{% endif %}
+            {% if commission.cancelled_at %} | Cancelled: {{ commission.cancelled_at|date:"M d, Y" }}{% endif %}
         </div>
 
         <div class="card mb-3 shadow-sm rounded-4 p-3">
@@ -52,7 +54,21 @@
 
             <!-- STATUS -->
             <div class="mb-2">
-                <span class="badge bg-secondary">{{ commission.status|title }}</span>
+                {% if commission.status == 'delivered' %}
+                    <span class="badge bg-success">{{ commission.status|title }}</span>
+                {% elif commission.status == 'cancelled' %}
+                    <span class="badge bg-danger">{{ commission.status|title }}</span>
+                {% elif commission.status == 'rejected' %}
+                    <span class="badge bg-danger">{{ commission.status|title }}</span>
+                {% elif commission.status == 'completed' %}
+                    <span class="badge bg-primary">{{ commission.status|title }}</span>
+                {% elif commission.status == 'in_progress' %}
+                    <span class="badge bg-info">{{ commission.status|title }}</span>
+                {% elif commission.status == 'accepted' %}
+                    <span class="badge bg-warning text-dark">{{ commission.status|title }}</span>
+                {% else %}
+                    <span class="badge bg-secondary">{{ commission.status|title }}</span>
+                {% endif %}
             </div>
 
             <!-- ADVANCE -->
@@ -66,7 +82,7 @@
                     {% endif %}
                 </p>
 
-                {% if commission.status == 'accepted' and not commission.advance_paid %}
+                {% if commission.status == 'accepted' and not commission.advance_paid and commission.status != 'cancelled' and commission.status != 'rejected' %}
                     <a href="{% url 'pay_advance' commission.id %}"
                        class="btn btn-warning btn-sm">
                         Pay Advance
@@ -74,12 +90,20 @@
                 {% endif %}
             {% endif %}
 
-            <!-- ================= BALANCE PAYMENT ================= -->
+            <!-- CANCEL BUTTON -->
+            {% if commission.status == 'pending' or commission.status == 'accepted' or commission.status == 'advance_paid' %}
+                <form method="post" action="{% url 'cancel_commission' commission.id %}">
+                    {% csrf_token %}
+                    <button class="btn btn-danger btn-sm mt-2">
+                        Cancel Commission
+                    </button>
+                </form>
+            {% endif %}
 
-            {% if commission.total_price > commission.advance_amount %}
+            <!-- ================= BALANCE PAYMENT ================= -->
+            {% if commission.total_price > commission.advance_amount and commission.status != 'cancelled' and commission.status != 'rejected' %}
 
                 {% if commission.status == 'completed' %}
-
                     <!-- STEP 1: Choose payment method -->
                     {% if not commission.payment_mode %}
                         <div class="border rounded p-3 bg-light mt-3">
@@ -108,7 +132,6 @@
                             Pay Balance Now
                         </a>
                     {% endif %}
-
                 {% endif %}
 
                 {% if commission.payment_mode == 'offline' and commission.status == 'shipping' %}
@@ -129,6 +152,14 @@
             {% if commission.status == 'delivered' %}
                 <p class="text-success small mt-2">
                     🎉 Artwork delivered successfully!
+                </p>
+            {% elif commission.status == 'cancelled' %}
+                <p class="text-danger small mt-2">
+                    ❌ This commission was cancelled.
+                </p>
+            {% elif commission.status == 'rejected' %}
+                <p class="text-danger small mt-2">
+                    ❌ This commission was rejected by the artist.
                 </p>
             {% endif %}
 

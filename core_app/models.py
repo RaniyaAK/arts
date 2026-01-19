@@ -63,6 +63,7 @@ class Commission(models.Model):
         ('shipped', 'Shipped'),
         ('delivered', 'Delivered'),
         ('rejected', 'Rejected'),
+        ('cancelled', 'Cancelled'),
     ]
 
     PAYMENT_MODE_CHOICES = [
