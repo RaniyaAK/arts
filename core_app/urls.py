@@ -52,7 +52,13 @@ urlpatterns = [
     path('commission/<int:commission_id>/balance-choice/', views.pay_balance_choice, name='pay_balance_choice'),
     path('commission/<int:commission_id>/balance-online/', views.pay_balance_online, name='pay_balance_online'),
 
+    path('commission/<int:commission_id>/cancel/', views.cancel_commission, name='cancel_commission'),
+
+
     path('commission/<int:commission_id>/<str:status>/', views.update_commission_status, name='update_commission_status'),
+
+    path('commission/<int:commission_id>/cancel/',views.cancel_commission,name='cancel_commission'),
+
     
     # path('artist/revenue/', views.artist_revenue, name='artist_revenue'),
 

@@ -727,3 +727,39 @@ def paypal_success_balance(request, commission_id):
 
     return redirect("client_commissions")
 
+@login_required
+@require_POST
+def cancel_commission(request, commission_id):
+    commission = get_object_or_404(Commission, id=commission_id)
+
+    # Only client OR artist can cancel
+    if request.user not in [commission.client, commission.artist]:
+        return HttpResponseForbidden()
+
+    # ❌ Cannot cancel after shipping
+    if commission.status in ['shipping', 'delivered']:
+        messages.error(request, "Cannot cancel after shipping.")
+        return redirect(
+            'client_commissions' if request.user == commission.client else 'artist_commissions'
+        )
+
+    commission.status = 'cancelled'
+    commission.cancelled_at = timezone.now()
+    commission.cancelled_by = 'client' if request.user == commission.client else 'artist'
+    commission.cancellation_reason = request.POST.get('reason', '')
+    commission.save()
+
+    # 🔔 Notify other party
+    receiver = commission.artist if request.user == commission.client else commission.client
+
+    Notification.objects.create(
+        receiver=receiver,
+        commission=commission,
+        message=f"Commission '{commission.title}' ({commission.commission_id}) has been cancelled.",
+        notification_type='cancelled'
+    )
+
+    messages.success(request, "Commission cancelled successfully.")
+    return redirect(
+        'client_commissions' if request.user == commission.client else 'artist_commissions'
+    )

@@ -60,6 +60,7 @@
             {% if c.shipping_at %} | Shipping: {{ c.shipping_at|date:"M d, Y" }}{% endif %}
             {% if c.delivered_at %} | Delivered: {{ c.delivered_at|date:"M d, Y" }}{% endif %}
             {% if c.rejected_at %} | Rejected: {{ c.rejected_at|date:"M d, Y" }}{% endif %}
+            {% if c.cancelled_at %} | Cancelled: {{ c.cancelled_at|date:"M d, Y" }}{% endif %}
         </div>
 
         <div class="card commission-card shadow-sm p-4 mb-4">
@@ -107,6 +108,8 @@
                     <span class="badge bg-primary">Accepted</span>
                 {% elif c.status == 'rejected' %}
                     <span class="badge bg-danger">Rejected ✕</span>
+                {% elif c.status == 'cancelled' %}
+                    <span class="badge bg-danger">Cancelled ✖</span>
                 {% else %}
                     <span class="badge bg-secondary">Pending</span>
                 {% endif %}
@@ -125,7 +128,7 @@
             {% endif %}
 
             <!-- BALANCE PAYMENT (FIXED) -->
-            {% if c.total_price > c.advance_amount %}
+            {% if c.total_price > c.advance_amount and c.status != 'cancelled' %}
                 {% if c.balance_paid %}
                     <p class="small text-success fw-semibold">Balance Paid ✅</p>
                 {% elif c.payment_mode == 'offline' and c.status == 'shipping' %}
@@ -176,7 +179,10 @@
                 {% elif c.status == 'rejected' %}
                     <span class="text-danger small">Rejected</span>
 
-                {% endif %}
+                {% elif c.status == 'cancelled' %}
+                    <span class="text-danger small fw-semibold">❌ Commission Cancelled</span>
+                {% endif %}    
+
             </div>
 
         </div>
