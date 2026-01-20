@@ -41,7 +41,7 @@ class ResetPasswordForm(forms.Form):
 class ArtworkForm(forms.ModelForm):
     class Meta:
         model = Artwork
-        fields = ['image']
+        fields = ['image', 'artwork_title']
 
 
 

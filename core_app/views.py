@@ -251,7 +251,7 @@ def add_artworks(request):
 
             Activity.objects.create(
                 user=request.user,
-                artwork_title=artwork.title,
+                artwork_title=artwork.artwork_title,
                 action='added'
             )
 
