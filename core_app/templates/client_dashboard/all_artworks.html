@@ -21,7 +21,9 @@
                      alt="{{ artwork.title }}"
                      style="height:250px; object-fit:cover; width:100%;">
                 <div class="card-body">
-                    <p class="text-muted small">By {{ artwork.artist.name }}</p>
+                    <a href="{% url 'artist_profile' artwork.artist.id %}"
+                       class="text-decoration-none text-dark small">By {{ artwork.artist.name }}
+                    </a>
                 </div>
             </div>
         </div>
