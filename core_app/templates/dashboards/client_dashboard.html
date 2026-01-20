@@ -139,12 +139,15 @@
         {% endfor %}
     </div>
 
+    {% if artwork_count > 6 %}
     <div class="text-end mt-3">
         <a href="{% url 'all_artworks' %}"
-           class="btn bg-primary-color text-cream rounded-pill">
+        class="btn bg-primary-color text-cream rounded-pill">
             See All →
         </a>
     </div>
+    {% endif %}
+
 
 </div>
 

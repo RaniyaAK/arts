@@ -190,7 +190,6 @@ def artist_dashboard(request):
         'full_revenue': full_revenue,
     })
 
-
 @login_required
 def client_dashboard(request):
     if request.user.role != 'client':
@@ -209,16 +208,20 @@ def client_dashboard(request):
     else:
         featured_artists = User.objects.filter(role='artist')
 
-    artworks = Artwork.objects.all().order_by('-created_at')[:6]
+    all_artworks = Artwork.objects.all().order_by('-created_at')
+    artworks = all_artworks[:6]   # show only 6 cards
+    artwork_count = all_artworks.count()   # count total artworks
 
     return render(
         request,
         'dashboards/client_dashboard.html',
         {
             'artworks': artworks,
-            'featured_artists': featured_artists
+            'featured_artists': featured_artists,
+            'artwork_count': artwork_count
         }
     )
+
 
 # ____________________________________________________________________________________________________________________
 
