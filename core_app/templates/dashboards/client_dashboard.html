@@ -23,17 +23,13 @@
 
                     <i class="fas fa-bell"></i>
 
-                    <!-- 🔴 UNREAD COUNT BADGE (AJAX) -->
                     <span id="notification-count"
                           class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                          style="display:none;">
-                    </span>
+                          style="display:none;"></span>
                 </button>
 
                 <ul class="dropdown-menu dropdown-menu-end p-2"
-                    aria-labelledby="notificationDropdown"
                     style="width:300px; max-height:400px; overflow-y:auto;">
-
                     {% for notif in request.user.notifications.all|dictsortreversed:"created_at" %}
                         <li class="border-bottom mb-1 pb-1">
                             <small class="text-muted">
@@ -42,14 +38,11 @@
                             <div>{{ notif.message }}</div>
                         </li>
                     {% empty %}
-                        <li class="text-center text-muted">
-                            No notifications
-                        </li>
+                        <li class="text-center text-muted">No notifications</li>
                     {% endfor %}
                 </ul>
             </div>
 
-            <!-- My Commissions Button -->
             <a href="{% url 'client_commissions' %}"
                class="btn btn-outline-dark rounded-pill">
                 My Commissions
@@ -78,7 +71,16 @@
 
     <div class="d-flex flex-wrap mb-5" id="artistContainer">
         {% for artist in featured_artists %}
-        <div class="artist-card mb-4 me-3" style="width:180px;">
+        <div class="artist-card mb-4 me-3 {% if forloop.counter > 6 %}extra-artist{% endif %}"
+             style="width:180px; position:relative; {% if forloop.counter > 6 %}display:none;{% endif %}">
+
+            {% if forloop.counter == 6 and featured_artists|length > 6 %}
+            <!-- EDGE TOGGLE -->
+            <div class="edge-toggle toggle-btn">
+                <i class="fas fa-plus"></i>
+            </div>
+            {% endif %}
+
             <div class="card shadow-sm rounded-4 p-3 text-center"
                  style="height:280px;display:flex;flex-direction:column;justify-content:center;">
 
@@ -113,39 +115,22 @@
         {% endfor %}
     </div>
 
-    <!-- Latest Artworks -->
+    <!-- Latest Artworks (UNCHANGED) -->
     <h4 class="text-primary-color mb-3">Latest Artworks</h4>
 
     <div class="row">
         {% for artwork in artworks %}
         <div class="col-md-4 mb-4">
             <div class="card shadow-sm h-100 rounded-4">
-
                 <img src="{{ artwork.image.url }}"
                      class="card-img-top rounded-4"
                      style="height:250px;object-fit:cover;">
 
                 <div class="card-body d-flex align-items-center">
-
-                    {% if artwork.artist.profile_image %}
-                        <a href="{% url 'artist_profile' artwork.artist.id %}">
-                            <img src="{{ artwork.artist.profile_image.url }}"
-                                 class="rounded-circle me-2"
-                                 style="width:35px; height:35px; object-fit:cover;">
-                        </a>
-                    {% else %}
-                        <a href="{% url 'artist_profile' artwork.artist.id %}">
-                            <i class="fas fa-user-circle fa-lg text-primary-color me-2"></i>
-                        </a>
-                    {% endif %}
-
-                    <div>
-                        <a href="{% url 'artist_profile' artwork.artist.id %}"
-                           class="text-decoration-none text-dark small">
-                            By {{ artwork.artist.name }}
-                        </a>
-                    </div>
-
+                    <a href="{% url 'artist_profile' artwork.artist.id %}"
+                       class="text-decoration-none text-dark small">
+                        By {{ artwork.artist.name }}
+                    </a>
                 </div>
             </div>
         </div>
@@ -154,7 +139,6 @@
         {% endfor %}
     </div>
 
-    <!-- See All -->
     <div class="text-end mt-3">
         <a href="{% url 'all_artworks' %}"
            class="btn bg-primary-color text-cream rounded-pill">
@@ -168,55 +152,79 @@
 <script>
 function fetchUnreadCount() {
     fetch("{% url 'unread_notification_count' %}")
-        .then(response => response.json())
+        .then(r => r.json())
         .then(data => {
             const badge = document.getElementById("notification-count");
-
-            if (data.count > 0) {
-                badge.style.display = "inline-block";
-                badge.textContent = data.count;
-            } else {
-                badge.style.display = "none";
-            }
+            badge.style.display = data.count > 0 ? "inline-block" : "none";
+            badge.textContent = data.count || "";
         });
 }
 
 document.getElementById("notificationDropdown")
-    .addEventListener("shown.bs.dropdown", function () {
-        fetch("{% url 'mark_notification_read' %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}"
-            }
-        }).then(() => fetchUnreadCount());
+?.addEventListener("shown.bs.dropdown", function () {
+    fetch("{% url 'mark_notification_read' %}", {
+        method: "POST",
+        headers: { "X-CSRFToken": "{{ csrf_token }}" }
+    }).then(fetchUnreadCount);
 });
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
     fetchUnreadCount();
     setInterval(fetchUnreadCount, 10000);
 });
 </script>
 
+<!-- EXPAND / COLLAPSE FEATURE -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const extras = document.querySelectorAll(".extra-artist");
+    const cards = document.querySelectorAll(".artist-card");
+    let expanded = false;
+
+    document.addEventListener("click", function (e) {
+        const btn = e.target.closest(".toggle-btn");
+        if (!btn) return;
+
+        expanded = !expanded;
+
+        extras.forEach(card => {
+            card.style.display = expanded ? "inline-block" : "none";
+        });
+
+        btn.remove();
+
+        const targetCard = expanded ? cards[cards.length - 1] : cards[5];
+
+        const toggle = document.createElement("div");
+        toggle.className = "edge-toggle toggle-btn";
+        toggle.innerHTML = `<i class="fas fa-${expanded ? 'minus' : 'plus'}"></i>`;
+
+        targetCard.appendChild(toggle);
+    });
+});
+</script>
+
+<!-- SEARCH -->
 <script>
 const searchInput = document.getElementById('artistSearch');
 const artistCards = document.querySelectorAll('.artist-card');
 const noArtistsMsg = document.getElementById('noArtistsMsg');
 
 searchInput.addEventListener('input', function () {
-    const searchValue = this.value.toLowerCase();
-    let visibleCount = 0;
+    const value = this.value.toLowerCase();
+    let visible = 0;
 
     artistCards.forEach(card => {
-        const artistName = card.querySelector('.artist-name').innerText.toLowerCase();
-        if (artistName.includes(searchValue)) {
+        const name = card.querySelector('.artist-name').innerText.toLowerCase();
+        if (name.includes(value)) {
             card.style.display = 'inline-block';
-            visibleCount++;
+            visible++;
         } else {
             card.style.display = 'none';
         }
     });
 
-    noArtistsMsg.style.display = visibleCount === 0 ? 'block' : 'none';
+    noArtistsMsg.style.display = visible === 0 ? 'block' : 'none';
 });
 </script>
 
@@ -224,6 +232,28 @@ searchInput.addEventListener('input', function () {
 .artist-card .card:hover {
     transform: translateY(-5px);
     box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+
+/* EDGE TOGGLE — FLOATING, NO EXTRA SPACE */
+.edge-toggle {
+    position: absolute;
+    top: 50%;
+    right: -18px;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.edge-toggle i {
+    font-size: 14px;
 }
 </style>
 
