@@ -23,6 +23,11 @@ from .models import Notification
 import paypalrestsdk
 from django.db.models import Sum
 
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.core.mail import send_mail
+
 
 paypalrestsdk.configure({
     "mode": settings.PAYPAL_MODE,
@@ -789,3 +794,65 @@ def cancel_commission(request, commission_id):
     return redirect(
         'client_commissions' if request.user == commission.client else 'artist_commissions'
     )
+
+
+
+User = get_user_model()
+
+def forgot_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        user = User.objects.filter(email=email).first()
+
+        if not user:
+            messages.error(request, "No account found with this email.")
+            return redirect('forgot_password')
+
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+
+        reset_link = request.build_absolute_uri(
+            f"/reset-password/{uid}/{token}/"
+        )
+
+        send_mail(
+            subject="Reset Your Password - Paletra",
+            message=f"Click the link to reset your password:\n\n{reset_link}",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+        )
+
+        messages.success(request, "Password reset link sent to your email.")
+        return redirect('login')
+
+    return render(request, 'forgot_password.html')
+
+
+
+
+def reset_password(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User.objects.get(pk=uid)
+    except:
+        user = None
+
+    if user is None or not default_token_generator.check_token(user, token):
+        messages.error(request, "Invalid or expired reset link.")
+        return redirect('forgot_password')
+
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+            return redirect(request.path)
+
+        user.set_password(password)
+        user.save()
+
+        messages.success(request, "Password reset successful. Please login.")
+        return redirect('login')
+
+    return render(request, 'auth/reset_password.html')
