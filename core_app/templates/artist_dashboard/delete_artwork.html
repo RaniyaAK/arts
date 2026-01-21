@@ -4,27 +4,23 @@
 {% block content %}
 <style>
 .delete-page {
-    min-height: 100vh;
+    position: fixed;      /* 🔥 key fix */
+    inset: 0;             /* top:0 right:0 bottom:0 left:0 */
     background: #FFF7EC;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: center;  /* vertical center */
+    justify-content: center; /* horizontal center */
+    z-index: 999;
 }
 
 .delete-card {
     background: #ffffff;
-    padding: 40px;
+    padding: 36px 48px;
     border-radius: 24px;
-    max-width: 420px;
+    max-width: 520px;
     width: 100%;
     box-shadow: 0 18px 40px rgba(0,0,0,0.08);
     text-align: center;
-}
-
-.delete-icon {
-    font-size: 48px;
-    color: #C0392B;
-    margin-bottom: 15px;
 }
 
 .delete-title {
@@ -36,13 +32,14 @@
     color: #8A6A4F;
     font-size: 15px;
     margin-top: 10px;
+    line-height: 1.6;
 }
 
 .btn-cancel {
     background: #E6D6C3;
     color: #5C3A21;
     border-radius: 50px;
-    padding: 10px 22px;
+    padding: 10px 26px;
     text-decoration: none;
     font-weight: 600;
 }
@@ -51,7 +48,7 @@
     background: #C0392B;
     color: #fff;
     border-radius: 50px;
-    padding: 10px 22px;
+    padding: 10px 26px;
     border: none;
     font-weight: 600;
 }
@@ -59,13 +56,10 @@
 .btn-delete:hover {
     background: #A93226;
 }
-
 </style>
 
 <div class="delete-page">
     <div class="delete-card">
-
-        <div class="delete-icon">🗑️</div>
 
         <h4 class="delete-title">
             Delete Sample Artwork?
@@ -78,12 +72,10 @@
 
         <form method="post" class="mt-4">
             {% csrf_token %}
-
-            <div class="d-flex justify-content-center gap-3">
+            <div class="d-flex justify-content-center gap-4">
                 <a href="{% url 'artist_dashboard' %}" class="btn-cancel">
                     Cancel
                 </a>
-
                 <button type="submit" class="btn-delete">
                     Yes, Delete
                 </button>
