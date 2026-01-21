@@ -183,28 +183,24 @@ def artist_dashboard(request):
         artist=request.user
     )
 
-    # ✅ Advance revenue (paid advances)
     advance_revenue = commissions.filter(
         advance_paid=True
     ).aggregate(
         total=Sum('advance_amount')
     )['total'] or 0
 
-    # ✅ Balance revenue (paid balances)
     balance_revenue = commissions.filter(
         balance_paid=True
     ).aggregate(
         total=Sum('total_price') - Sum('advance_amount')
     )
 
-    # Django ORM can't subtract like that directly → safe calculation
     balance_revenue = sum(
         (c.total_price - c.advance_amount)
         for c in commissions.filter(balance_paid=True)
         if c.total_price and c.advance_amount
     )
 
-    # ✅ Full revenue = advance + balance
     full_revenue = advance_revenue + balance_revenue
 
     return render(request, 'dashboards/artist_dashboard.html', {
@@ -235,9 +231,8 @@ def client_dashboard(request):
         featured_artists = User.objects.filter(role='artist')
 
     all_artworks = Artwork.objects.all().order_by('-created_at')
-    artworks = all_artworks[:6]   # show only 6 cards
-    artwork_count = all_artworks.count()   # count total artworks
-
+    artworks = all_artworks[:6]   
+    artwork_count = all_artworks.count()  
     return render(
         request,
         'dashboards/client_dashboard.html',
