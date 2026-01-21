@@ -24,14 +24,12 @@
 
                     <i class="fas fa-bell"></i>
 
-                    <!-- 🔴 UNREAD COUNT BADGE (AJAX ONLY) -->
                     <span id="notification-count"
                           class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
                           style="display:none;">
                     </span>
                 </button>
 
-                <!-- Notifications List -->
                 <ul class="dropdown-menu dropdown-menu-end p-2"
                     aria-labelledby="notificationDropdown"
                     style="width:300px; max-height:400px; overflow-y:auto;">
@@ -62,28 +60,36 @@
         Clients can request custom digital artwork based on these samples.
     </div>
 
-    <!-- ADD NEW ARTWORK BUTTON -->
-    <div class="mb-4 text-center">
-        <a href="{% url 'add_artworks' %}"
-           class="btn bg-primary-color text-cream rounded-pill px-4">
-            Add Sample Artwork
-        </a>
-    </div>
-
-    <!-- REVENUE -->
+    <!-- REVENUE (3 CARDS) -->
     <div class="row mb-4">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="card p-3 rounded-4 shadow-sm bg-light">
                 <h6>Advance Revenue</h6>
                 <h4>₹{{ advance_revenue }}</h4>
             </div>
         </div>
-        <div class="col-md-6">
+
+        <div class="col-md-4">
+            <div class="card p-3 rounded-4 shadow-sm bg-light">
+                <h6>Balance Revenue</h6>
+                <h4>₹{{ balance_revenue }}</h4>
+            </div>
+        </div>
+
+        <div class="col-md-4">
             <div class="card p-3 rounded-4 shadow-sm bg-light">
                 <h6>Full Revenue</h6>
                 <h4>₹{{ full_revenue }}</h4>
             </div>
         </div>
+    </div>
+
+    <!-- ADD NEW ARTWORK BUTTON (MOVED BELOW REVENUE) -->
+    <div class="mb-4 text-center">
+        <a href="{% url 'add_artworks' %}"
+           class="btn bg-primary-color text-cream rounded-pill px-4">
+            Add Sample Artwork
+        </a>
     </div>
 
     <!-- ARTWORK GALLERY -->
@@ -154,27 +160,17 @@ function fetchUnreadCount() {
         .then(response => response.json())
         .then(data => {
             const badge = document.getElementById("notification-count");
-
-            if (data.count > 0) {
-                badge.style.display = "inline-block";
-                badge.textContent = data.count;
-            } else {
-                badge.style.display = "none";
-            }
+            badge.style.display = data.count > 0 ? "inline-block" : "none";
+            badge.textContent = data.count;
         });
 }
 
-// Mark notifications as read ONLY when dropdown actually opens
 document.getElementById("notificationDropdown")
     .addEventListener("shown.bs.dropdown", function () {
         fetch("{% url 'mark_notification_read' %}", {
             method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}"
-            }
-        }).then(() => {
-            fetchUnreadCount();
-        });
+            headers: { "X-CSRFToken": "{{ csrf_token }}" }
+        }).then(fetchUnreadCount);
 });
 
 document.addEventListener("DOMContentLoaded", function () {

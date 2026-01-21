@@ -171,22 +171,48 @@ def artist_dashboard(request):
     if request.user.role != 'artist':
         return redirect('login')
 
-    artworks = Artwork.objects.filter(artist=request.user).order_by('-created_at')
-    activities = Activity.objects.filter(user=request.user).order_by('-created_at')[:10]
-    commissions = Commission.objects.filter(artist=request.user).order_by('-created_at')
+    artworks = Artwork.objects.filter(
+        artist=request.user
+    ).order_by('-created_at')
 
-    # Revenue calculations
-    advance_revenue = commissions.filter(advance_paid=True).aggregate(total=Sum('advance_amount'))['total'] or 0
-    # Full revenue: consider completed commissions; for now sum advance + remaining
-    full_revenue = commissions.filter(status='completed').aggregate(total=Sum('advance_amount'))['total'] or 0
-    # total revenue = advance + full? or full already includes advance? Adjust as needed.
+    activities = Activity.objects.filter(
+        user=request.user
+    ).order_by('-created_at')[:10]
+
+    commissions = Commission.objects.filter(
+        artist=request.user
+    )
+
+    # ✅ Advance revenue (paid advances)
+    advance_revenue = commissions.filter(
+        advance_paid=True
+    ).aggregate(
+        total=Sum('advance_amount')
+    )['total'] or 0
+
+    # ✅ Balance revenue (paid balances)
+    balance_revenue = commissions.filter(
+        balance_paid=True
+    ).aggregate(
+        total=Sum('total_price') - Sum('advance_amount')
+    )
+
+    # Django ORM can't subtract like that directly → safe calculation
+    balance_revenue = sum(
+        (c.total_price - c.advance_amount)
+        for c in commissions.filter(balance_paid=True)
+        if c.total_price and c.advance_amount
+    )
+
+    # ✅ Full revenue = advance + balance
+    full_revenue = advance_revenue + balance_revenue
 
     return render(request, 'dashboards/artist_dashboard.html', {
         'artworks': artworks,
         'activities': activities,
-        'numbers': range(1, 4),
         'commissions': commissions,
         'advance_revenue': advance_revenue,
+        'balance_revenue': balance_revenue,
         'full_revenue': full_revenue,
     })
 
