@@ -310,11 +310,13 @@ def request_commission(request, artist_id):
                 commission.advance_amount = 0
             commission.save()
 
-            # 🔔 Create notification for artist
+
+            client_name = request.user.name or "A client"
+
             Notification.objects.create(
                 receiver=artist,
                 commission=commission,
-                message=f"{request.user.get_full_name() or request.user.username} requested a commission: {commission.title}",
+                message=f"{client_name} requested a commission: {commission.title}",
                 notification_type='commission_request'
             )
 
