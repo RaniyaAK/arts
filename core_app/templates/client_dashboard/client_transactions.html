@@ -1,0 +1,49 @@
+{% extends "masterss.html" %}
+
+{% block title %}My Transactions | Paletra{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <!-- BACK BUTTON -->
+    <div class="mb-4">
+        <a href="{% url 'client_dashboard' %}" class="btn btn-outline-secondary rounded-pill">
+            ← Back
+        </a>
+    </div>
+
+    <h2 class="text-primary-color mb-4">
+        My Transactions
+    </h2>
+
+    {% if transactions %}
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Date</th>
+                    <th>Commission ID</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for txn in transactions %}
+                <tr>
+                    <td>{{ txn.created_at|date:"M d, Y" }}</td>
+                    <td>{{ txn.commission.commission_id }}</td>
+                    <td>{{ txn.transaction_type|title }}</td>
+                    <td>₹{{ txn.amount }}</td>
+                    <td><span class="badge bg-success">Paid</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p class="text-muted">No transactions yet.</p>
+    {% endif %}
+
+</div>
+{% endblock %}

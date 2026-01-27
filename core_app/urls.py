@@ -57,7 +57,8 @@ urlpatterns = [
 
     path('commission/<int:commission_id>/cancel/',views.cancel_commission,name='cancel_commission'),
 
-    
+    path('client/transactions/', views.client_transactions, name='client_transactions'),
+
     # path('artist/revenue/', views.artist_revenue, name='artist_revenue'),
 
 

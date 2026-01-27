@@ -17,6 +17,12 @@
                class="btn btn-outline-dark rounded-pill">
                 My Commissions
             </a>
+
+            <!-- NEW: Transactions Button -->
+            <a href="{% url 'client_transactions' %}"
+               class="btn btn-outline-dark rounded-pill">
+                My Transactions
+            </a>
         </div>
     </div>
 
@@ -120,38 +126,6 @@
             See All →
         </a>
     </div>
-    {% endif %}
-
-    <!-- TRANSACTIONS (ONLY ADDITION) -->
-    <h4 class="text-primary-color mt-5 mb-3">My Transactions</h4>
-
-    {% if transactions %}
-    <div class="table-responsive">
-        <table class="table table-bordered align-middle">
-            <thead class="table-light">
-                <tr>
-                    <th>Date</th>
-                    <th>Commission ID</th>
-                    <th>Type</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for txn in transactions %}
-                <tr>
-                    <td>{{ txn.created_at|date:"M d, Y" }}</td>
-                    <td>{{ txn.commission.commission_id }}</td>
-                    <td>{{ txn.transaction_type|title }}</td>
-                    <td>₹{{ txn.amount }}</td>
-                    <td><span class="badge bg-success">Paid</span></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-        <p class="text-muted">No transactions yet.</p>
     {% endif %}
 
 </div>
