@@ -13,36 +13,6 @@
 
         <div class="d-flex align-items-center gap-3">
 
-            <!-- Notifications Dropdown -->
-            <div class="dropdown">
-                <button class="btn btn-outline-secondary position-relative rounded-pill dropdown-toggle"
-                        type="button"
-                        id="notificationDropdown"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false">
-
-                    <i class="fas fa-bell"></i>
-
-                    <span id="notification-count"
-                          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                          style="display:none;"></span>
-                </button>
-
-                <ul class="dropdown-menu dropdown-menu-end p-2"
-                    style="width:300px; max-height:400px; overflow-y:auto;">
-                    {% for notif in request.user.notifications.all|dictsortreversed:"created_at" %}
-                        <li class="border-bottom mb-1 pb-1">
-                            <small class="text-muted">
-                                {{ notif.created_at|date:"M d, Y H:i" }}
-                            </small>
-                            <div>{{ notif.message }}</div>
-                        </li>
-                    {% empty %}
-                        <li class="text-center text-muted">No notifications</li>
-                    {% endfor %}
-                </ul>
-            </div>
-
             <a href="{% url 'client_commissions' %}"
                class="btn btn-outline-dark rounded-pill">
                 My Commissions
@@ -75,7 +45,6 @@
              style="width:180px; position:relative; {% if forloop.counter > 6 %}display:none;{% endif %}">
 
             {% if forloop.counter == 6 and featured_artists|length > 6 %}
-            <!-- EDGE TOGGLE -->
             <div class="edge-toggle toggle-btn">
                 <i class="fas fa-plus"></i>
             </div>
@@ -115,7 +84,7 @@
         {% endfor %}
     </div>
 
-    <!-- Latest Artworks (UNCHANGED) -->
+    <!-- Latest Artworks -->
     <h4 class="text-primary-color mb-3">Latest Artworks</h4>
 
     <div class="row">
@@ -127,10 +96,15 @@
                      style="height:250px;object-fit:cover;">
 
                 <div class="card-body d-flex align-items-center">
-                    <a href="{% url 'artist_profile' artwork.artist.id %}"
-                       class="text-decoration-none text-dark small">
-                        By {{ artwork.artist.name }}
-                    </a>
+                    <div class="w-100">
+                        <a href="{% url 'artist_profile' artwork.artist.id %}"
+                           class="text-decoration-none text-dark small">
+                            By {{ artwork.artist.name }}
+                        </a>
+                        <div class="mt-2">
+                            <strong>{{ artwork.artwork_title }}</strong>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -142,42 +116,47 @@
     {% if artwork_count > 6 %}
     <div class="text-end mt-3">
         <a href="{% url 'all_artworks' %}"
-        class="btn bg-primary-color text-cream rounded-pill">
+           class="btn bg-primary-color text-cream rounded-pill">
             See All →
         </a>
     </div>
     {% endif %}
 
+    <!-- TRANSACTIONS (ONLY ADDITION) -->
+    <h4 class="text-primary-color mt-5 mb-3">My Transactions</h4>
+
+    {% if transactions %}
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Date</th>
+                    <th>Commission ID</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for txn in transactions %}
+                <tr>
+                    <td>{{ txn.created_at|date:"M d, Y" }}</td>
+                    <td>{{ txn.commission.commission_id }}</td>
+                    <td>{{ txn.transaction_type|title }}</td>
+                    <td>₹{{ txn.amount }}</td>
+                    <td><span class="badge bg-success">Paid</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p class="text-muted">No transactions yet.</p>
+    {% endif %}
 
 </div>
 
-<!-- 🔔 NOTIFICATION SCRIPT -->
-<script>
-function fetchUnreadCount() {
-    fetch("{% url 'unread_notification_count' %}")
-        .then(r => r.json())
-        .then(data => {
-            const badge = document.getElementById("notification-count");
-            badge.style.display = data.count > 0 ? "inline-block" : "none";
-            badge.textContent = data.count || "";
-        });
-}
-
-document.getElementById("notificationDropdown")
-?.addEventListener("shown.bs.dropdown", function () {
-    fetch("{% url 'mark_notification_read' %}", {
-        method: "POST",
-        headers: { "X-CSRFToken": "{{ csrf_token }}" }
-    }).then(fetchUnreadCount);
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-    fetchUnreadCount();
-    setInterval(fetchUnreadCount, 10000);
-});
-</script>
-
-<!-- EXPAND / COLLAPSE FEATURE -->
+<!-- EXPAND / COLLAPSE -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const extras = document.querySelectorAll(".extra-artist");
@@ -237,7 +216,6 @@ searchInput.addEventListener('input', function () {
     box-shadow: 0 12px 25px rgba(0,0,0,0.15);
 }
 
-/* EDGE TOGGLE — FLOATING, NO EXTRA SPACE */
 .edge-toggle {
     position: absolute;
     top: 50%;
