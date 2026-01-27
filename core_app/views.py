@@ -19,14 +19,15 @@ from .forms import CommissionRequestForm
 
 from .models import Artwork, Activity, Commission
 from .models import Notification
+from .models import Transaction
 
 import paypalrestsdk
 from django.db.models import Sum
-
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
+
 
 
 paypalrestsdk.configure({
@@ -852,3 +853,15 @@ def reset_password(request, uidb64, token):
         return redirect('login')
 
     return render(request, 'auth/reset_password.html')
+
+
+
+@login_required
+def client_transactions(request):
+    # Only show transactions of logged-in user
+    transactions = Transaction.objects.filter(user=request.user).order_by('-created_at')
+
+    context = {
+        "transactions": transactions
+    }
+    return render(request, "client_dashboard/client_transactions.html", context)
