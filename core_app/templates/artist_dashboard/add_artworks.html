@@ -24,7 +24,7 @@
     box-shadow: 0 18px 40px rgba(0,0,0,0.08);
 }
 
-/* INPUTS - consistent full width block */
+/* INPUTS */
 .art-form-card input,
 .art-form-card textarea,
 .art-form-card select {
@@ -57,7 +57,6 @@
     align-items: center;
 }
 
-/* IMAGE PREVIEW INSIDE FILE UPLOAD */
 .file-upload img {
     max-height: 200px;
     width: auto;
@@ -84,12 +83,11 @@
     background: #7A4A2B;
 }
 
-/* INSTRUCTIONS BOX */
+/* LEFT INFO BOX */
 .preview-box {
     background: #FFF9F1;
     border-radius: 18px;
-    padding: 20px;
-    text-align: center;
+    padding: 24px;
     border: 1px solid #E6D6C3;
 }
 
@@ -103,7 +101,6 @@
     border-radius: 8px;
     text-decoration: none;
     font-weight: 500;
-    transition: background 0.2s ease;
 }
 .back-btn:hover {
     background: #4A2A18;
@@ -118,40 +115,58 @@
 
     <!-- HEADER -->
     <div class="mb-5">
-        <h2 class="text-main fw-bold">
-            Add New Artwork 🎨
-        </h2>
-        <p class="text-muted-soft">
-            Upload your work and share its story.
-        </p>
+        <h2 class="text-main fw-bold">Add New Artwork 🎨</h2>
+        <p class="text-muted-soft">Upload your work and share its story.</p>
     </div>
 
     <div class="row g-5">
 
-        <!-- INSTRUCTIONS / NOTE (LEFT) -->
+        <!-- LEFT SIDE (UPDATED ONLY HERE) -->
         <div class="col-md-5 order-md-1">
-            <div class="preview-box">
-                <h5 class="text-main mb-3">
-                    Before you publish
+            <div class="preview-box text-start">
+                <h5 class="text-main mb-4 text-center">
+                    Before you publish ✨
                 </h5>
-                <p class="text-muted-soft small">
-                    • Upload high-quality images  
-                    <br>
-                    • Keep descriptions personal  
-                    <br>
-                    • Let the artwork speak  
-                </p>
+
+                <div class="d-flex align-items-start mb-3">
+                    <div class="me-3 fs-4">🖼️</div>
+                    <div>
+                        <h6 class="mb-1 text-main">High-quality image</h6>
+                        <p class="small text-muted-soft mb-0">
+                            Use clear, well-lit photos to show details.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-start mb-3">
+                    <div class="me-3 fs-4">✍️</div>
+                    <div>
+                        <h6 class="mb-1 text-main">Personal touch</h6>
+                        <p class="small text-muted-soft mb-0">
+                            Choose a title that reflects your story.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-start">
+                    <div class="me-3 fs-4">🎨</div>
+                    <div>
+                        <h6 class="mb-1 text-main">Let it breathe</h6>
+                        <p class="small text-muted-soft mb-0">
+                            Keep it simple — your art is the focus.
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- FORM / UPLOAD (RIGHT) -->
+        <!-- RIGHT FORM -->
         <div class="col-md-7 order-md-2">
             <div class="art-form-card">
 
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
 
-                    <!-- TITLE -->
                     <div class="mb-4">
                         <label class="form-label fw-semibold text-main">Artwork Title</label>
                         {{ form.artwork_title }}
@@ -160,55 +175,23 @@
                         {% endif %}
                     </div>
 
-                    <!-- DESCRIPTION -->
-                    <!-- <div class="mb-4">
-                        <label class="form-label fw-semibold text-main">Description</label>
-                        {{ form.description }}
-                        {% if form.description.errors %}
-                          <div class="text-danger small mt-1">{{ form.description.errors.0 }}</div>
-                        {% endif %}
-                    </div> -->
-
-                    <!-- CATEGORY -->
-                    <!-- <div class="mb-4">
-                        <label class="form-label fw-semibold text-main">Category</label>
-                        {{ form.category }}
-                        {% if form.category.errors %}
-                          <div class="text-danger small mt-1">{{ form.category.errors.0 }}</div>
-                        {% endif %}
-                    </div> -->
-
-                    <!-- PRICE -->
-                    <!-- <div class="mb-4">
-                        <label class="form-label fw-semibold text-main">Price (₹)</label>
-                        {{ form.price }}
-                        {% if form.price.errors %}
-                          <div class="text-danger small mt-1">{{ form.price.errors.0 }}</div>
-                        {% endif %}
-                    </div> -->
-
-                    <!-- IMAGE UPLOAD -->
                     <div class="mb-4">
                         <label class="form-label fw-semibold text-main">Upload Artwork</label>
 
                         <div class="file-upload">
-                            <!-- IMAGE PREVIEW INSIDE FILE UPLOAD -->
                             <img id="image-preview" alt="Preview">
 
-                            <p class="text-muted-soft mb-2">
-                                Drag & drop your image here
-                            </p>
-                            <p class="small text-muted-soft">
-                                or click to browse
-                            </p>
+                            <p class="text-muted-soft mb-2">Drag & drop your image here</p>
+                            <p class="small text-muted-soft">or click to browse</p>
+
                             {{ form.image }}
+
                             {% if form.image.errors %}
                               <div class="text-danger small mt-1">{{ form.image.errors.0 }}</div>
                             {% endif %}
                         </div>
                     </div>
 
-                    <!-- SUBMIT -->
                     <div class="mt-4">
                         <button type="submit" class="btn btn-art">
                             Publish Artwork
@@ -226,23 +209,23 @@
 </div>
 
 <script>
-  const imageInput = document.querySelector('input[type="file"]');
-  const imagePreview = document.getElementById('image-preview');
+const imageInput = document.querySelector('input[type="file"]');
+const imagePreview = document.getElementById('image-preview');
 
-  imageInput.addEventListener('change', function() {
+imageInput.addEventListener('change', function() {
     const file = this.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        imagePreview.src = e.target.result;
-        imagePreview.style.display = 'block';
-      }
-      reader.readAsDataURL(file);
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            imagePreview.src = e.target.result;
+            imagePreview.style.display = 'block';
+        }
+        reader.readAsDataURL(file);
     } else {
-      imagePreview.src = '';
-      imagePreview.style.display = 'none';
+        imagePreview.src = '';
+        imagePreview.style.display = 'none';
     }
-  });
+});
 </script>
 
 {% endblock %}

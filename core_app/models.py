@@ -6,6 +6,7 @@ from django.utils import timezone
 import uuid
 
 
+
 class User(AbstractUser):
     ROLE_CHOICES = [
         ('artist', 'Artist'),
@@ -189,3 +190,45 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"{self.notification_type} → {self.receiver.username}"
+
+
+
+class Transaction(models.Model):
+    TRANSACTION_TYPE_CHOICES = [
+        ('advance', 'Advance'),
+        ('balance', 'Balance'),
+    ]
+
+    PAYMENT_MODE_CHOICES = [
+        ('online', 'Online'),
+        ('offline', 'Offline'),
+    ]
+
+    STATUS_CHOICES = [
+        ('completed', 'Completed'),
+        ('pending', 'Pending'),
+    ]
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='transactions'
+    )
+
+    commission = models.ForeignKey(
+        Commission,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    transaction_type = models.CharField(max_length=20, choices=TRANSACTION_TYPE_CHOICES)
+    payment_mode = models.CharField(max_length=20, choices=PAYMENT_MODE_CHOICES)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='completed')
+
+    description = models.CharField(max_length=255, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} - ₹{self.amount}"

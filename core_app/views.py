@@ -127,47 +127,6 @@ def logout_view(request):
     return redirect('login')
 
 
-def forgot_password(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        user = User.objects.filter(email=email).first()
-        if not user:
-            return render(request, 'forgot_password.html', {
-                'error': 'Email not found'
-            })
-
-        return redirect('reset_password', email=user.email)
-
-    return render(request, 'forgot_password.html')
-
-
-# ------------------------ Reset Password Fix ------------------------
-def reset_password(request, email):
-    user = User.objects.filter(email=email).first()
-    if not user:
-        messages.error(request, "Invalid email.")
-        return redirect('forgot_password')
-
-    if request.method == 'POST':
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirm_password')
-
-        if password != confirm_password:
-            messages.error(request, "Passwords do not match.")
-            return render(request, 'reset_password.html')
-
-        user.set_password(password)
-        user.save()
-        login(request, user)
-
-        if not user.is_profile_complete:
-            return redirect('complete_profile')
-        if user.role == 'artist':
-            return redirect('artist_dashboard')
-        elif user.role == 'client':
-            return redirect('client_dashboard')
-
-    return render(request, 'reset_password.html')
 #  ________________________________________________________________________________________________________________________
 
 
@@ -216,11 +175,11 @@ def artist_dashboard(request):
         'balance_revenue': balance_revenue,
         'full_revenue': full_revenue,
     })
-
 @login_required
 def client_dashboard(request):
     if request.user.role != 'client':
         return redirect('login')
+
     if not request.user.is_profile_complete:
         return redirect('complete_profile')
 
@@ -236,17 +195,26 @@ def client_dashboard(request):
         featured_artists = User.objects.filter(role='artist')
 
     all_artworks = Artwork.objects.all().order_by('-created_at')
-    artworks = all_artworks[:6]   
-    artwork_count = all_artworks.count()  
+    artworks = all_artworks[:6]
+    artwork_count = all_artworks.count()
+
+    # 💰 TRANSACTIONS
+    transactions = Transaction.objects.filter(
+        user=request.user
+    ).order_by('-created_at')
+
     return render(
         request,
         'dashboards/client_dashboard.html',
         {
             'artworks': artworks,
             'featured_artists': featured_artists,
-            'artwork_count': artwork_count
+            'artwork_count': artwork_count,
+            'transactions': transactions,  # ✅ NOW IT WORKS
         }
     )
+
+
 
 
 # ____________________________________________________________________________________________________________________
@@ -534,9 +502,11 @@ def pay_advance(request, commission_id):
         messages.error(request, "Error creating PayPal payment.")
         return redirect("client_commissions")
 
+from .models import Transaction
 @login_required
 def paypal_success(request, commission_id):
     commission = get_object_or_404(Commission, id=commission_id, client=request.user)
+
     payment_id = request.GET.get('paymentId')
     payer_id = request.GET.get('PayerID')
 
@@ -547,19 +517,30 @@ def paypal_success(request, commission_id):
         commission.status = "advance_paid"
         commission.advance_paid_at = timezone.now()
         commission.save()
-        messages.success(request, "Advance payment successful via PayPal!")
 
-        # 🔔 Notify artist
+        # ✅ CREATE TRANSACTION HERE
+        Transaction.objects.create(
+            user=request.user,
+            commission=commission,
+            amount=commission.advance_amount,
+            transaction_type='advance',
+            payment_mode='online',
+            status='completed',
+            description=f"Advance payment for {commission.title}"
+        )
+
         Notification.objects.create(
             receiver=commission.artist,
             message=f"Advance payment received for commission: {commission.title} ({commission.commission_id})",
             notification_type='advance_paid'
         )
 
+        messages.success(request, "Advance payment successful via PayPal!")
     else:
         messages.error(request, "Payment failed. Please try again.")
 
     return redirect("client_commissions")
+
 
 
 @login_required
@@ -729,6 +710,7 @@ def pay_balance_online(request, commission_id):
     return redirect('client_commissions')
 
 
+
 @login_required
 def paypal_success_balance(request, commission_id):
     commission = get_object_or_404(
@@ -745,6 +727,17 @@ def paypal_success_balance(request, commission_id):
         commission.balance_paid_at = timezone.now()
         commission.save()
 
+        # ✅ CREATE BALANCE TRANSACTION
+        Transaction.objects.create(
+            user=request.user,
+            commission=commission,
+            amount=commission.total_price - commission.advance_amount,
+            transaction_type='balance',
+            payment_mode='online',
+            status='completed',
+            description=f"Balance payment for {commission.title}"
+        )
+
         messages.success(request, "Balance payment successful!")
 
         Notification.objects.create(
@@ -757,6 +750,9 @@ def paypal_success_balance(request, commission_id):
         messages.error(request, "Balance payment failed.")
 
     return redirect("client_commissions")
+
+
+
 
 @login_required
 @require_POST
