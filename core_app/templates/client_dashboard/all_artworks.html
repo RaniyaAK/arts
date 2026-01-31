@@ -15,21 +15,40 @@
     <div class="row">
         {% for artwork in artworks %}
         <div class="col-md-4 mb-4">
-            <div class="card shadow-sm h-100">
+
+            <div class="card shadow-sm h-100 rounded-4">
+
+                <!-- Artwork Image -->
                 <img src="{{ artwork.image.url }}"
-                     class="card-img-top rounded"
-                     alt="{{ artwork.title }}"
-                     style="height:250px; object-fit:cover; width:100%;">
-                <div class="card-body">
-                    <a href="{% url 'artist_profile' artwork.artist.id %}"
-                       class="text-decoration-none text-dark small">By {{ artwork.artist.name }}
-                    </a>
+                     class="card-img-top rounded-4"
+                     alt="{{ artwork.artwork_title }}"
+                     style="height:250px; object-fit:cover;">
+
+                <!-- Card Body -->
+                <div class="card-body d-flex align-items-center">
+                    <div class="w-100">
+
+                        <!-- Artist Name -->
+                        <a href="{% url 'artist_profile' artwork.artist.id %}"
+                           class="text-decoration-none text-dark small">
+                            By {{ artwork.artist.name }}
+                        </a>
+
+                        <!-- Artwork Title -->
+                        <div class="mt-2">
+                            <strong>{{ artwork.artwork_title }}</strong>
+                        </div>
+
+                    </div>
                 </div>
+
             </div>
+
         </div>
         {% empty %}
-        <p>No artworks available yet.</p>
+        <p class="text-muted">No artworks available yet.</p>
         {% endfor %}
     </div>
+
 </div>
 {% endblock %}
