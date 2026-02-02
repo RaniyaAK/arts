@@ -5,11 +5,27 @@
 {% block content %}
 <div class="container py-5">
 
-    <!-- Header -->
+    <!-- Header WITH TRANSACTIONS BUTTON -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="text-primary-color">
             Welcome, {{ request.user.name }} 👤
         </h2>
+
+        <div class="d-flex align-items-center gap-3">
+
+            <!-- View Commissions -->
+            <a href="{% url 'artist_commissions' %}"
+               class="btn btn-outline-dark rounded-pill">
+                My Commissions
+            </a>
+
+            <!-- NEW: Artist Transactions Button -->
+            <a href="{% url 'artist_transactions' %}"
+               class="btn btn-outline-dark rounded-pill">
+                My Transactions
+            </a>
+
+        </div>
     </div>
 
     <!-- INFO NOTE -->
@@ -44,7 +60,7 @@
         </div>
     </div>
 
-    <!-- ADD NEW ARTWORK BUTTON (MOVED BELOW REVENUE) -->
+    <!-- ADD NEW ARTWORK BUTTON -->
     <div class="mb-4 text-center">
         <a href="{% url 'add_artworks' %}"
            class="btn bg-primary-color text-cream rounded-pill px-4">
@@ -82,14 +98,6 @@
             </p>
         </div>
         {% endfor %}
-    </div>
-
-    <!-- COMMISSIONS -->
-    <div class="text-center mb-5">
-        <a href="{% url 'artist_commissions' %}"
-           class="btn btn-primary rounded-pill px-4 py-2">
-            View Commission Requests
-        </a>
     </div>
 
 </div>

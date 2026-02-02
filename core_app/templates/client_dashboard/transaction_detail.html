@@ -1,0 +1,46 @@
+{% extends "masterss.html" %}
+
+{% block title %}Transaction Details | Paletra{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <!-- BACK BUTTON -->
+    <div class="mb-4">
+        <a href="{% url 'client_transactions' %}" class="btn btn-outline-secondary rounded-pill">
+            ← Back to Transactions
+        </a>
+    </div>
+
+    <h2 class="text-primary-color mb-4">Transaction Details</h2>
+
+    <div class="card shadow-sm p-4">
+        <h5 class="mb-3 text-primary">Commission Information</h5>
+        <p><strong>Commission ID:</strong> {{ commission.commission_id }}</p>
+        <p><strong>Title:</strong> {{ commission.title }}</p>
+        <p><strong>Description:</strong> {{ commission.description }}</p>
+        <p><strong>Date:</strong> {{ commission.created_at|date:"M d, Y" }}</p>
+
+        <hr>
+
+        <h5 class="mb-3 text-primary">Artist Details</h5>
+        <div class="d-flex align-items-center">
+            <img src="{{ commission.artist.profile_image.url }}" alt="Artist Image" class="rounded-circle me-3" width="70" height="70">
+            <div>
+                <p class="mb-1"><strong>Name:</strong> {{ commission.artist.name }}</p>
+                <p class="mb-0"><strong>Email:</strong> {{ commission.artist.email }}</p>
+            </div>
+        </div>
+
+        <hr>
+
+        <h5 class="mb-3 text-primary">Payment Details</h5>
+        <p><strong>Amount Paid:</strong> ₹{{ transaction.amount }}</p>
+        <p><strong>Payment Type:</strong> {{ transaction.transaction_type|title }}</p>
+        <p><strong>Payment Mode:</strong> {{ transaction.payment_mode|title }}</p>
+        <p><strong>Status:</strong> <span class="badge bg-success">{{ transaction.status }}</span></p>
+        <p><strong>Transaction Date:</strong> {{ transaction.created_at|date:"M d, Y" }}</p>
+
+    </div>
+</div>
+{% endblock %}

@@ -407,10 +407,23 @@ def update_commission_status(request, commission_id, status):
         commission.status = 'shipping'
         commission.shipping_at = now
 
+        # 🔥 Offline payment handling
         if commission.payment_mode == 'offline' and not commission.balance_paid:
             commission.balance_paid = True
             commission.balance_paid_at = now
 
+            # ✅ Create offline balance payment transaction
+            Transaction.objects.create(
+                user=commission.client,
+                commission=commission,
+                amount=commission.total_price - commission.advance_amount,
+                transaction_type='balance',
+                payment_mode='offline',
+                status='completed',
+                description=f"Offline balance payment collected for {commission.title}"
+            )
+
+            # Notify client
             Notification.objects.create(
                 receiver=commission.client,
                 commission=commission,
@@ -423,7 +436,7 @@ def update_commission_status(request, commission_id, status):
             commission=commission,
             message=f"Your commission '{commission.title}' ({commission.commission_id}) has been shipped",
             notification_type='shipped'
-    )
+        )
 
 
     elif status == 'delivered':
@@ -865,3 +878,19 @@ def client_transactions(request):
         "transactions": transactions
     }
     return render(request, "client_dashboard/client_transactions.html", context)
+
+
+def artist_transactions(request):
+    # Example dummy data
+    transactions = []  
+    return render(request, "artist_dashboard/artist_transactions.html", {"transactions": transactions})
+
+@login_required
+def transaction_detail(request, transaction_id):
+    transaction = get_object_or_404(Transaction, id=transaction_id, user=request.user)
+    commission = transaction.commission  # linked commission
+
+    return render(request, "client_dashboard/transaction_detail.html", {
+        "transaction": transaction,
+        "commission": commission,
+    })

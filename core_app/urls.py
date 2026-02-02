@@ -60,6 +60,10 @@ urlpatterns = [
     path('client/transactions/', views.client_transactions, name='client_transactions'),
 
     # path('artist/revenue/', views.artist_revenue, name='artist_revenue'),
+    path('artist/transactions/', views.artist_transactions, name='artist_transactions'),
+    path("transaction/<int:transaction_id>/", views.transaction_detail, name="transaction_detail"),
+
+
 
 
 
