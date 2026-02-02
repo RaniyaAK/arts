@@ -25,31 +25,55 @@
                     <th>Commission ID</th>
                     <th>Type</th>
                     <th>Amount</th>
+                    <th>Payment Mode</th>   <!-- ⭐ NEW COLUMN -->
                     <th>Status</th>
                 </tr>
             </thead>
+
             <tbody>
                 {% for txn in transactions %}
                 <tr>
                     <td>{{ txn.created_at|date:"M d, Y" }}</td>
-                    <td>{{ txn.commission.commission_id }}</td>
+
+                    <td>
+                        <a href="{% url 'transaction_detail' txn.id %}" class="text-decoration-none fw-semibold">
+                            {{ txn.commission.commission_id }}
+                        </a>
+                    </td>
+
                     <td>{{ txn.transaction_type|title }}</td>
                     <td>₹{{ txn.amount }}</td>
+
+                    <!-- ⭐ PAYMENT MODE DISPLAY -->
                     <td>
-                        <span class="badge bg-success">
-                            Paid
-                        </span>
+                        {% if txn.payment_mode == "offline" %}
+                            <span class="badge bg-warning text-dark">Offline</span>
+                        {% else %}
+                            <span class="badge bg-info text-dark">Online</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if txn.payment_mode == "offline" %}
+                            <span class="badge bg-warning text-dark">Offline Payment</span>
+
+                        {% elif txn.status == "completed" %}
+                            <span class="badge bg-success">Paid</span>
+
+                        {% else %}
+                            <span class="badge bg-secondary">{{ txn.status|title }}</span>
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
+
         </table>
     </div>
+
     {% else %}
         <p class="text-muted">No transactions yet.</p>
     {% endif %}
 
 </div>
 {% endblock %}
-
-sb-3ws4n47985732@business.example.com

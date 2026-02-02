@@ -1,0 +1,40 @@
+{% extends "masterss.html" %}
+
+{% block title %}My Transactions | Paletra{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <h2 class="text-primary-color mb-4">My Transactions</h2>
+
+    {% if transactions %}
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Client</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for tx in transactions %}
+                    <tr>
+                        <td>{{ tx.date }}</td>
+                        <td>{{ tx.client_name }}</td>
+                        <td>{{ tx.type }}</td>
+                        <td>₹{{ tx.amount }}</td>
+                        <td>{{ tx.status }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-muted">No transactions found.</p>
+    {% endif %}
+
+</div>
+{% endblock %}
