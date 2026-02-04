@@ -62,6 +62,7 @@ urlpatterns = [
     # path('artist/revenue/', views.artist_revenue, name='artist_revenue'),
     path('artist/transactions/', views.artist_transactions, name='artist_transactions'),
     path("transaction/<int:transaction_id>/", views.transaction_detail, name="transaction_detail"),
+    path('payment-success/<int:transaction_id>/', views.payment_success, name='payment_success'),
 
 
 

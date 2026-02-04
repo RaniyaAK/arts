@@ -1,0 +1,55 @@
+{% extends "masterss.html" %}
+
+{% block title %}Payment Successful{% endblock %}
+
+{% block content %}
+
+<style>
+    body {
+        background: #ffffff !important; /* FULL PAGE WHITE */
+    }
+
+    /* Hide navbar only on this page */
+    nav, .navbar {
+        display: none !important;
+    }
+</style>
+
+<div class="container py-5" style="min-height:80vh;">
+
+    <!-- 🔙 Back Button (Top-Left Corner) -->
+    <a href="{% url 'client_commissions' %}" 
+       class="btn btn-primary mb-4"
+       style="background-color:#0b3d91; border:none; padding:10px 25px; font-weight:500; border-radius:8px;">
+        Back
+    </a>
+
+    <div class="d-flex align-items-center justify-content-center" style="min-height:70vh;">
+        <div class="card p-5 shadow"
+             style="max-width:500px; border-radius:20px; text-align:center; background:white; color:black;">
+
+            <!-- ✅ Dark Blue Tick Icon -->
+            <div class="mb-4 d-inline-block">
+                <div style="width:90px; height:90px; border-radius:50%; background-color:#0b3d91; display:flex; align-items:center; justify-content:center; margin:auto;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" fill="white" class="bi bi-check2" viewBox="0 0 16 16">
+                        <path d="M13.854 3.146a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L6.5 9.793l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- 💬 Payment Success Message -->
+            <h2 class="mb-3" style="color:#0b3d91; font-weight:600;">Payment Successful!</h2>
+
+            <!-- 📄 Transaction Details -->
+            <div style="text-align:left; margin-top:20px; line-height:1.6;">
+                <p><strong>Transaction ID:</strong> {{ transaction.id }}</p>
+                <p><strong>Commission:</strong> {{ commission.title }}</p>
+                <p><strong>Amount Paid:</strong> ${{ transaction.amount }}</p>
+                <p><strong>Date:</strong> {{ transaction.created_at|date:"d M Y, H:i" }}</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
