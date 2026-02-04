@@ -516,7 +516,6 @@ def pay_advance(request, commission_id):
         messages.error(request, "Error creating PayPal payment.")
         return redirect("client_commissions")
 
-from .models import Transaction
 @login_required
 def paypal_success(request, commission_id):
     commission = get_object_or_404(Commission, id=commission_id, client=request.user)
@@ -532,8 +531,8 @@ def paypal_success(request, commission_id):
         commission.advance_paid_at = timezone.now()
         commission.save()
 
-        # ✅ CREATE TRANSACTION HERE
-        Transaction.objects.create(
+        # CREATE TRANSACTION
+        transaction = Transaction.objects.create(
             user=request.user,
             commission=commission,
             amount=commission.advance_amount,
@@ -550,10 +549,14 @@ def paypal_success(request, commission_id):
         )
 
         messages.success(request, "Advance payment successful via PayPal!")
+
+        # 🔹 Redirect to Payment Success page
+        return redirect('payment_success', transaction_id=transaction.id)
+
     else:
         messages.error(request, "Payment failed. Please try again.")
+        return redirect("client_commissions")
 
-    return redirect("client_commissions")
 
 
 
@@ -724,12 +727,9 @@ def pay_balance_online(request, commission_id):
     return redirect('client_commissions')
 
 
-
 @login_required
 def paypal_success_balance(request, commission_id):
-    commission = get_object_or_404(
-        Commission, id=commission_id, client=request.user
-    )
+    commission = get_object_or_404(Commission, id=commission_id, client=request.user)
 
     payment_id = request.GET.get('paymentId')
     payer_id = request.GET.get('PayerID')
@@ -741,8 +741,8 @@ def paypal_success_balance(request, commission_id):
         commission.balance_paid_at = timezone.now()
         commission.save()
 
-        # ✅ CREATE BALANCE TRANSACTION
-        Transaction.objects.create(
+        # CREATE BALANCE TRANSACTION
+        transaction = Transaction.objects.create(
             user=request.user,
             commission=commission,
             amount=commission.total_price - commission.advance_amount,
@@ -760,12 +760,13 @@ def paypal_success_balance(request, commission_id):
             message=f"Balance payment received for '{commission.title}'",
             notification_type='balance_paid'
         )
+
+        # 🔹 Redirect to Payment Success page
+        return redirect('payment_success', transaction_id=transaction.id)
+
     else:
         messages.error(request, "Balance payment failed.")
-
-    return redirect("client_commissions")
-
-
+        return redirect("client_commissions")
 
 
 @login_required
@@ -891,6 +892,17 @@ def transaction_detail(request, transaction_id):
     commission = transaction.commission  # linked commission
 
     return render(request, "client_dashboard/transaction_detail.html", {
+        "transaction": transaction,
+        "commission": commission,
+    })
+
+
+@login_required
+def payment_success(request, transaction_id):
+    transaction = get_object_or_404(Transaction, id=transaction_id, user=request.user)
+    commission = transaction.commission
+
+    return render(request, "client_dashboard/payment_success.html", {
         "transaction": transaction,
         "commission": commission,
     })
