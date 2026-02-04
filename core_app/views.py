@@ -184,7 +184,6 @@ def client_dashboard(request):
     if not request.user.is_profile_complete:
         return redirect('complete_profile')
 
-    # 🔍 Search logic
     search_query = request.GET.get('search', '')
 
     if search_query:
@@ -199,7 +198,6 @@ def client_dashboard(request):
     artworks = all_artworks[:6]
     artwork_count = all_artworks.count()
 
-    # 💰 TRANSACTIONS
     transactions = Transaction.objects.filter(
         user=request.user
     ).order_by('-created_at')
@@ -211,7 +209,7 @@ def client_dashboard(request):
             'artworks': artworks,
             'featured_artists': featured_artists,
             'artwork_count': artwork_count,
-            'transactions': transactions,  # ✅ NOW IT WORKS
+            'transactions': transactions,  
         }
     )
 
@@ -407,12 +405,10 @@ def update_commission_status(request, commission_id, status):
         commission.status = 'shipping'
         commission.shipping_at = now
 
-        # 🔥 Offline payment handling
         if commission.payment_mode == 'offline' and not commission.balance_paid:
             commission.balance_paid = True
             commission.balance_paid_at = now
 
-            # ✅ Create offline balance payment transaction
             Transaction.objects.create(
                 user=commission.client,
                 commission=commission,
@@ -444,7 +440,6 @@ def update_commission_status(request, commission_id, status):
             messages.error(request, "Artwork must be shipped before delivery.")
             return redirect('artist_commissions')
 
-        # ✅ Check if balance is fully paid
         remaining = commission.total_price - commission.advance_amount
         if remaining > 0 and not commission.balance_paid:
             messages.error(request, "Cannot mark as delivered. Client has not paid the remaining balance yet.")
