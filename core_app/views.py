@@ -901,3 +901,14 @@ def payment_success(request, transaction_id):
         "transaction": transaction,
         "commission": commission,
     })
+
+
+from django.shortcuts import redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Notification
+
+@login_required
+def delete_notification(request, notification_id):
+    notif = get_object_or_404(Notification, id=notification_id, receiver=request.user)
+    notif.delete()
+    return redirect(request.META.get("HTTP_REFERER", "client_dashboard"))

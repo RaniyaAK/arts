@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous"/>
 
     <style>
-        /* --- Root Theme --- */
         :root {
             --brown-dark: #5C4033;
             --brown-main: #8B5E3C;
@@ -32,7 +31,6 @@
 
         .text-primary-color { color: var(--brown-dark); }
 
-        /* --- Navbar --- */
         .navbar { 
             background-color: rgba(255,248,231,0.95); 
             backdrop-filter: blur(6px); 
@@ -56,12 +54,9 @@
             background-color: var(--gold-soft);
             transition: width 0.3s ease;
         }
-        .nav-link:hover {
-            color: var(--brown-dark);
-        }
+        .nav-link:hover { color: var(--brown-dark); }
         .nav-link:hover::after { width: 100%; }
 
-        /* --- Buttons --- */
         .btn-outline-primary {
             border-color: var(--brown-main);
             color: var(--brown-dark);
@@ -82,7 +77,6 @@
             color: var(--brown-dark);
         }
 
-        /* --- Dropdown --- */
         .dropdown-menu { 
             border-radius: 12px; 
             box-shadow: 0 8px 25px rgba(92,58,33,0.2); 
@@ -119,16 +113,15 @@
             color: var(--cream);
             border-color: var(--brown-main);
         }
+
         .dropdown-menu li strong { color: var(--brown-dark); }
         .dropdown-menu li.text-muted { color: var(--brown-dark); opacity: 0.7; }
 
-        /* --- Hide navbar if needed --- */
         body.no-navbar nav { display: none; }
     </style>
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
-    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg shadow-sm py-3">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
@@ -149,7 +142,6 @@
                         {% endif %}
                     {% else %}
                         {% if request.user.is_authenticated %}
-                        <!-- Notification Bell -->
                         <li class="nav-item dropdown ms-3">
                             <a class="nav-link position-relative"
                                 href="#"
@@ -164,20 +156,30 @@
                                       style="display:none;"></span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
+
                                 {% for notif in request.user.notifications.all|dictsortreversed:"created_at" %}
-                                    <li class="border-bottom mb-1 pb-1">
+                                    <li class="border-bottom mb-1 pb-3 position-relative" style="padding-right: 22px;">
                                         <small class="text-muted">
                                             {{ notif.created_at|date:"M d, Y H:i" }}
                                         </small>
-                                        <div>{{ notif.message }}</div>
+
+                                        <div style="padding-bottom: 6px;">
+                                            {{ notif.message }}
+                                        </div>
+
+                                        <a href="{% url 'delete_notification' notif.id %}"
+                                           class="text-danger position-absolute"
+                                           style="bottom: 4px; right: 4px; font-size: 0.9rem;">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </a>
                                     </li>
                                 {% empty %}
                                     <li class="text-center text-muted">No notifications</li>
                                 {% endfor %}
+
                             </ul>
                         </li>
 
-                        <!-- Profile Dropdown -->
                         <li class="nav-item dropdown ms-3">
                             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
                                data-bs-toggle="dropdown" aria-expanded="false">
@@ -213,6 +215,7 @@
                                 </li>
                             </ul>
                         </li>
+
                         {% else %}
                         <li class="nav-item ms-2">
                             <a class="btn bg-primary-color rounded-pill px-4" href="{% url 'login' %}">Login</a>
@@ -224,15 +227,12 @@
         </div>
     </nav>
 
-    <!-- PAGE CONTENT -->
     <main>
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Notification Script -->
     <script>
     function fetchUnreadCount() {
         fetch("{% url 'unread_notification_count' %}")

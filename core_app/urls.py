@@ -63,6 +63,8 @@ urlpatterns = [
     path('artist/transactions/', views.artist_transactions, name='artist_transactions'),
     path("transaction/<int:transaction_id>/", views.transaction_detail, name="transaction_detail"),
     path('payment-success/<int:transaction_id>/', views.payment_success, name='payment_success'),
+    path('notification/delete/<int:notification_id>/', views.delete_notification, name='delete_notification'),
+
 
 
 
