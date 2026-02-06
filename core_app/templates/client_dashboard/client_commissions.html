@@ -6,18 +6,18 @@
 
     <!-- 🔙 BACK BUTTON -->
     <div class="mb-4">
-        <a href="{% url 'client_dashboard' %}" class="btn btn-outline-secondary rounded-pill">
+        <a href="{% url 'client_dashboard' %}" class="btn btn-outline-secondary rounded-pill shadow-sm px-4 py-2 hover-scale">
             ← Back
         </a>
     </div>
 
-    <h3 class="mb-4">My Commission Requests</h3>
+    <h3 class="mb-4 fw-bold text-primary">My Commission Requests</h3>
 
     {% if commissions %}
         {% for commission in commissions %}
 
         <!-- TIMELINE -->
-        <div class="mb-1 small text-muted">
+        <div class="mb-2 small text-muted ps-2 border-start border-3 border-primary">
             Requested: {{ commission.created_at|date:"M d, Y" }}
             {% if commission.accepted_at %} | Accepted: {{ commission.accepted_at|date:"M d, Y" }}{% endif %}
             {% if commission.advance_paid_at %} | Advance Paid: {{ commission.advance_paid_at|date:"M d, Y" }}{% endif %}
@@ -29,140 +29,121 @@
             {% if commission.cancelled_at %} | Cancelled: {{ commission.cancelled_at|date:"M d, Y" }}{% endif %}
         </div>
 
-        <div class="card mb-3 shadow-sm rounded-4 p-3">
+        <div class="card mb-4 shadow-lg rounded-4 border-0 smooth-card">
+            <div class="card-body p-4">
 
-            <!-- ARTIST INFO -->
-            <div class="d-flex align-items-center mb-2">
-                {% if commission.artist.profile_image %}
-                    <img src="{{ commission.artist.profile_image.url }}"
-                         class="rounded-circle me-3"
-                         style="width:45px; height:45px; object-fit:cover;">
-                {% else %}
-                    <i class="fas fa-user-circle fa-2x text-muted me-3"></i>
-                {% endif %}
-                <strong>{{ commission.artist.name }}</strong>
-            </div>
-
-            <hr>
-
-            <h5>{{ commission.title }}</h5>
-            <p class="text-muted">{{ commission.description }}</p>
-
-            {% if commission.reference_image %}
-                <img src="{{ commission.reference_image.url }}" class="img-fluid rounded mb-2">
-            {% endif %}
-
-            <!-- STATUS -->
-            <div class="mb-2">
-                {% if commission.status == 'delivered' %}
-                    <span class="badge bg-success">{{ commission.status|title }}</span>
-                {% elif commission.status == 'cancelled' %}
-                    <span class="badge bg-danger">{{ commission.status|title }}</span>
-                {% elif commission.status == 'rejected' %}
-                    <span class="badge bg-danger">{{ commission.status|title }}</span>
-                {% elif commission.status == 'completed' %}
-                    <span class="badge bg-primary">{{ commission.status|title }}</span>
-                {% elif commission.status == 'in_progress' %}
-                    <span class="badge bg-info">{{ commission.status|title }}</span>
-                {% elif commission.status == 'accepted' %}
-                    <span class="badge bg-warning text-dark">{{ commission.status|title }}</span>
-                {% else %}
-                    <span class="badge bg-secondary">{{ commission.status|title }}</span>
-                {% endif %}
-            </div>
-
-            <!-- ADVANCE -->
-            {% if commission.advance_amount %}
-                <p>
-                    <strong>Advance:</strong> ₹{{ commission.advance_amount }}
-                    {% if commission.advance_paid %}
-                        <span class="text-success">(Paid)</span>
+                <!-- ARTIST INFO -->
+                <div class="d-flex align-items-center mb-3">
+                    {% if commission.artist.profile_image %}
+                        <img src="{{ commission.artist.profile_image.url }}" class="rounded-circle me-3 shadow-sm" style="width:50px; height:50px; object-fit:cover;">
                     {% else %}
-                        <span class="text-warning">(Pending)</span>
+                        <i class="fas fa-user-circle fa-2x text-muted me-3"></i>
                     {% endif %}
-                </p>
+                    <strong class="fs-5">{{ commission.artist.name }}</strong>
+                </div>
 
-                {% if commission.status == 'accepted' and not commission.advance_paid and commission.status != 'cancelled' and commission.status != 'rejected' %}
-                    <a href="{% url 'pay_advance' commission.id %}"
-                       class="btn btn-warning btn-sm">
-                        Pay Advance
-                    </a>
+                <h5 class="fw-bold text-dark">{{ commission.title }}</h5>
+                <p class="text-muted">{{ commission.description }}</p>
+
+                {% if commission.reference_image %}
+                    <img src="{{ commission.reference_image.url }}" class="img-fluid rounded mb-3 shadow-sm">
                 {% endif %}
-            {% endif %}
 
-            <!-- CANCEL BUTTON -->
-            {% if commission.status == 'pending' or commission.status == 'accepted' or commission.status == 'advance_paid' %}
-                <form method="post" action="{% url 'cancel_commission' commission.id %}">
-                    {% csrf_token %}
-                    <button class="btn btn-danger btn-sm mt-2">
-                        Cancel Commission
-                    </button>
-                </form>
-            {% endif %}
-
-            <!-- ================= BALANCE PAYMENT ================= -->
-            {% if commission.total_price > commission.advance_amount and commission.status != 'cancelled' and commission.status != 'rejected' %}
-
-                {% if commission.status == 'completed' %}
-                    <!-- STEP 1: Choose payment method -->
-                    {% if not commission.payment_mode %}
-                        <div class="border rounded p-3 bg-light mt-3">
-                            <h6>Choose payment method for remaining balance</h6>
-                            <form method="post" action="{% url 'pay_balance_choice' commission.id %}">
-                                {% csrf_token %}
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="method" value="online" required>
-                                    <label class="form-check-label">Online (PayPal)</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="method" value="offline" required>
-                                    <label class="form-check-label">Offline (after shipping)</label>
-                                </div>
-                                <button class="btn btn-primary btn-sm mt-2">
-                                    Confirm Payment Method
-                                </button>
-                            </form>
-                        </div>
+                <!-- STATUS -->
+                <div class="mb-3">
+                    {% if commission.status == 'delivered' %}
+                        <span class="badge bg-success px-3 py-2 rounded-pill shadow-sm">{{ commission.status|title }}</span>
+                    {% elif commission.status == 'cancelled' or commission.status == 'rejected' %}
+                        <span class="badge bg-danger px-3 py-2 rounded-pill shadow-sm">{{ commission.status|title }}</span>
+                    {% elif commission.status == 'completed' %}
+                        <span class="badge bg-primary px-3 py-2 rounded-pill shadow-sm">{{ commission.status|title }}</span>
+                    {% elif commission.status == 'in_progress' %}
+                        <span class="badge bg-info px-3 py-2 rounded-pill shadow-sm">{{ commission.status|title }}</span>
+                    {% elif commission.status == 'accepted' %}
+                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill shadow-sm">{{ commission.status|title }}</span>
+                    {% else %}
+                        <span class="badge bg-secondary px-3 py-2 rounded-pill shadow-sm">{{ commission.status|title }}</span>
                     {% endif %}
+                </div>
 
-                    <!-- STEP 2: Pay Now button -->
-                    {% if commission.payment_mode == 'online' and not commission.balance_paid %}
-                        <a href="{% url 'pay_balance_online' commission.id %}"
-                           class="btn btn-success btn-sm mt-2">
-                            Pay Balance Now
+                <!-- ADVANCE SECTION -->
+                {% if commission.advance_amount %}
+                    <p class="fw-semibold">
+                        <strong>Advance:</strong> ₹{{ commission.advance_amount }}
+                        {% if commission.advance_paid %}
+                            <span class="text-success">(Paid)</span>
+                        {% else %}
+                            <span class="text-warning">(Pending)</span>
+                        {% endif %}
+                    </p>
+
+                    {% if commission.status == 'accepted' and not commission.advance_paid %}
+                        <a href="{% url 'pay_advance' commission.id %}" class="btn btn-warning btn-sm rounded-pill shadow-sm px-3">
+                            Pay Advance
                         </a>
                     {% endif %}
                 {% endif %}
 
-                {% if commission.payment_mode == 'offline' and commission.status == 'shipping' %}
-                    <p class="text-success small mt-2">
-                        Offline payment assumed completed after shipping ✅
-                    </p>
+                <!-- CANCEL BUTTON -->
+                {% if commission.status in 'pending accepted advance_paid' %}
+                    <form method="post" action="{% url 'cancel_commission' commission.id %}">
+                        {% csrf_token %}
+                        <button class="btn btn-danger btn-sm mt-3 rounded-pill shadow-sm px-3">
+                            Cancel Commission
+                        </button>
+                    </form>
                 {% endif %}
 
-                {% if commission.balance_paid %}
-                    <p class="text-success small mt-2">
-                        Balance payment completed ✅
-                    </p>
+                <!-- BALANCE PAYMENT UI -->
+                {% if commission.total_price > commission.advance_amount and commission.status not in 'cancelled rejected' %}
+
+                    {% if commission.status == 'completed' %}
+
+                        {% if not commission.payment_mode %}
+                        <div class="border rounded p-3 bg-light mt-3 shadow-sm">
+                            <h6 class="fw-bold mb-2">Choose payment method</h6>
+                            <form method="post" action="{% url 'pay_balance_choice' commission.id %}">
+                                {% csrf_token %}
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="method" value="online" required>
+                                    <label class="form-check-label">Online (PayPal)</label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="method" value="offline" required>
+                                    <label class="form-check-label">Offline (after shipping)</label>
+                                </div>
+                                <button class="btn btn-primary btn-sm rounded-pill px-3">Confirm</button>
+                            </form>
+                        </div>
+                        {% endif %}
+
+                        {% if commission.payment_mode == 'online' and not commission.balance_paid %}
+                            <a href="{% url 'pay_balance_online' commission.id %}" class="btn btn-success btn-sm mt-3 rounded-pill shadow-sm px-3">
+                                Pay Balance Now
+                            </a>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if commission.payment_mode == 'offline' and commission.status == 'shipping' %}
+                        <p class="text-success mt-3 small">Offline payment confirmed after shipping ✔️</p>
+                    {% endif %}
+
+                    {% if commission.balance_paid %}
+                        <p class="text-success mt-3 small">Balance payment completed ✔️</p>
+                    {% endif %}
+
                 {% endif %}
 
-            {% endif %}
+                <!-- FINAL STATUS MESSAGE -->
+                {% if commission.status == 'delivered' %}
+                    <p class="text-success mt-3 small fw-bold">🎉 Artwork delivered successfully!</p>
+                {% elif commission.status == 'cancelled' %}
+                    <p class="text-danger mt-3 small fw-bold">❌ This commission was cancelled.</p>
+                {% elif commission.status == 'rejected' %}
+                    <p class="text-danger mt-3 small fw-bold">❌ This commission was rejected by the artist.</p>
+                {% endif %}
 
-            <!-- FINAL -->
-            {% if commission.status == 'delivered' %}
-                <p class="text-success small mt-2">
-                    🎉 Artwork delivered successfully!
-                </p>
-            {% elif commission.status == 'cancelled' %}
-                <p class="text-danger small mt-2">
-                    ❌ This commission was cancelled.
-                </p>
-            {% elif commission.status == 'rejected' %}
-                <p class="text-danger small mt-2">
-                    ❌ This commission was rejected by the artist.
-                </p>
-            {% endif %}
-
+            </div>
         </div>
         {% endfor %}
     {% else %}
@@ -170,4 +151,12 @@
     {% endif %}
 
 </div>
+
+<!-- Extra styling -->
+<style>
+.smooth-card { transition: 0.3s ease; }
+.smooth-card:hover { transform: translateY(-4px); box-shadow: 0 8px 18px rgba(0,0,0,0.15); }
+.hover-scale:hover { transform: scale(1.05); }
+</style>
+
 {% endblock %}

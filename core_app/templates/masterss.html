@@ -118,6 +118,7 @@
         .dropdown-menu li.text-muted { color: var(--brown-dark); opacity: 0.7; }
 
         body.no-navbar nav { display: none; }
+
     </style>
 </head>
 
@@ -155,29 +156,39 @@
                                       class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
                                       style="display:none;"></span>
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
+
+                            <!-- 🔥 UPDATED NOTIFICATION DROPDOWN -->
+                            <ul class="dropdown-menu dropdown-menu-end p-2" style="width: 320px; max-height: 360px; overflow-y: auto; border-radius: 14px;">
+
+                                <li class="px-2 pb-2">
+                                    <strong class="text-primary-color">Notifications</strong>
+                                </li>
+                                <hr class="my-1">
 
                                 {% for notif in request.user.notifications.all|dictsortreversed:"created_at" %}
-                                    <li class="border-bottom mb-1 pb-3 position-relative" style="padding-right: 22px;">
-                                        <small class="text-muted">
+                                    <li class="notification-item bg-white border rounded p-2 mb-2 position-relative"
+                                        style="box-shadow: 0 2px 6px rgba(0,0,0,0.08);">
+
+                                        <small class="text-muted d-block mb-1">
                                             {{ notif.created_at|date:"M d, Y H:i" }}
                                         </small>
 
-                                        <div style="padding-bottom: 6px;">
+                                        <div class="fw-semibold text-primary-color" style="font-size: 0.95rem;">
                                             {{ notif.message }}
                                         </div>
 
                                         <a href="{% url 'delete_notification' notif.id %}"
-                                           class="text-danger position-absolute"
-                                           style="bottom: 4px; right: 4px; font-size: 0.9rem;">
+                                        class="text-danger position-absolute"
+                                        style="top: 6px; right: 8px; font-size: 0.9rem;">
                                             <i class="fa-solid fa-trash"></i>
                                         </a>
+
                                     </li>
                                 {% empty %}
-                                    <li class="text-center text-muted">No notifications</li>
+                                    <li class="text-center text-muted py-3">No notifications</li>
                                 {% endfor %}
-
                             </ul>
+
                         </li>
 
                         <li class="nav-item dropdown ms-3">
