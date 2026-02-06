@@ -3,6 +3,97 @@
 {% block title %}My Transactions | Paletra{% endblock %}
 
 {% block content %}
+
+<style>
+/* Glassmorphism Theme */
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.55);
+    --glass-border: rgba(255, 255, 255, 0.32);
+    --hover-bg: rgba(255, 255, 255, 0.75);
+    --shadow: rgba(0, 0, 0, 0.08);
+    --primary: #8B5E3C;
+    --primary-hover: #6f482f;
+    --glow: rgba(139, 94, 60, 0.45);
+}
+
+/* Table Wrapper */
+.table-glass-container {
+    backdrop-filter: blur(12px);
+    padding: 12px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.35);
+    box-shadow: 0 8px 25px var(--shadow);
+}
+
+/* Table */
+.table-glass {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+/* Header */
+.table-glass thead th {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    color: var(--primary);
+    padding: 14px;
+    font-weight: 600;
+    border-radius: 10px;
+}
+
+/* Rows */
+.table-glass tbody tr {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    transition: 0.25s ease;
+    box-shadow: 0 2px 6px var(--shadow);
+}
+
+.table-glass tbody tr:hover {
+    background: var(--hover-bg);
+    transform: translateY(-2px);
+}
+
+/* Table cells */
+.table-glass tbody td {
+    padding: 14px 12px;
+    border-top: 1px solid var(--glass-border);
+}
+
+/* Glow link for Commission ID */
+.glow-link {
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+    position: relative;
+    transition: 0.25s;
+}
+
+.glow-link::after {
+    content: "";
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background: var(--primary);
+    box-shadow: 0 0 6px var(--glow);
+    transition: width 0.3s ease;
+}
+
+.glow-link:hover {
+    color: var(--primary-hover);
+}
+
+.glow-link:hover::after {
+    width: 100%;
+}
+</style>
+
+
 <div class="container py-5">
 
     <!-- BACK BUTTON -->
@@ -12,20 +103,20 @@
         </a>
     </div>
 
-    <h2 class="text-primary-color mb-4">
-        My Transactions
-    </h2>
+    <h2 class="text-primary-color mb-4">My Transactions</h2>
 
     {% if transactions %}
-    <div class="table-responsive">
-        <table class="table table-bordered align-middle">
-            <thead class="table-light">
+    <div class="table-glass-container">
+
+        <table class="table-glass align-middle">
+
+            <thead>
                 <tr>
                     <th>Date</th>
                     <th>Commission ID</th>
                     <th>Type</th>
                     <th>Amount</th>
-                    <th>Payment Mode</th>   <!-- ⭐ NEW COLUMN -->
+                    <th>Payment Mode</th>
                     <th>Status</th>
                 </tr>
             </thead>
@@ -36,7 +127,7 @@
                     <td>{{ txn.created_at|date:"M d, Y" }}</td>
 
                     <td>
-                        <a href="{% url 'transaction_detail' txn.id %}" class="text-decoration-none fw-semibold">
+                        <a href="{% url 'transaction_detail' txn.id %}" class="glow-link">
                             {{ txn.commission.commission_id }}
                         </a>
                     </td>
@@ -44,7 +135,6 @@
                     <td>{{ txn.transaction_type|title }}</td>
                     <td>₹{{ txn.amount }}</td>
 
-                    <!-- ⭐ PAYMENT MODE DISPLAY -->
                     <td>
                         {% if txn.payment_mode == "offline" %}
                             <span class="badge bg-warning text-dark">Offline</span>
@@ -69,6 +159,7 @@
             </tbody>
 
         </table>
+
     </div>
 
     {% else %}
@@ -76,4 +167,5 @@
     {% endif %}
 
 </div>
+
 {% endblock %}
