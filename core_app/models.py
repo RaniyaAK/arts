@@ -19,6 +19,8 @@ class User(AbstractUser):
     bio = models.TextField(blank=True, null=True)
     profile_image = models.ImageField(upload_to='profiles/', blank=False)
     is_profile_complete = models.BooleanField(default=False)
+    is_approved = models.BooleanField(default=False)
+
 
 
 # ---------------- ARTWORK ----------------

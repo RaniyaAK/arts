@@ -1,0 +1,79 @@
+{% extends "masterss.html" %}
+{% block title %}Clients | Admin{% endblock %}
+
+{% block content %}
+
+<style>
+/* Same styling as artists page */
+:root {
+    --primary: #8B5E3C;
+    --primary-light: #B88967;
+    --glass-bg: rgba(255, 255, 255, 0.15);
+    --glass-border: rgba(255, 255, 255, 0.35);
+    --sidebar-bg: rgba(255, 255, 255, 0.08);
+    --text-dark: #3b2f27;
+}
+
+.main-content {
+    margin-left: 270px;
+    padding: 40px;
+}
+
+.section-box {
+    padding: 25px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 14px;
+    margin-top: 30px;
+}
+
+.section-box h3 {
+    color: var(--primary);
+}
+
+.table th {
+    background: var(--primary);
+    color: white;
+}
+
+.table td {
+    color: var(--text-dark);
+}
+</style>
+
+
+<div class="admin-container">
+
+
+    <div class="main-content">
+
+        <h1 style="color:#3b2f27;">Clients</h1>
+
+        <div class="section-box">
+            <h3>Registered Clients</h3>
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Joined</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for c in clients %}
+                    <tr>
+                        <td>{{ c.name }}</td>
+                        <td>{{ c.email }}</td>
+                        <td>{{ c.date_joined }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

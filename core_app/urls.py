@@ -64,7 +64,13 @@ urlpatterns = [
     path("transaction/<int:transaction_id>/", views.transaction_detail, name="transaction_detail"),
     path('payment-success/<int:transaction_id>/', views.payment_success, name='payment_success'),
     path('notification/delete/<int:notification_id>/', views.delete_notification, name='delete_notification'),
+    path("admin-dashboard/", views.admin_dashboard, name="admin_dashboard"),
 
+    path("admin_dashboard/admin_artists/", views.admin_artists, name="admin_artists"),
+
+
+
+    path("admin-clients/", views.admin_clients, name="admin_clients"),
 
 
 
