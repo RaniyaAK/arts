@@ -27,7 +27,8 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
-
+from .models import Transaction
+from .models import Notification
 
 
 paypalrestsdk.configure({
@@ -876,10 +877,22 @@ def client_transactions(request):
     return render(request, "client_dashboard/client_transactions.html", context)
 
 
+
+@login_required
 def artist_transactions(request):
-    # Example dummy data
-    transactions = []  
-    return render(request, "artist_dashboard/artist_transactions.html", {"transactions": transactions})
+    if request.user.role != 'artist':
+        return redirect('login')
+
+    # Fetch only transactions where the logged-in user is the artist
+    transactions = Transaction.objects.filter(
+        commission__artist=request.user
+    ).order_by('-created_at')
+
+    return render(request, "artist_dashboard/artist_transactions.html", {
+        "transactions": transactions
+    })
+
+
 
 @login_required
 def transaction_detail(request, transaction_id):
@@ -903,12 +916,68 @@ def payment_success(request, transaction_id):
     })
 
 
-from django.shortcuts import redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from .models import Notification
-
 @login_required
 def delete_notification(request, notification_id):
     notif = get_object_or_404(Notification, id=notification_id, receiver=request.user)
     notif.delete()
     return redirect(request.META.get("HTTP_REFERER", "client_dashboard"))
+
+
+@login_required
+def admin_dashboard(request):
+    if not request.user.is_superuser:
+        return redirect("login")
+
+    total_users = User.objects.count()
+    total_artists = User.objects.filter(role="artist").count()
+    total_clients = User.objects.filter(role="client").count()
+
+    total_commissions = Commission.objects.count()
+    pending_commissions = Commission.objects.filter(status="pending").count()
+    completed_commissions = Commission.objects.filter(status="delivered").count()
+
+    total_transactions = Transaction.objects.count()
+    revenue = Transaction.objects.filter(status="completed").aggregate(Sum("amount"))["amount__sum"] or 0
+
+    recent_users = User.objects.order_by("-date_joined")[:5]
+    recent_commissions = Commission.objects.order_by("-created_at")[:5]
+    recent_transactions = Transaction.objects.order_by("-created_at")[:5]
+
+    return render(request, "dashboards/admin_dashboard.html", {
+        "total_users": total_users,
+        "total_artists": total_artists,
+        "total_clients": total_clients,
+        "total_commissions": total_commissions,
+        "pending_commissions": pending_commissions,
+        "completed_commissions": completed_commissions,
+        "total_transactions": total_transactions,
+        "revenue": revenue,
+        "recent_users": recent_users,
+        "recent_commissions": recent_commissions,
+        "recent_transactions": recent_transactions,
+
+
+    })
+
+def admin_artists(request):
+    if not request.user.is_superuser:
+        return redirect("home")
+
+    # Fetch only artists
+    artists = User.objects.filter(role="artist").order_by("-date_joined")
+
+    context = {
+        "artists": artists
+    }
+    return render(request, "admin_dashboard/admin_artists.html", context)
+
+
+from django.shortcuts import render
+from core_app.models import User
+
+def admin_clients(request):
+    clients = User.objects.filter(role="client").order_by("-date_joined")
+
+    return render(request, "admin_dashboard/admin_clients.html", {
+        "clients": clients
+    })

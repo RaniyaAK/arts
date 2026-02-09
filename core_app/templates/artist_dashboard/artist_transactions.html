@@ -5,6 +5,12 @@
 {% block content %}
 <div class="container py-5">
 
+    <!-- Back Button -->
+    <a href="{{ request.META.HTTP_REFERER|default:'/artist_dashboard/' }}" 
+       class="btn btn-outline-secondary mb-3">
+        ⟵ Back
+    </a>
+
     <h2 class="text-primary-color mb-4">My Transactions</h2>
 
     {% if transactions %}
@@ -22,9 +28,9 @@
                 <tbody>
                 {% for tx in transactions %}
                     <tr>
-                        <td>{{ tx.date }}</td>
-                        <td>{{ tx.client_name }}</td>
-                        <td>{{ tx.type }}</td>
+                        <td>{{ tx.created_at|date:"Y-m-d H:i" }}</td>
+                        <td>{{ tx.commission.client.name }}</td>
+                        <td>{{ tx.transaction_type }}</td>
                         <td>₹{{ tx.amount }}</td>
                         <td>{{ tx.status }}</td>
                     </tr>

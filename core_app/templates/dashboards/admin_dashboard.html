@@ -1,0 +1,291 @@
+{% extends "masterss.html" %}
+{% block title %}Admin Dashboard | Paletra{% endblock %}
+
+{% block content %}
+
+<style>
+:root {
+    --primary: #8B5E3C;
+    --primary-light: #B88967;
+    --sidebar-bg: rgba(255, 255, 255, 0.08);
+    --glass-bg: rgba(255, 255, 255, 0.45);
+    --text-dark: #3b2f27;
+}
+
+/* Layout */
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #F6E8D5, #E9D3BB);
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    padding: 25px 20px;
+    background: var(--sidebar-bg);
+    backdrop-filter: blur(18px);
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.sidebar h2 {
+    color: var(--primary);
+    margin-bottom: 25px;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.sidebar a {
+    display: block;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 10px;
+    color: var(--text-dark);
+    transition: .3s ease;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background: var(--primary);
+    color: white;
+    transform: translateX(8px);
+}
+
+/* Main content */
+.main-content {
+    margin-left: 270px;
+    padding: 40px;
+}
+
+/* Metrics */
+.metrics-wrap {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+    gap: 18px;
+}
+
+.metric {
+    background: var(--glass-bg);
+    padding: 20px;
+    border-left: 6px solid var(--primary);
+    border-radius: 14px;
+    backdrop-filter: blur(12px);
+    transition: 0.3s;
+}
+
+.metric:hover {
+    background: rgba(255,255,255,0.7);
+    transform: scale(1.03);
+}
+
+.metric-title {
+    font-size: 14px;
+    color: var(--text-dark);
+}
+
+.metric-value {
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+/* Boxes */
+.section-box {
+    background: rgba(255,255,255,0.55);
+    margin-top: 40px;
+    padding: 25px;
+    border-radius: 14px;
+    backdrop-filter: blur(10px);
+}
+
+.section-box h3 {
+    font-size: 22px;
+    color: var(--primary);
+    margin-bottom: 15px;
+}
+
+.table th {
+    background: var(--primary);
+    color: #fff;
+}
+
+.table td {
+    color: var(--text-dark);
+}
+</style>
+
+<div class="admin-container">
+
+    <!-- ==== SIDEBAR ==== -->
+    <div class="sidebar">
+        <h2>Paletra Admin</h2>
+
+        <a href="{% url 'admin_dashboard' %}" class="active">Dashboard</a>
+        <a href="{% url 'admin_artists' %}">Artists</a>
+        <a href="{% url 'admin_clients' %}">Clients</a>
+
+        <a href="{% url 'logout' %}">Log Out</a>
+    </div>
+
+    <!-- ==== MAIN CONTENT ==== -->
+    <div class="main-content">
+
+        <h1 style="color: var(--text-dark); font-size:32px;">Welcome Back, Admin 👋</h1>
+
+        <!-- ========== METRICS ========== -->
+        <div class="metrics-wrap">
+
+            <div class="metric">
+                <div class="metric-title">Total Users</div>
+                <div class="metric-value">{{ total_users }}</div>
+            </div>
+
+            <div class="metric">
+                <div class="metric-title">Artists</div>
+                <div class="metric-value">{{ total_artists }}</div>
+            </div>
+
+            <div class="metric">
+                <div class="metric-title">Clients</div>
+                <div class="metric-value">{{ total_clients }}</div>
+            </div>
+
+            <div class="metric">
+                <div class="metric-title">Total Commissions</div>
+                <div class="metric-value">{{ total_commissions }}</div>
+            </div>
+
+            <div class="metric">
+                <div class="metric-title">Completed</div>
+                <div class="metric-value">{{ completed_commissions }}</div>
+            </div>
+
+            <div class="metric">
+                <div class="metric-title">Pending</div>
+                <div class="metric-value">{{ pending_commissions }}</div>
+            </div>
+
+            <div class="metric">
+                <div class="metric-title">Total Revenue</div>
+                <div class="metric-value">₹{{ revenue }}</div>
+            </div>
+
+        </div>
+
+
+        <!-- ========== RECENT USERS ========== -->
+        <div class="section-box">
+            <h3>Latest Users</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr>
+                </thead>
+                <tbody>
+                {% for u in recent_users %}
+                    <tr>
+                        <td>{{ u.name }}</td>
+                        <td>{{ u.email }}</td>
+                        <td>{{ u.role }}</td>
+                        <td>{{ u.date_joined }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- ========== RECENT ARTISTS ========== -->
+        <div class="section-box">
+            <h3>Recent Artists</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr><th>Name</th><th>Email</th><th>Approved</th><th>Joined</th></tr>
+                </thead>
+                <tbody>
+                {% for a in recent_artists %}
+                    <tr>
+                        <td>{{ a.name }}</td>
+                        <td>{{ a.email }}</td>
+                        <td>{{ a.is_approved }}</td>
+                        <td>{{ a.date_joined }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- ========== RECENT CLIENTS ========== -->
+        <div class="section-box">
+            <h3>Recent Clients</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr><th>Name</th><th>Email</th><th>Joined</th></tr>
+                </thead>
+                <tbody>
+                {% for c in recent_clients %}
+                    <tr>
+                        <td>{{ c.name }}</td>
+                        <td>{{ c.email }}</td>
+                        <td>{{ c.date_joined }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- ========== RECENT COMMISSIONS ========== -->
+        <div class="section-box">
+            <h3>Recent Commissions</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr><th>Title</th><th>Client</th><th>Artist</th><th>Status</th><th>Date</th></tr>
+                </thead>
+                <tbody>
+                {% for c in recent_commissions %}
+                    <tr>
+                        <td>{{ c.title }}</td>
+                        <td>{{ c.client.name }}</td>
+                        <td>{{ c.artist.name }}</td>
+                        <td>{{ c.status }}</td>
+                        <td>{{ c.created_at }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- ========== RECENT TRANSACTIONS ========== -->
+        <div class="section-box">
+            <h3>Recent Transactions</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr><th>User</th><th>Amount</th><th>Type</th><th>Status</th><th>Date</th></tr>
+                </thead>
+                <tbody>
+                {% for t in recent_transactions %}
+                    <tr>
+                        <td>{{ t.user.name }}</td>
+                        <td>₹{{ t.amount }}</td>
+                        <td>{{ t.transaction_type }}</td>
+                        <td>{{ t.status }}</td>
+                        <td>{{ t.created_at }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

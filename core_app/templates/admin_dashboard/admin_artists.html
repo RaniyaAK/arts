@@ -1,0 +1,117 @@
+{% extends "masterss.html" %}
+{% block title %}Artists | Admin{% endblock %}
+
+{% block content %}
+
+<style>
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #F6E8D5, #E9D3BB);
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 25px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+}
+
+.sidebar h2 {
+    color: #8B5E3C;
+    font-weight: 700;
+    font-size: 22px;
+    margin-bottom: 25px;
+}
+
+.sidebar a {
+    display: block;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    color: #3b2f27;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background: #8B5E3C;
+    color: #fff;
+    transform: translateX(8px);
+}
+
+/* Main Content */
+.main-content {
+    margin-left: 270px;
+    padding: 40px;
+    width: 100%;
+}
+
+.section-box {
+    background: rgba(255,255,255,0.5);
+    padding: 25px;
+    border-radius: 14px;
+    backdrop-filter: blur(10px);
+}
+
+.table th {
+    background: #8B5E3C;
+    color: #fff;
+}
+</style>
+
+
+<div class="admin-container">
+
+    <!-- Include Sidebar -->
+
+    <div class="main-content">
+
+        <h1 style="color:#3b2f27;">Artists</h1>
+
+        <div class="section-box">
+            <h3>Registered Artists</h3>
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Approved</th>
+                        <th>Joined</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for a in artists %}
+                    <tr>
+                        <td>{{ a.name }}</td>
+                        <td>{{ a.email }}</td>
+                        <td>
+                            {% if a.is_approved %}
+                                <span class="text-success">Approved</span>
+                            {% else %}
+                                <span class="text-danger">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ a.date_joined }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
