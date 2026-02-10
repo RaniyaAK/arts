@@ -1,5 +1,6 @@
 {% extends "masterss.html" %}
 {% block title %}Admin Dashboard | Paletra{% endblock %}
+{% block body_class %}admin-dashboard{% endblock %}
 
 {% block content %}
 
@@ -12,280 +13,251 @@
     --text-dark: #3b2f27;
 }
 
-/* Layout */
-.admin-container {
-    display: flex;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #F6E8D5, #E9D3BB);
+/* Topbar */
+.topbar {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 60px;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(10px);
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 30px; border-bottom: 1px solid rgba(0,0,0,0.1); z-index:1000;
 }
+.topbar .logo { font-weight:700; font-size:20px; color:var(--primary); }
+.topbar-right { display:flex; align-items:center; gap:20px; }
+
+/* Notification */
+.notification {
+    position: relative;
+    font-size:20px;
+    cursor:pointer;
+    color: var(--text-dark);
+}
+.notification-badge {
+    position: absolute;
+    top:-6px;
+    right:-6px;
+    background:red;
+    color:#fff;
+    font-size:10px;
+    padding:2px 6px;
+    border-radius:50%;
+}
+
+/* Dropdown */
+.dropdown-menu { min-width:200px; max-height:250px; overflow-y:auto; }
+
+/* Layout */
+.admin-container { display:flex; margin-top:60px; min-height: calc(100vh - 60px); }
 
 /* Sidebar */
 .sidebar {
-    width: 250px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    padding: 25px 20px;
-    background: var(--sidebar-bg);
-    backdrop-filter: blur(18px);
-    border-right: 1px solid rgba(255, 255, 255, 0.3);
+    width:250px; position:fixed; top:60px; left:0;
+    height:calc(100vh - 60px); padding:30px 20px;
+    background:var(--sidebar-bg); backdrop-filter:blur(18px);
+    border-right:1px solid rgba(255,255,255,0.3);
 }
-
-.sidebar h2 {
-    color: var(--primary);
-    margin-bottom: 25px;
-    font-size: 26px;
-    font-weight: 700;
-}
-
-.sidebar a {
-    display: block;
-    padding: 12px 14px;
-    margin-bottom: 10px;
-    font-weight: 600;
-    text-decoration: none;
-    border-radius: 10px;
-    color: var(--text-dark);
-    transition: .3s ease;
-}
-
-.sidebar a:hover,
-.sidebar a.active {
-    background: var(--primary);
-    color: white;
-    transform: translateX(8px);
-}
+.sidebar h2 { color: var(--primary); text-align:center; font-size:26px; font-weight:700; margin-bottom:30px;}
+.sidebar a { display:block; padding:12px 16px; margin-bottom:12px; font-weight:600; text-decoration:none; border-radius:10px; color:var(--text-dark); transition:0.3s;}
+.sidebar a:hover, .sidebar a.active { background: var(--primary); color:white; transform:translateX(6px); }
 
 /* Main content */
-.main-content {
-    margin-left: 270px;
-    padding: 40px;
-}
+.main-content { margin-left:270px; padding:30px; }
 
 /* Metrics */
-.metrics-wrap {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
-    gap: 18px;
-}
+.metrics-wrap { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px; }
+.metric { background: var(--glass-bg); padding:20px; border-left:6px solid var(--primary); border-radius:14px; backdrop-filter:blur(12px); text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.08); transition:0.3s; }
+.metric:hover { background: rgba(255,255,255,0.7); transform: translateY(-3px);}
+.metric-title { font-size:14px; color:var(--text-dark); }
+.metric-value { font-size:28px; font-weight:bold; color:var(--primary); }
 
-.metric {
-    background: var(--glass-bg);
-    padding: 20px;
-    border-left: 6px solid var(--primary);
-    border-radius: 14px;
-    backdrop-filter: blur(12px);
-    transition: 0.3s;
-}
+/* Section Boxes */
+.section-box { background: rgba(255,255,255,0.55); margin-top:30px; padding:25px; border-radius:14px; backdrop-filter:blur(10px); box-shadow:0 6px 20px rgba(0,0,0,0.05);}
+.section-box h3 { font-size:20px; color:var(--primary); margin-bottom:15px; border-bottom:1px solid rgba(0,0,0,0.1); padding-bottom:6px;}
 
-.metric:hover {
-    background: rgba(255,255,255,0.7);
-    transform: scale(1.03);
-}
+/* Table */
+.table th { background: var(--primary); color: #fff; text-align:center;}
+.table td { text-align:center; vertical-align:middle; color:var(--text-dark); }
 
-.metric-title {
-    font-size: 14px;
-    color: var(--text-dark);
-}
-
-.metric-value {
-    font-size: 28px;
-    font-weight: bold;
-    color: var(--primary);
-}
-
-/* Boxes */
-.section-box {
-    background: rgba(255,255,255,0.55);
-    margin-top: 40px;
-    padding: 25px;
-    border-radius: 14px;
-    backdrop-filter: blur(10px);
-}
-
-.section-box h3 {
-    font-size: 22px;
-    color: var(--primary);
-    margin-bottom: 15px;
-}
-
-.table th {
-    background: var(--primary);
-    color: #fff;
-}
-
-.table td {
-    color: var(--text-dark);
-}
+/* Buttons */
+.btn-approve, .btn-reject { padding:5px 12px; border-radius:6px; color:#fff; text-decoration:none; font-size:0.9rem; }
+.btn-approve { background:#28a745;} .btn-approve:hover { background:#218838;}
+.btn-reject { background:#dc3545;} .btn-reject:hover { background:#c82333;}
 </style>
+
+<!-- Topbar -->
+<div class="topbar">
+    <div class="logo">Paletra Admin</div>
+    <div class="topbar-right">
+        <!-- Notification Dropdown -->
+        <div class="dropdown">
+            <div class="notification" id="notifDropdown" data-bs-toggle="dropdown">
+                <i class="fas fa-bell"></i>
+                {% if pending_artists %}
+                <span class="notification-badge" id="notifCount">{{ pending_artists|length }}</span>
+                {% endif %}
+            </div>
+            <ul class="dropdown-menu dropdown-menu-end">
+                {% if pending_artists %}
+                    {% for artist in pending_artists %}
+                    <li>
+                        <a class="dropdown-item" href="{% url 'approve_artist' artist.id %}" onclick="hideNotifBadge()">
+                            You have a request from {{ artist.name }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                {% else %}
+                    <li><span class="dropdown-item">No new notifications</span></li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <!-- User Dropdown -->
+        <div class="dropdown">
+            <a href="#" class="text-dark dropdown-toggle" data-bs-toggle="dropdown">{{ request.user.username }}</a>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="{% url 'edit_profile' %}">Edit Profile</a></li>
+                <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
 
 <div class="admin-container">
 
-    <!-- ==== SIDEBAR ==== -->
+    <!-- Sidebar -->
     <div class="sidebar">
         <h2>Paletra Admin</h2>
-
         <a href="{% url 'admin_dashboard' %}" class="active">Dashboard</a>
         <a href="{% url 'admin_artists' %}">Artists</a>
         <a href="{% url 'admin_clients' %}">Clients</a>
-
         <a href="{% url 'logout' %}">Log Out</a>
     </div>
 
-    <!-- ==== MAIN CONTENT ==== -->
+    <!-- Main Content -->
     <div class="main-content">
 
-        <h1 style="color: var(--text-dark); font-size:32px;">Welcome Back, Admin 👋</h1>
+        <h1 style="color: var(--text-dark); font-size:32px; margin-bottom:30px;">Welcome Back, Admin 👋</h1>
 
-        <!-- ========== METRICS ========== -->
+        <!-- Metrics -->
         <div class="metrics-wrap">
-
-            <div class="metric">
-                <div class="metric-title">Total Users</div>
-                <div class="metric-value">{{ total_users }}</div>
-            </div>
-
-            <div class="metric">
-                <div class="metric-title">Artists</div>
-                <div class="metric-value">{{ total_artists }}</div>
-            </div>
-
-            <div class="metric">
-                <div class="metric-title">Clients</div>
-                <div class="metric-value">{{ total_clients }}</div>
-            </div>
-
-            <div class="metric">
-                <div class="metric-title">Total Commissions</div>
-                <div class="metric-value">{{ total_commissions }}</div>
-            </div>
-
-            <div class="metric">
-                <div class="metric-title">Completed</div>
-                <div class="metric-value">{{ completed_commissions }}</div>
-            </div>
-
-            <div class="metric">
-                <div class="metric-title">Pending</div>
-                <div class="metric-value">{{ pending_commissions }}</div>
-            </div>
-
-            <div class="metric">
-                <div class="metric-title">Total Revenue</div>
-                <div class="metric-value">₹{{ revenue }}</div>
-            </div>
-
+            <div class="metric"><div class="metric-title">Total Users</div><div class="metric-value">{{ total_users }}</div></div>
+            <div class="metric"><div class="metric-title">Artists</div><div class="metric-value">{{ total_artists }}</div></div>
+            <div class="metric"><div class="metric-title">Clients</div><div class="metric-value">{{ total_clients }}</div></div>
+            <div class="metric"><div class="metric-title">Total Commissions</div><div class="metric-value">{{ total_commissions }}</div></div>
+            <div class="metric"><div class="metric-title">Completed</div><div class="metric-value">{{ completed_commissions }}</div></div>
+            <div class="metric"><div class="metric-title">Pending</div><div class="metric-value">{{ pending_commissions }}</div></div>
+            <div class="metric"><div class="metric-title">Total Revenue</div><div class="metric-value">₹{{ revenue }}</div></div>
         </div>
 
+        <!-- Pending Artist Approvals -->
+        <div class="section-box">
+            <h3>Pending Artist Approvals</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr><th>Name</th><th>Email</th><th>Joined</th><th>Action</th></tr>
+                </thead>
+                <tbody>
+                    {% for a in pending_artists %}
+                    <tr>
+                        <td>{{ a.name }}</td>
+                        <td>{{ a.email }}</td>
+                        <td>{{ a.date_joined }}</td>
+                        <td>
+                            <a href="{% url 'approve_artist' a.id %}" class="btn-approve">Approve</a>
+                            <a href="{% url 'reject_artist' a.id %}" class="btn-reject">Reject</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" class="text-center">No pending artists</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-        <!-- ========== RECENT USERS ========== -->
+        <!-- Latest Users -->
         <div class="section-box">
             <h3>Latest Users</h3>
             <table class="table table-bordered">
-                <thead>
-                    <tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr>
-                </thead>
-                <tbody>
-                {% for u in recent_users %}
+                <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr></thead>
+                <tbody>{% for u in recent_users %}
                     <tr>
                         <td>{{ u.name }}</td>
                         <td>{{ u.email }}</td>
                         <td>{{ u.role }}</td>
                         <td>{{ u.date_joined }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
+                    </tr>{% endfor %}</tbody>
             </table>
         </div>
 
-
-        <!-- ========== RECENT ARTISTS ========== -->
+        <!-- Recent Artists -->
         <div class="section-box">
             <h3>Recent Artists</h3>
             <table class="table table-bordered">
-                <thead>
-                    <tr><th>Name</th><th>Email</th><th>Approved</th><th>Joined</th></tr>
-                </thead>
-                <tbody>
-                {% for a in recent_artists %}
+                <thead><tr><th>Name</th><th>Email</th><th>Approved</th><th>Joined</th></tr></thead>
+                <tbody>{% for a in recent_artists %}
                     <tr>
                         <td>{{ a.name }}</td>
                         <td>{{ a.email }}</td>
                         <td>{{ a.is_approved }}</td>
                         <td>{{ a.date_joined }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
+                    </tr>{% endfor %}</tbody>
             </table>
         </div>
 
-
-        <!-- ========== RECENT CLIENTS ========== -->
+        <!-- Recent Clients -->
         <div class="section-box">
             <h3>Recent Clients</h3>
             <table class="table table-bordered">
-                <thead>
-                    <tr><th>Name</th><th>Email</th><th>Joined</th></tr>
-                </thead>
-                <tbody>
-                {% for c in recent_clients %}
+                <thead><tr><th>Name</th><th>Email</th><th>Joined</th></tr></thead>
+                <tbody>{% for c in recent_clients %}
                     <tr>
                         <td>{{ c.name }}</td>
                         <td>{{ c.email }}</td>
                         <td>{{ c.date_joined }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
+                    </tr>{% endfor %}</tbody>
             </table>
         </div>
 
-
-        <!-- ========== RECENT COMMISSIONS ========== -->
+        <!-- Recent Commissions -->
         <div class="section-box">
             <h3>Recent Commissions</h3>
             <table class="table table-bordered">
-                <thead>
-                    <tr><th>Title</th><th>Client</th><th>Artist</th><th>Status</th><th>Date</th></tr>
-                </thead>
-                <tbody>
-                {% for c in recent_commissions %}
+                <thead><tr><th>Title</th><th>Client</th><th>Artist</th><th>Status</th><th>Date</th></tr></thead>
+                <tbody>{% for c in recent_commissions %}
                     <tr>
                         <td>{{ c.title }}</td>
                         <td>{{ c.client.name }}</td>
                         <td>{{ c.artist.name }}</td>
                         <td>{{ c.status }}</td>
                         <td>{{ c.created_at }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
+                    </tr>{% endfor %}</tbody>
             </table>
         </div>
 
-
-        <!-- ========== RECENT TRANSACTIONS ========== -->
+        <!-- Recent Transactions -->
         <div class="section-box">
             <h3>Recent Transactions</h3>
             <table class="table table-bordered">
-                <thead>
-                    <tr><th>User</th><th>Amount</th><th>Type</th><th>Status</th><th>Date</th></tr>
-                </thead>
-                <tbody>
-                {% for t in recent_transactions %}
+                <thead><tr><th>User</th><th>Amount</th><th>Type</th><th>Status</th><th>Date</th></tr></thead>
+                <tbody>{% for t in recent_transactions %}
                     <tr>
                         <td>{{ t.user.name }}</td>
                         <td>₹{{ t.amount }}</td>
                         <td>{{ t.transaction_type }}</td>
                         <td>{{ t.status }}</td>
                         <td>{{ t.created_at }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
+                    </tr>{% endfor %}</tbody>
             </table>
         </div>
 
     </div>
-
 </div>
+
+<script>
+function hideNotifBadge(){
+    const notifCount = document.getElementById('notifCount');
+    if(notifCount) notifCount.style.display = 'none';
+}
+</script>
 
 {% endblock %}

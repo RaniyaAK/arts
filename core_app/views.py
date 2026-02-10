@@ -69,10 +69,8 @@ def complete_profile(request):
 
     return render(request, 'complete_profile.html', {'form': form})
 
-
 def register_view(request):
     if request.user.is_authenticated:
-        # Already logged in users go straight to dashboard
         if request.user.role == 'artist':
             return redirect('artist_dashboard')
         elif request.user.role == 'client':
@@ -88,39 +86,76 @@ def register_view(request):
             return render(request, 'register.html', {'form': form, 'role': role})
 
         user.role = role
-        user.is_profile_complete = False  
+        user.is_profile_complete = False
+
+        if user.role == "artist":
+            user.is_approved = False   # Requires admin approval
+        else:
+            user.is_approved = True    # Client auto approved
+
         user.save()
 
-        login(request, user)  
+        # 🔔 Notify admin when a new artist registers
+        if user.role == "artist":
+            admin_user = User.objects.filter(is_superuser=True).first()
+            if admin_user:
+                Notification.objects.create(
+                    receiver=admin_user,
+                    message=f"New artist registered: {user.name}",
+                    notification_type="new_artist"
+                )
+
+        # 🔥 Artist NOT allowed to login immediately
+        if user.role == "artist":
+            messages.info(request, "Your registration is submitted. Please wait for admin approval.")
+            return redirect("login")
+
+        # Client auto-login
+        login(request, user)
         return redirect('complete_profile')
 
     return render(request, 'register.html', {'form': form, 'role': role})
 
+
 def login_view(request):
     if request.user.is_authenticated:
-        # Normal login, go straight to dashboard
-        if request.user.role == 'artist':
-            return redirect('artist_dashboard')
-        elif request.user.role == 'client':
-            return redirect('client_dashboard')
+        if request.user.is_superuser:
+            return redirect("admin_dashboard")
+        elif request.user.role == "artist":
+            return redirect("artist_dashboard")
+        elif request.user.role == "client":
+            return redirect("client_dashboard")
 
     form = LoginForm(request.POST or None)
+
     if request.method == 'POST' and form.is_valid():
         username = form.cleaned_data['username']
         password = form.cleaned_data['password']
 
         user = authenticate(request, username=username, password=password)
+
         if user is not None:
+
+            # 🔥 BLOCK UNAPPROVED ARTISTS
+            if user.role == "artist" and not user.is_approved:
+                messages.error(request, "Your artist account is not yet approved by admin.")
+                return redirect('login')
+
             login(request, user)
+
+            if user.is_superuser:
+                return redirect("admin_dashboard")
+
             if user.role == 'artist':
                 return redirect('artist_dashboard')
-            elif user.role == 'client':
+
+            if user.role == 'client':
                 return redirect('client_dashboard')
+
         else:
             messages.error(request, "Invalid username or password.")
 
     return render(request, 'login.html', {'form': form})
-
 
 # Logout View
 @login_required
@@ -923,11 +958,11 @@ def delete_notification(request, notification_id):
     return redirect(request.META.get("HTTP_REFERER", "client_dashboard"))
 
 
-@login_required
 def admin_dashboard(request):
     if not request.user.is_superuser:
         return redirect("login")
 
+    # ------------------ METRICS ------------------
     total_users = User.objects.count()
     total_artists = User.objects.filter(role="artist").count()
     total_clients = User.objects.filter(role="client").count()
@@ -939,11 +974,28 @@ def admin_dashboard(request):
     total_transactions = Transaction.objects.count()
     revenue = Transaction.objects.filter(status="completed").aggregate(Sum("amount"))["amount__sum"] or 0
 
+    # ------------------ RECENT LISTS ------------------
     recent_users = User.objects.order_by("-date_joined")[:5]
     recent_commissions = Commission.objects.order_by("-created_at")[:5]
     recent_transactions = Transaction.objects.order_by("-created_at")[:5]
 
+    recent_artists = User.objects.filter(role="artist").order_by("-date_joined")[:5]
+    recent_clients = User.objects.filter(role="client").order_by("-date_joined")[:5]
+
+    # ------------------ PENDING ARTIST APPROVALS ------------------
+    pending_artists = User.objects.filter(role="artist", is_approved=False).order_by("-date_joined")
+
+    # ------------------ NEW ARTIST NOTIFICATIONS ------------------
+    new_artist_notifications = Notification.objects.filter(
+        receiver=request.user,
+        notification_type='new_artist'
+    ).order_by('-created_at')
+
+    new_artist_count = new_artist_notifications.filter(is_read=False).count()
+
+    # ------------------ RENDER ------------------
     return render(request, "dashboards/admin_dashboard.html", {
+        # Metrics
         "total_users": total_users,
         "total_artists": total_artists,
         "total_clients": total_clients,
@@ -952,12 +1004,23 @@ def admin_dashboard(request):
         "completed_commissions": completed_commissions,
         "total_transactions": total_transactions,
         "revenue": revenue,
+
+        # Recent lists
         "recent_users": recent_users,
         "recent_commissions": recent_commissions,
         "recent_transactions": recent_transactions,
+        "recent_artists": recent_artists,
+        "recent_clients": recent_clients,
 
+        # Pending artist approvals
+        "pending_artists": pending_artists,
 
+        # New artist notifications
+        "new_artist_notifications": new_artist_notifications,
+        "new_artist_count": new_artist_count,
     })
+
+
 
 def admin_artists(request):
     if not request.user.is_superuser:
@@ -980,4 +1043,39 @@ def admin_clients(request):
 
     return render(request, "admin_dashboard/admin_clients.html", {
         "clients": clients
+    })
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .models import User  # adjust if your User model is in another file
+
+def approve_artist(request, user_id):
+    user = get_object_or_404(User, id=user_id, role='artist')
+    user.is_approved = True
+    user.save()
+    messages.success(request, f"{user.name} has been approved as Artist.")
+    return redirect('admin_dashboard')
+
+def reject_artist(request, user_id):
+    user = get_object_or_404(User, id=user_id, role='artist')
+    user.delete()
+    messages.error(request, f"{user.name}'s artist registration was rejected & removed.")
+    return redirect('admin_dashboard')
+
+
+@login_required
+def admin_notifications(request):
+    if not request.user.is_superuser:
+        return redirect("login")
+
+    notifications = Notification.objects.filter(
+        receiver=request.user
+    ).order_by('-created_at')
+
+    # mark all as read
+    Notification.objects.filter(receiver=request.user, is_read=False).update(is_read=True)
+
+    return render(request, "notifications/admin_notifications.html", {
+        "notifications": notifications
     })
