@@ -38,13 +38,29 @@
 .table td {
     color: var(--text-dark);
 }
+
+.back-btn {
+    background: var(--primary);
+    color: white;
+    padding: 8px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: 0.3s;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.back-btn:hover {
+    background: var(--primary-light);
+    color: white;
+}
 </style>
 
-
 <div class="admin-container">
-
-
     <div class="main-content">
+
+        <!-- BACK BUTTON -->
+        <a href="{% url 'admin_dashboard' %}" class="back-btn">← Back</a>
 
         <h1 style="color:#3b2f27;">Clients</h1>
 
