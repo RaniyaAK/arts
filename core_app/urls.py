@@ -80,6 +80,9 @@ urlpatterns = [
 
 
 
+
+
+
 ]
 
 if settings.DEBUG:
