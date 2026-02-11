@@ -89,13 +89,12 @@ def register_view(request):
         user.is_profile_complete = False
 
         if user.role == "artist":
-            user.is_approved = False   # Requires admin approval
+            user.is_approved = False   
         else:
-            user.is_approved = True    # Client auto approved
+            user.is_approved = True   
 
         user.save()
 
-        # 🔔 Notify admin when a new artist registers
         if user.role == "artist":
             admin_user = User.objects.filter(is_superuser=True).first()
             if admin_user:
@@ -105,12 +104,10 @@ def register_view(request):
                     notification_type="new_artist"
                 )
 
-        # 🔥 Artist NOT allowed to login immediately
         if user.role == "artist":
             messages.info(request, "Your registration is submitted. Please wait for admin approval.")
             return redirect("login")
 
-        # Client auto-login
         login(request, user)
         return redirect('complete_profile')
 
@@ -136,7 +133,6 @@ def login_view(request):
 
         if user is not None:
 
-            # 🔥 BLOCK UNAPPROVED ARTISTS
             if user.role == "artist" and not user.is_approved:
                 messages.error(request, "Your artist account is not yet approved by admin.")
                 return redirect('login')
@@ -146,8 +142,11 @@ def login_view(request):
             if user.is_superuser:
                 return redirect("admin_dashboard")
 
-            if user.role == 'artist':
-                return redirect('artist_dashboard')
+            if user.role == "artist":
+                if not user.is_profile_complete:
+                    return redirect("complete_profile")
+                return redirect("artist_dashboard")
+
 
             if user.role == 'client':
                 return redirect('client_dashboard')
@@ -169,8 +168,13 @@ def logout_view(request):
 
 @login_required
 def artist_dashboard(request):
+
     if request.user.role != 'artist':
         return redirect('login')
+
+    if not request.user.is_profile_complete:
+        return redirect('complete_profile')
+
 
     artworks = Artwork.objects.filter(
         artist=request.user
@@ -838,8 +842,6 @@ def cancel_commission(request, commission_id):
     )
 
 
-
-User = get_user_model()
 
 def forgot_password(request):
     if request.method == 'POST':
