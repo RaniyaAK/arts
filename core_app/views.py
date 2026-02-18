@@ -343,6 +343,9 @@ def request_commission(request, artist_id):
             commission.delivery_latitude = form.cleaned_data.get('delivery_latitude')
             commission.delivery_longitude = form.cleaned_data.get('delivery_longitude')
 
+            commission.phone_number = form.cleaned_data.get('phone_number')
+
+
             if not commission.advance_amount:
                 commission.advance_amount = 0
             

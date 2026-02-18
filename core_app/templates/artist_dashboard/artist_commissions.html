@@ -92,6 +92,30 @@
                 </div>
             {% endif %}
 
+            <!-- NEW SECTION: DELIVERY DETAILS -->
+            <div class="mb-3 p-3 rounded" style="background:#FFF7EF; border:1px solid #ead7c4;">
+                <h6 class="fw-semibold mb-2">📦 Delivery Details</h6>
+
+                <p class="small mb-1">
+                    <strong>Phone:</strong> {{ c.phone_number }}
+                </p>
+
+                <p class="small mb-1">
+                    <strong>Address:</strong><br>
+                    {{ c.delivery_address|linebreaksbr }}
+                </p>
+
+                {% if c.delivery_latitude and c.delivery_longitude %}
+                <p class="small mb-1">
+                    <strong>Map Location:</strong>  
+                    <a href="https://www.google.com/maps?q={{ c.delivery_latitude }},{{ c.delivery_longitude }}" 
+                       target="_blank" class="text-primary">
+                        Open in Google Maps →
+                    </a>
+                </p>
+                {% endif %}
+            </div>
+
             <!-- STATUS BADGE -->
             <div class="mb-2">
                 {% if c.status == 'delivered' %}
@@ -127,7 +151,7 @@
                 </p>
             {% endif %}
 
-            <!-- BALANCE PAYMENT (FIXED) -->
+            <!-- BALANCE PAYMENT -->
             {% if c.total_price > c.advance_amount and c.status != 'cancelled' %}
                 {% if c.balance_paid %}
                     <p class="small text-success fw-semibold">Balance Paid ✅</p>
@@ -140,7 +164,7 @@
                 {% endif %}
             {% endif %}
 
-            <!-- ACTION BUTTONS (NO LOOP) -->
+            <!-- ACTION BUTTONS -->
             <div class="mt-3 d-flex gap-2 flex-wrap">
 
                 {% if c.status == 'pending' %}
@@ -181,7 +205,7 @@
 
                 {% elif c.status == 'cancelled' %}
                     <span class="text-danger small fw-semibold">❌ Commission Cancelled</span>
-                {% endif %}    
+                {% endif %}
 
             </div>
 
