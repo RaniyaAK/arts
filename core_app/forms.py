@@ -68,15 +68,40 @@ class ProfileEditForm(forms.ModelForm):
 
 
 class CommissionRequestForm(forms.ModelForm):
+
+    delivery_address = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter delivery address',
+            'rows': 3
+        }),
+        required=True           # <-- UPDATED (previously False)
+    )
+
+    delivery_latitude = forms.FloatField(
+        widget=forms.HiddenInput(),
+        required=False
+    )
+
+    delivery_longitude = forms.FloatField(
+        widget=forms.HiddenInput(),
+        required=False
+    )
+
     class Meta:
         model = Commission
-        fields = ['title', 'description', 'reference_image', 'required_date']
+        fields = [
+            'title',
+            'description',
+            'reference_image',
+            'required_date',
+            'delivery_address',
+            'delivery_latitude',
+            'delivery_longitude'
+        ]
         widgets = {
             'required_date': forms.DateInput(
-                attrs={
-                    'type': 'date',
-                    'class': 'form-control',
-                }
+                attrs={'type': 'date', 'class': 'form-control'}
             )
         }
 
@@ -85,12 +110,10 @@ class CommissionRequestForm(forms.ModelForm):
         today = timezone.now().date()
 
         if required_date <= today:
-            raise forms.ValidationError(
-                "Required date must be a future date."
-            )
-
+            raise forms.ValidationError("Required date must be a future date.")
         return required_date
-    
+
+
 
 class SetTotalPriceForm(forms.ModelForm):
     class Meta:

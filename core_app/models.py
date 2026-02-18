@@ -111,6 +111,12 @@ class Commission(models.Model):
     )
     required_date = models.DateField()
 
+
+    delivery_address = models.TextField(blank=True, null=True)
+    delivery_latitude = models.FloatField(blank=True, null=True)
+    delivery_longitude = models.FloatField(blank=True, null=True)
+
+
     total_price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
