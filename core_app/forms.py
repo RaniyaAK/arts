@@ -69,6 +69,15 @@ class ProfileEditForm(forms.ModelForm):
 
 class CommissionRequestForm(forms.ModelForm):
 
+    phone_number = forms.CharField(
+    max_length=15,
+    required=True,
+    widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'Enter phone number (India only)'
+    })
+    )
+
     delivery_address = forms.CharField(
         widget=forms.Textarea(attrs={
             'class': 'form-control',

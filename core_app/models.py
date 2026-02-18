@@ -115,6 +115,8 @@ class Commission(models.Model):
     delivery_address = models.TextField(blank=True, null=True)
     delivery_latitude = models.FloatField(blank=True, null=True)
     delivery_longitude = models.FloatField(blank=True, null=True)
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+
 
 
     total_price = models.DecimalField(

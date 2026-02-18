@@ -12,10 +12,11 @@
         </a>
     </div>
 
-    <!-- ARTIST INFO LEFT-ALIGNED -->
+    <!-- ARTIST INFO -->
     <div class="d-flex align-items-center mb-4">
         {% if artist.profile_image %}
-            <img src="{{ artist.profile_image.url }}" class="rounded-circle me-3" style="width:60px; height:60px; object-fit:cover;">
+            <img src="{{ artist.profile_image.url }}" class="rounded-circle me-3"
+                 style="width:60px; height:60px; object-fit:cover;">
         {% else %}
             <i class="fas fa-user-circle fa-3x text-muted me-3"></i>
         {% endif %}
@@ -28,7 +29,9 @@
     </div>
 
     <!-- COMMISSION FORM -->
-    <form method="POST" enctype="multipart/form-data" class="card p-4 shadow-sm rounded-4 bg-light">
+    <form id="commissionForm" method="POST" enctype="multipart/form-data"
+          class="card p-4 shadow-sm rounded-4 bg-light">
+
         {% csrf_token %}
 
         <!-- TITLE -->
@@ -61,13 +64,19 @@
             {{ form.reference_image|add_class:"form-control" }}
         </div>
 
+        <!-- PHONE NUMBER -->
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Phone Number <span class="text-danger">*</span></label>
+            {{ form.phone_number|add_class:"form-control" }}
+        </div>
+
         <!-- DELIVERY ADDRESS -->
         <div class="mb-3">
-            <label class="form-label fw-semibold">Delivery Address</label>
+            <label class="form-label fw-semibold">Delivery Address <span class="text-danger">*</span></label>
             {{ form.delivery_address|add_class:"form-control" }}
         </div>
 
-        <!-- USE MY LOCATION -->
+        <!-- USE MY CURRENT LOCATION -->
         <div class="mb-3">
             <button type="button" onclick="getGPSLocation()" class="btn btn-outline-primary rounded-pill">
                 📍 Use My Current Location
@@ -75,29 +84,30 @@
             <span id="location-status" class="ms-2 text-success fw-semibold"></span>
         </div>
 
-        <!-- SHOW PLACE NAME -->
+        <!-- LOCATION NAME -->
         <div class="mb-3">
             <label class="form-label fw-semibold">Selected Location</label>
             <input type="text" id="place-name" class="form-control" readonly>
         </div>
 
-        <!-- MAP PREVIEW -->
+        <!-- MAP -->
         <div class="mb-3">
-            <label class="form-label fw-semibold">Tap on Map to Choose Location</label>
+            <label class="form-label fw-semibold">Tap on Map to Choose Location <span class="text-danger">*</span></label>
             <div id="map" style="height:300px; border-radius:15px; border:1px solid #ccc;"></div>
         </div>
 
-        <!-- HIDDEN LAT/LONG -->
+        <!-- LAT-LONG -->
         {{ form.delivery_latitude }}
         {{ form.delivery_longitude }}
 
+        <!-- SUBMIT -->
         <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 mt-2">
             Submit Request
         </button>
     </form>
 </div>
 
-<!-- Leaflet CSS & JS -->
+<!-- Leaflet CDN -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
@@ -105,7 +115,7 @@
     let map;
     let marker;
 
-    // Initialize map centered on India
+    // Initialize map (India center)
     document.addEventListener("DOMContentLoaded", () => {
         map = L.map('map').setView([20.5937, 78.9629], 5);
 
@@ -113,35 +123,28 @@
             maxZoom: 19
         }).addTo(map);
 
-        // Click on map to select location
         map.on("click", async function(e) {
             const lat = e.latlng.lat;
             const lon = e.latlng.lng;
-
             setLocation(lat, lon);
         });
     });
 
-    // Set location (lat/lon + marker + address)
+    // Set location
     async function setLocation(lat, lon) {
-
-        // Update hidden fields
         document.querySelector("input[name='delivery_latitude']").value = lat;
         document.querySelector("input[name='delivery_longitude']").value = lon;
 
-        // Move or create marker
         if (!marker) {
             marker = L.marker([lat, lon]).addTo(map);
         } else {
             marker.setLatLng([lat, lon]);
         }
 
-        // Move map focus
         map.setView([lat, lon], 15);
 
-        // Reverse geocoding
+        // Reverse geocode
         const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
-
         try {
             const res = await fetch(url);
             const data = await res.json();
@@ -154,7 +157,7 @@
         }
     }
 
-    // Use GPS location
+    // Use GPS
     function getGPSLocation() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -169,6 +172,33 @@
             );
         }
     }
+
+    // FORM VALIDATION
+    document.getElementById("commissionForm").addEventListener("submit", function(e) {
+
+        const address = document.querySelector("textarea[name='delivery_address']").value.trim();
+        const phone = document.querySelector("input[name='phone_number']").value.trim();
+        const lat = document.querySelector("input[name='delivery_latitude']").value;
+        const lon = document.querySelector("input[name='delivery_longitude']").value;
+
+        if (!phone) {
+            alert("Please enter a phone number.");
+            e.preventDefault();
+            return;
+        }
+
+        if (!address) {
+            alert("Please enter a delivery address.");
+            e.preventDefault();
+            return;
+        }
+
+        if (!lat || !lon) {
+            alert("Please choose a location on the map.");
+            e.preventDefault();
+            return;
+        }
+    });
 </script>
 
 <style>
@@ -197,4 +227,5 @@
         border: 1px solid #ddd;
     }
 </style>
+
 {% endblock %}
