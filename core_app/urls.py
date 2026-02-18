@@ -68,17 +68,12 @@ urlpatterns = [
 
     path("admin_dashboard/admin_artists/", views.admin_artists, name="admin_artists"),
 
-
-
     path("admin-clients/", views.admin_clients, name="admin_clients"),
 
     path('approve-artist/<int:user_id>/', views.approve_artist, name='approve_artist'),
     path('reject-artist/<int:user_id>/', views.reject_artist, name='reject_artist'),
 
-
-
-
-
+    path('reset-password/<uidb64>/<token>/', views.reset_password, name='reset_password'),
 
 
 

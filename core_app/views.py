@@ -27,9 +27,6 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
-from .models import Transaction
-from .models import Notification
-
 
 paypalrestsdk.configure({
     "mode": settings.PAYPAL_MODE,
@@ -329,6 +326,7 @@ def artist_profile(request, artist_id):
         'artist': artist,
         'artworks': artworks,
     })
+
 @login_required
 def request_commission(request, artist_id):
     artist = get_object_or_404(User, id=artist_id)
@@ -339,10 +337,16 @@ def request_commission(request, artist_id):
             commission = form.save(commit=False)
             commission.client = request.user
             commission.artist = artist
+
+            # NEW FIELDS: Save location
+            commission.delivery_address = form.cleaned_data.get('delivery_address')
+            commission.delivery_latitude = form.cleaned_data.get('delivery_latitude')
+            commission.delivery_longitude = form.cleaned_data.get('delivery_longitude')
+
             if not commission.advance_amount:
                 commission.advance_amount = 0
+            
             commission.save()
-
 
             client_name = request.user.name or "A client"
 
@@ -356,7 +360,6 @@ def request_commission(request, artist_id):
             messages.success(request, "Commission requested successfully!")
             return redirect('client_commissions')
         else:
-            # Debug: print errors if form fails
             print("Form errors:", form.errors)
     else:
         form = CommissionRequestForm()
@@ -1037,8 +1040,6 @@ def admin_artists(request):
     return render(request, "admin_dashboard/admin_artists.html", context)
 
 
-from django.shortcuts import render
-from core_app.models import User
 
 def admin_clients(request):
     clients = User.objects.filter(role="client").order_by("-date_joined")
@@ -1048,9 +1049,6 @@ def admin_clients(request):
     })
 
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from .models import User  # adjust if your User model is in another file
 
 def approve_artist(request, user_id):
     user = get_object_or_404(User, id=user_id, role='artist')
