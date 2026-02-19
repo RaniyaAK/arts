@@ -11,7 +11,7 @@
         </a>
     </div>
 
-    <h3 class="mb-4 fw-bold text-primary">My Commission Requests</h3>
+    <h3 class="mb-4 fw-bold text-primary text-center">My Commission Requests</h3>
 
     {% if commissions %}
         {% for commission in commissions %}
@@ -35,25 +35,45 @@
                 <!-- ARTIST INFO -->
                 <div class="d-flex align-items-center mb-3">
                     {% if commission.artist.profile_image %}
-                        <img src="{{ commission.artist.profile_image.url }}" class="rounded-circle me-3 shadow-sm" style="width:50px; height:50px; object-fit:cover;">
+                        <img src="{{ commission.artist.profile_image.url }}" class="rounded-circle me-3 shadow-sm artist-img">
                     {% else %}
                         <i class="fas fa-user-circle fa-2x text-muted me-3"></i>
                     {% endif %}
                     <strong class="fs-5">{{ commission.artist.name }}</strong>
                 </div>
 
+                <!-- TITLE & DESCRIPTION -->
                 <h5 class="fw-bold text-dark">{{ commission.title }}</h5>
-                <p class="text-muted">{{ commission.description }}</p>
+                <p class="text-muted mb-3">{{ commission.description }}</p>
 
+                <!-- REFERENCE IMAGE -->
                 {% if commission.reference_image %}
-                    <img src="{{ commission.reference_image.url }}" class="img-fluid rounded mb-3 shadow-sm">
+                    <img src="{{ commission.reference_image.url }}" class="img-fluid rounded mb-3 shadow-sm reference-img">
                 {% endif %}
 
-                <!-- STATUS -->
+                <!-- DELIVERY DETAILS -->
+                <div class="mb-3 p-3 rounded" style="background:#FFF7EF; border:1px solid #ead7c4;">
+                    <h6 class="fw-semibold mb-2">📦 Delivery Details</h6>
+
+                    <p class="small mb-1"><strong>Phone:</strong> {{ commission.phone_number }}</p>
+                    <p class="small mb-1"><strong>Address:</strong><br>{{ commission.delivery_address|linebreaksbr }}</p>
+
+                    {% if commission.delivery_latitude and commission.delivery_longitude %}
+                        <p class="small mb-1">
+                            <strong>Map Location:</strong>
+                            <a href="https://www.google.com/maps?q={{ commission.delivery_latitude }},{{ commission.delivery_longitude }}" 
+                               target="_blank" class="text-primary">
+                                Open in Google Maps →
+                            </a>
+                        </p>
+                    {% endif %}
+                </div>
+
+                <!-- STATUS BADGE -->
                 <div class="mb-3">
                     {% if commission.status == 'delivered' %}
                         <span class="badge bg-success px-3 py-2 rounded-pill shadow-sm">{{ commission.status|title }}</span>
-                    {% elif commission.status == 'cancelled' or commission.status == 'rejected' %}
+                    {% elif commission.status in 'cancelled rejected' %}
                         <span class="badge bg-danger px-3 py-2 rounded-pill shadow-sm">{{ commission.status|title }}</span>
                     {% elif commission.status == 'completed' %}
                         <span class="badge bg-primary px-3 py-2 rounded-pill shadow-sm">{{ commission.status|title }}</span>
@@ -68,7 +88,7 @@
 
                 <!-- ADVANCE SECTION -->
                 {% if commission.advance_amount %}
-                    <p class="fw-semibold">
+                    <p class="fw-semibold mb-2">
                         <strong>Advance:</strong> ₹{{ commission.advance_amount }}
                         {% if commission.advance_paid %}
                             <span class="text-success">(Paid)</span>
@@ -78,7 +98,7 @@
                     </p>
 
                     {% if commission.status == 'accepted' and not commission.advance_paid %}
-                        <a href="{% url 'pay_advance' commission.id %}" class="btn btn-warning btn-sm rounded-pill shadow-sm px-3">
+                        <a href="{% url 'pay_advance' commission.id %}" class="btn btn-warning btn-sm rounded-pill shadow-sm px-3 mb-2">
                             Pay Advance
                         </a>
                     {% endif %}
@@ -86,15 +106,13 @@
 
                 <!-- CANCEL BUTTON -->
                 {% if commission.status in 'pending accepted advance_paid' %}
-                    <form method="post" action="{% url 'cancel_commission' commission.id %}">
+                    <form method="post" action="{% url 'cancel_commission' commission.id %}" class="d-inline-block mt-2">
                         {% csrf_token %}
-                        <button class="btn btn-danger btn-sm mt-3 rounded-pill shadow-sm px-3">
-                            Cancel Commission
-                        </button>
+                        <button class="btn btn-danger btn-sm rounded-pill shadow-sm px-3">Cancel Commission</button>
                     </form>
                 {% endif %}
 
-                <!-- BALANCE PAYMENT UI -->
+                <!-- BALANCE PAYMENT SECTION -->
                 {% if commission.total_price > commission.advance_amount and commission.status not in 'cancelled rejected' %}
 
                     {% if commission.status == 'completed' %}
@@ -145,18 +163,43 @@
 
             </div>
         </div>
+
         {% endfor %}
     {% else %}
-        <p class="text-muted text-center">No commission requests yet.</p>
+        <p class="text-muted text-center mt-5">No commission requests yet.</p>
     {% endif %}
 
 </div>
 
 <!-- Extra styling -->
 <style>
-.smooth-card { transition: 0.3s ease; }
-.smooth-card:hover { transform: translateY(-4px); box-shadow: 0 8px 18px rgba(0,0,0,0.15); }
-.hover-scale:hover { transform: scale(1.05); }
+/* CARD HOVER EFFECT */
+.smooth-card {
+    transition: 0.3s ease;
+}
+.smooth-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+/* BUTTON HOVER SCALE */
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+/* REFERENCE IMAGE */
+.reference-img {
+    max-height: 250px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+/* ARTIST IMAGE */
+.artist-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+}
 </style>
 
 {% endblock %}
