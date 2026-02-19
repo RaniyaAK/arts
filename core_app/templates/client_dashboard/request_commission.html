@@ -8,7 +8,7 @@
     <!-- BACK BUTTON -->
     <div class="mb-4">
         <a href="{% url 'artist_profile' artist.id %}" class="btn btn-outline-secondary rounded-pill">
-            ← Back
+            ← Back 
         </a>
     </div>
 
@@ -30,26 +30,38 @@
 
     <!-- COMMISSION FORM -->
     <form id="commissionForm" method="POST" enctype="multipart/form-data"
-          class="card p-4 shadow-sm rounded-4 bg-light">
+      class="card p-4 shadow-sm rounded-4 bg-light" novalidate>
 
         {% csrf_token %}
 
         <!-- TITLE -->
         <div class="mb-3">
             <label class="form-label fw-semibold">Artwork Title</label>
-            {{ form.title|add_class:"form-control" }}
+            {% if form.title.errors %}
+                {{ form.title|add_class:"form-control highlight-error" }}
+            {% else %}
+                {{ form.title|add_class:"form-control" }}
+            {% endif %}
         </div>
 
         <!-- DESCRIPTION -->
         <div class="mb-3">
             <label class="form-label fw-semibold">Description</label>
-            {{ form.description|add_class:"form-control" }}
+            {% if form.description.errors %}
+                {{ form.description|add_class:"form-control highlight-error" }}
+            {% else %}
+                {{ form.description|add_class:"form-control" }}
+            {% endif %}
         </div>
 
         <!-- REQUIRED DATE -->
         <div class="mb-3">
             <label class="form-label fw-semibold">Required Date</label>
-            {{ form.required_date|add_class:"form-control" }}
+            {% if form.required_date.errors %}
+                {{ form.required_date|add_class:"form-control highlight-error" }}
+            {% else %}
+                {{ form.required_date|add_class:"form-control" }}
+            {% endif %}
             <small class="text-muted">Select a future date for delivery.</small>
         </div>
 
@@ -66,14 +78,22 @@
 
         <!-- PHONE NUMBER -->
         <div class="mb-3">
-            <label class="form-label fw-semibold">Phone Number <span class="text-danger">*</span></label>
-            {{ form.phone_number|add_class:"form-control" }}
+            <label class="form-label fw-semibold">Phone Number</label>
+            {% if form.phone_number.errors %}
+                {{ form.phone_number|add_class:"form-control highlight-error" }}
+            {% else %}
+                {{ form.phone_number|add_class:"form-control" }}
+            {% endif %}
         </div>
 
         <!-- DELIVERY ADDRESS -->
         <div class="mb-3">
-            <label class="form-label fw-semibold">Delivery Address <span class="text-danger">*</span></label>
-            {{ form.delivery_address|add_class:"form-control" }}
+            <label class="form-label fw-semibold">Delivery Address</label>
+            {% if form.delivery_address.errors %}
+                {{ form.delivery_address|add_class:"form-control highlight-error" }}
+            {% else %}
+                {{ form.delivery_address|add_class:"form-control" }}
+            {% endif %}
         </div>
 
         <!-- USE MY CURRENT LOCATION -->
@@ -92,11 +112,10 @@
 
         <!-- MAP -->
         <div class="mb-3">
-            <label class="form-label fw-semibold">Tap on Map to Choose Location <span class="text-danger">*</span></label>
+            <label class="form-label fw-semibold">Tap on Map to Choose Location</label>
             <div id="map" style="height:300px; border-radius:15px; border:1px solid #ccc;"></div>
         </div>
 
-        <!-- LAT-LONG -->
         {{ form.delivery_latitude }}
         {{ form.delivery_longitude }}
 
@@ -107,7 +126,7 @@
     </form>
 </div>
 
-<!-- Leaflet CDN -->
+<!-- Leaflet -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
@@ -115,90 +134,72 @@
     let map;
     let marker;
 
-    // Initialize map (India center)
     document.addEventListener("DOMContentLoaded", () => {
-        map = L.map('map').setView([20.5937, 78.9629], 5);
+        map = L.map("map").setView([20.5937, 78.9629], 5);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             maxZoom: 19
         }).addTo(map);
 
-        map.on("click", async function(e) {
-            const lat = e.latlng.lat;
-            const lon = e.latlng.lng;
-            setLocation(lat, lon);
-        });
+        map.on("click", (e) => setLocation(e.latlng.lat, e.latlng.lng));
+
+        // Highlight first error field if exists
+        const firstError = document.querySelector(".highlight-error");
+        if(firstError){
+            firstError.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
     });
 
-    // Set location
     async function setLocation(lat, lon) {
         document.querySelector("input[name='delivery_latitude']").value = lat;
         document.querySelector("input[name='delivery_longitude']").value = lon;
 
-        if (!marker) {
+        if (!marker)
             marker = L.marker([lat, lon]).addTo(map);
-        } else {
+        else
             marker.setLatLng([lat, lon]);
-        }
 
         map.setView([lat, lon], 15);
 
-        // Reverse geocode
-        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
         try {
-            const res = await fetch(url);
+            const res = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
+            );
             const data = await res.json();
-
             document.getElementById("place-name").value =
                 data.display_name || "Selected location";
-
         } catch {
-            document.getElementById("place-name").value = "Could not detect address";
+            document.getElementById("place-name").value =
+                "Could not detect address";
         }
     }
 
-    // Use GPS
     function getGPSLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                pos => {
-                    document.getElementById("location-status").textContent = "Location added ✓";
-                    setLocation(pos.coords.latitude, pos.coords.longitude);
-                },
-                () => {
-                    document.getElementById("location-status").textContent =
-                        "Please allow GPS permission.";
-                }
-            );
-        }
+        navigator.geolocation?.getCurrentPosition(
+            (pos) => {
+                document.getElementById("location-status").textContent =
+                    "Location added ✓";
+                setLocation(pos.coords.latitude, pos.coords.longitude);
+            },
+            () => {
+                document.getElementById("location-status").textContent =
+                    "Please allow GPS permission.";
+            }
+        );
     }
 
-    // FORM VALIDATION
-    document.getElementById("commissionForm").addEventListener("submit", function(e) {
-
-        const address = document.querySelector("textarea[name='delivery_address']").value.trim();
-        const phone = document.querySelector("input[name='phone_number']").value.trim();
-        const lat = document.querySelector("input[name='delivery_latitude']").value;
-        const lon = document.querySelector("input[name='delivery_longitude']").value;
-
-        if (!phone) {
-            alert("Please enter a phone number.");
-            e.preventDefault();
-            return;
-        }
-
-        if (!address) {
-            alert("Please enter a delivery address.");
-            e.preventDefault();
-            return;
-        }
-
-        if (!lat || !lon) {
-            alert("Please choose a location on the map.");
-            e.preventDefault();
-            return;
-        }
-    });
+    // Reference image preview
+    const previewInput = document.getElementById("id_reference_image");
+    if(previewInput){
+        previewInput.addEventListener("change", function(event){
+            const preview = document.getElementById("preview-image");
+            const file = event.target.files[0];
+            if(file){
+                preview.style.display = "block";
+                preview.src = URL.createObjectURL(file);
+            }
+        });
+    }
 </script>
 
 <style>
@@ -215,6 +216,7 @@
         border: 1px solid #D2C2A8;
         padding: 10px 16px;
         background-color: #FFFDF8;
+        transition: 0.2s;
     }
 
     .btn-primary {
@@ -222,9 +224,10 @@
         color: #FFF8E7;
     }
 
-    #preview-image {
-        border-radius: 12px;
-        border: 1px solid #ddd;
+    /* RED HIGHLIGHT FOR ERRORS */
+    .highlight-error {
+        border-color: #ff4d4d !important;
+        box-shadow: 0 0 6px rgba(255, 0, 0, 0.4);
     }
 </style>
 

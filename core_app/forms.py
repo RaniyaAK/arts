@@ -69,14 +69,17 @@ class ProfileEditForm(forms.ModelForm):
 
 class CommissionRequestForm(forms.ModelForm):
 
+    
+
     phone_number = forms.CharField(
-    max_length=15,
-    required=True,
-    widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'placeholder': 'Enter phone number (India only)'
-    })
+        max_length=10,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter 10-digit phone number'
+        })
     )
+
 
     delivery_address = forms.CharField(
         widget=forms.Textarea(attrs={
@@ -104,15 +107,30 @@ class CommissionRequestForm(forms.ModelForm):
             'description',
             'reference_image',
             'required_date',
+            'phone_number',
             'delivery_address',
             'delivery_latitude',
-            'delivery_longitude'
+            'delivery_longitude',
         ]
         widgets = {
             'required_date': forms.DateInput(
                 attrs={'type': 'date', 'class': 'form-control'}
             )
         }
+
+    def clean_phone_number(self):
+        phone = self.cleaned_data.get("phone_number", "").strip()
+
+        if not phone.isdigit():
+            raise forms.ValidationError("Phone number must contain only digits.")
+
+        if len(phone) != 10:
+            raise forms.ValidationError("Phone number must be exactly 10 digits.")
+
+        if phone[0] not in {'6', '7', '8', '9'}:
+            raise forms.ValidationError("Phone number must start with 6, 7, 8, or 9.")
+
+        return phone    
 
     def clean_required_date(self):
         required_date = self.cleaned_data.get('required_date')
