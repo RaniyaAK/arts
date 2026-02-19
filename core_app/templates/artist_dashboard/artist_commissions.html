@@ -4,16 +4,28 @@
 
 {% block content %}
 <style>
+    /* CARD STYLING */
     .commission-card {
         border-radius: 20px;
         border: none;
         background: #ffffff;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        transition: 0.2s;
     }
+    .commission-card:hover {
+        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    /* CLIENT IMAGE */
     .client-img {
         width: 48px;
         height: 48px;
         object-fit: cover;
+        border-radius: 50%;
+        border: 1px solid #e0c9b2;
     }
+
+    /* REFERENCE IMAGE */
     .reference-img {
         width: 120px;
         height: 120px;
@@ -22,18 +34,57 @@
         border: 1px solid #e5e5e5;
         background: #f9f9f9;
     }
+
+    /* TIMELINE */
     .timeline {
         font-size: 12px;
         color: #888;
+        text-align: right;
     }
+
+    /* BADGES */
     .badge {
         padding: 6px 12px;
         border-radius: 50px;
         font-size: 12px;
     }
+
+    /* DIVIDER */
     .divider {
         border-top: 1.5px solid #e0c9b2;
         margin: 10px 0;
+    }
+
+    /* DELIVERY DETAILS */
+    .delivery-box {
+        background: #FFF7EF;
+        border: 1px solid #ead7c4;
+        padding: 12px 16px;
+        border-radius: 14px;
+        font-size: 14px;
+    }
+
+    /* SMALL TEXT */
+    .small-text {
+        font-size: 13px;
+        color: #666;
+    }
+
+    /* ACTION BUTTONS */
+    .action-btns .btn {
+        font-size: 13px;
+    }
+
+    /* RESPONSIVE */
+    @media(max-width: 576px){
+        .reference-img {
+            width: 100px;
+            height: 100px;
+        }
+        .client-img {
+            width: 40px;
+            height: 40px;
+        }
     }
 </style>
 
@@ -51,7 +102,7 @@
         {% for c in commissions %}
 
         <!-- TIMELINE -->
-        <div class="timeline text-end mb-1">
+        <div class="timeline mb-1">
             Requested: {{ c.created_at|date:"M d, Y" }}
             {% if c.accepted_at %} | Accepted: {{ c.accepted_at|date:"M d, Y" }}{% endif %}
             {% if c.advance_paid_at %} | Advance Paid: {{ c.advance_paid_at|date:"M d, Y" }}{% endif %}
@@ -63,12 +114,12 @@
             {% if c.cancelled_at %} | Cancelled: {{ c.cancelled_at|date:"M d, Y" }}{% endif %}
         </div>
 
-        <div class="card commission-card shadow-sm p-4 mb-4">
+        <div class="card commission-card p-4 mb-4">
 
             <!-- CLIENT INFO -->
-            <div class="d-flex align-items-center gap-2">
+            <div class="d-flex align-items-center gap-2 mb-2">
                 {% if c.client.profile_image %}
-                    <img src="{{ c.client.profile_image.url }}" class="rounded-circle client-img">
+                    <img src="{{ c.client.profile_image.url }}" class="client-img">
                 {% else %}
                     <i class="fas fa-user-circle fa-2x text-secondary"></i>
                 {% endif %}
@@ -79,11 +130,8 @@
 
             <!-- DETAILS -->
             <h6 class="fw-semibold mb-1">{{ c.title }}</h6>
-            <p class="text-muted small mb-2">{{ c.description }}</p>
-
-            <p class="small mb-3">
-                <strong>Required Date:</strong> {{ c.required_date|date:"M d, Y" }}
-            </p>
+            <p class="small-text mb-2">{{ c.description }}</p>
+            <p class="small-text mb-3"><strong>Required Date:</strong> {{ c.required_date|date:"M d, Y" }}</p>
 
             {% if c.reference_image %}
                 <div class="d-flex align-items-center gap-3 mb-3">
@@ -92,27 +140,18 @@
                 </div>
             {% endif %}
 
-            <!-- NEW SECTION: DELIVERY DETAILS -->
-            <div class="mb-3 p-3 rounded" style="background:#FFF7EF; border:1px solid #ead7c4;">
+            <!-- DELIVERY DETAILS -->
+            <div class="delivery-box mb-3">
                 <h6 class="fw-semibold mb-2">📦 Delivery Details</h6>
-
-                <p class="small mb-1">
-                    <strong>Phone:</strong> {{ c.phone_number }}
-                </p>
-
-                <p class="small mb-1">
-                    <strong>Address:</strong><br>
-                    {{ c.delivery_address|linebreaksbr }}
-                </p>
-
+                <p class="small-text mb-1"><strong>Phone:</strong> {{ c.phone_number }}</p>
+                <p class="small-text mb-1"><strong>Address:</strong><br>{{ c.delivery_address|linebreaksbr }}</p>
                 {% if c.delivery_latitude and c.delivery_longitude %}
-                <p class="small mb-1">
-                    <strong>Map Location:</strong>  
-                    <a href="https://www.google.com/maps?q={{ c.delivery_latitude }},{{ c.delivery_longitude }}" 
-                       target="_blank" class="text-primary">
-                        Open in Google Maps →
-                    </a>
-                </p>
+                    <p class="small-text mb-0">
+                        <strong>Map Location:</strong>  
+                        <a href="https://www.google.com/maps?q={{ c.delivery_latitude }},{{ c.delivery_longitude }}" target="_blank" class="text-primary">
+                            Open in Google Maps →
+                        </a>
+                    </p>
                 {% endif %}
             </div>
 
@@ -141,7 +180,7 @@
 
             <!-- ADVANCE PAYMENT -->
             {% if c.advance_amount %}
-                <p class="small mb-2">
+                <p class="small-text mb-2">
                     <strong>Advance:</strong> ₹{{ c.advance_amount }}
                     {% if c.advance_paid %}
                         <span class="text-success">(Paid)</span>
@@ -154,18 +193,18 @@
             <!-- BALANCE PAYMENT -->
             {% if c.total_price > c.advance_amount and c.status != 'cancelled' %}
                 {% if c.balance_paid %}
-                    <p class="small text-success fw-semibold">Balance Paid ✅</p>
+                    <p class="small-text text-success fw-semibold">Balance Paid ✅</p>
                 {% elif c.payment_mode == 'offline' and c.status == 'shipping' %}
-                    <p class="small text-success fw-semibold">Offline payment collected ✅</p>
+                    <p class="small-text text-success fw-semibold">Offline payment collected ✅</p>
                 {% elif c.status == 'completed' and not c.payment_mode %}
-                    <p class="small text-warning">Waiting for client to choose payment method 💰</p>
+                    <p class="small-text text-warning">Waiting for client to choose payment method 💰</p>
                 {% elif c.status == 'completed' and c.payment_mode == 'online' %}
-                    <p class="small text-warning">Waiting for client to pay balance online 💰</p>
+                    <p class="small-text text-warning">Waiting for client to pay balance online 💰</p>
                 {% endif %}
             {% endif %}
 
             <!-- ACTION BUTTONS -->
-            <div class="mt-3 d-flex gap-2 flex-wrap">
+            <div class="mt-3 d-flex gap-2 flex-wrap action-btns">
 
                 {% if c.status == 'pending' %}
                     <a href="{% url 'update_commission_status' c.id 'accepted' %}" class="btn btn-success btn-sm">Accept</a>
@@ -179,7 +218,7 @@
                     </form>
 
                 {% elif c.status == 'accepted' %}
-                    <span class="small text-muted">Waiting for advance payment</span>
+                    <span class="small-text text-muted">Waiting for advance payment</span>
 
                 {% elif c.status == 'advance_paid' %}
                     <a href="{% url 'update_commission_status' c.id 'in_progress' %}" class="btn btn-info btn-sm">Start Work</a>
@@ -191,7 +230,7 @@
                     {% if c.balance_paid or c.payment_mode == 'offline' %}
                         <a href="{% url 'update_commission_status' c.id 'shipping' %}" class="btn btn-warning btn-sm">Start Shipping</a>
                     {% else %}
-                        <span class="text-warning small">Waiting for balance payment 💰</span>
+                        <span class="small-text text-warning">Waiting for balance payment 💰</span>
                     {% endif %}
 
                 {% elif c.status == 'shipping' %}
