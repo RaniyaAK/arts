@@ -877,9 +877,6 @@ def forgot_password(request):
 
     return render(request, 'forgot_password.html')
 
-
-
-
 def reset_password(request, uidb64, token):
     try:
         uid = urlsafe_base64_decode(uidb64).decode()
@@ -899,13 +896,16 @@ def reset_password(request, uidb64, token):
             messages.error(request, "Passwords do not match.")
             return redirect(request.path)
 
+        if len(password) < 6:
+            messages.error(request, "Password must be at least 6 characters.")
+            return redirect(request.path)
+
         user.set_password(password)
         user.save()
 
-        messages.success(request, "Password reset successful. Please login.")
-        return redirect('login')
+        return redirect('password_reset_complete')
 
-    return render(request, 'auth/reset_password.html')
+    return render(request, 'reset_password.html')
 
 
 
@@ -1082,3 +1082,11 @@ def admin_notifications(request):
     return render(request, "notifications/admin_notifications.html", {
         "notifications": notifications
     })
+
+
+
+def password_reset_success(request):
+    return render(request, 'password_reset_success.html')
+
+def password_reset_sent(request):
+    return render(request, 'password_reset_sent.html')

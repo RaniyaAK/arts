@@ -69,8 +69,6 @@ class ProfileEditForm(forms.ModelForm):
 
 class CommissionRequestForm(forms.ModelForm):
 
-    
-
     phone_number = forms.CharField(
         max_length=10,
         required=True,
