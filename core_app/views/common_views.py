@@ -39,4 +39,3 @@ def delete_notification(request, notification_id):
 
 
 
-

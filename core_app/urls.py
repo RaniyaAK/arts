@@ -63,6 +63,8 @@ from .views.client_views import(
     paypal_success,
     paypal_success_balance,
     transaction_detail,
+    contact_submit,
+    contact_thankyou
 
 )
 
@@ -133,6 +135,8 @@ urlpatterns = [
     path('client/transactions/', client_transactions, name='client_transactions'),
     path('payment-success/<int:transaction_id>/', payment_success, name='payment_success'),
     path("transaction/<int:transaction_id>/", transaction_detail, name="transaction_detail"),
+    path('contact/submit/',contact_submit, name='contact_submit'),
+    path('contact/thank-you/',contact_thankyou, name='contact_thankyou'),
 
 
     # common
@@ -141,10 +145,13 @@ urlpatterns = [
     path('notification/delete/<int:notification_id>/', delete_notification, name='delete_notification'),
 
 
+
+]
+
     # path('artist/revenue/', views.artist_revenue, name='artist_revenue'),
 
 
-]
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

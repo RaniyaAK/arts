@@ -399,3 +399,30 @@ def payment_success(request, transaction_id):
         "commission": commission,
     })
 
+from django.core.mail import send_mail
+from django.shortcuts import redirect
+from django.conf import settings
+
+def contact_submit(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        message = request.POST.get("message")
+
+        full_message = f"From: {name} <{email}>\n\n{message}"
+
+        send_mail(
+            subject=f"New Contact Message from {name}",
+            message=full_message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=["paletraart123@gmail.com"], 
+            fail_silently=False,
+        )
+
+        return redirect('contact_thankyou')  
+
+    return redirect('home')  # fallback if someone accesses directly
+
+
+def contact_thankyou(request):
+    return render(request, "contact_thankyou.html")
