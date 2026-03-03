@@ -10,7 +10,7 @@ from .views.auth_views import(
     logout_view,
     forgot_password,
     reset_password,
-    password_reset_sent,
+    password_reset_send,
     password_reset_success
 )
 
@@ -88,7 +88,7 @@ urlpatterns = [
     path('forgot-password/', forgot_password, name='forgot_password'),
     path('reset-password/<uidb64>/<token>/', reset_password, name='reset_password'),
     path('password-reset-success/', password_reset_success, name='password_reset_success'),
-    path('password-reset-sent/', password_reset_sent, name='reset_password_sent'),
+    path('password-reset-send/', password_reset_send, name='password_reset_send'),
 
 
     # profile

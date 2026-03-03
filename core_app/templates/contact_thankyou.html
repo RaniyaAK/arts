@@ -1,41 +1,67 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Thank You</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #F8F5F2;
-            color: #4A3A32;
-            margin: 0;
-            height: 100vh;
+{% extends "masterss.html" %}
+{% block body_class %}no-navbar{% endblock %}
+{% block title %}Thank You{% endblock %}
 
-            /* Center the box */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .box {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        h2 {
-            color: #6A4632;
-        }
-    </style>
-</head>
-<body>
-    <div class="box">
-        <h2>Thank You!</h2>
-        <p>Your message has been successfully sent.</p>
-        <p>We’ll get back to you soon.</p>
+{% block content %}
 
-        <a href="/" style="color:#6A4632; text-decoration:underline;">Return to Home</a>
+<style>
+body {
+    background-color: #F4EFE8;
+}
+
+.thank-wrapper {
+    min-height: 100vh;
+}
+
+.thank-card {
+    background: linear-gradient(180deg, #FFF8EE, #F3E8D9);
+    border-radius: 26px;
+    padding: 32px;
+}
+
+.thank-title {
+    color: #4B3326;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.btn-home {
+    background-color: #6A4632;
+    color: #FFF8E7;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    padding: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-home:hover {
+    background-color: #CFAF5D;
+    color: #3E2A20;
+}
+
+p {
+    color: #4A3A32;
+    font-size: 1rem;
+}
+</style>
+
+<div class="container thank-wrapper d-flex align-items-center justify-content-center">
+    <div class="col-md-5 col-lg-4">
+
+        <div class="card thank-card shadow-lg border-0">
+            <div class="card-body text-center">
+
+                <h4 class="thank-title mb-3">Thank You!</h4>
+
+                <p>Your message has been successfully sent.</p>
+                <p>We’ll get back to you soon.</p>
+
+                <a href="/" class="btn btn-home rounded-pill w-100 mt-3">Return to Home</a>
+
+            </div>
+        </div>
+
     </div>
-</body>
-</html>
+</div>
+
+{% endblock %}

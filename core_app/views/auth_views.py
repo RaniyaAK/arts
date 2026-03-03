@@ -138,7 +138,7 @@ def forgot_password(request):
         )
 
         messages.success(request, "Password reset link sent to your email.")
-        return redirect('login')
+        return redirect('password_reset_send')
 
     return render(request, 'auth/forgot_password.html')
 
@@ -178,5 +178,5 @@ def password_reset_success(request):
     return render(request, 'auth/password_reset_success.html')
 
 
-def password_reset_sent(request):
-    return render(request, 'auth/password_reset_sent.html')
+def password_reset_send(request):
+    return render(request, 'auth/password_reset_send.html')
