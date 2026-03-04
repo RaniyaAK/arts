@@ -4,78 +4,133 @@
 {% block content %}
 
 <style>
-/* Same styling as artists page */
+/* hide default navbar */
+.master-topbar,
+header,
+.navbar,
+.top-nav,
+.site-header {
+    display: none !important;
+}
+
 :root {
     --primary: #8B5E3C;
     --primary-light: #B88967;
-    --glass-bg: rgba(255, 255, 255, 0.15);
-    --glass-border: rgba(255, 255, 255, 0.35);
-    --sidebar-bg: rgba(255, 255, 255, 0.08);
+    --sidebar-bg: rgba(255, 255, 255, 0.1);
+    --glass-bg: rgba(255,255,255,0.6);
     --text-dark: #3b2f27;
 }
 
+/* FIXED TOPBAR */
+.topbar {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 60px;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(10px);
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 30px;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    z-index: 2000;
+}
+
+/* FIXED SIDEBAR */
+.admin-container { display:flex; margin-top:60px; }
+
+.sidebar {
+    width:250px;
+    position:fixed;
+    top:60px;
+    left:0;
+    height:calc(100vh - 60px);
+    padding:25px 20px;
+    background:var(--sidebar-bg);
+    backdrop-filter:blur(14px);
+    border-right:1px solid rgba(255,255,255,0.3);
+    z-index: 1500;
+}
+
+.sidebar a {
+    display:block;
+    padding:12px 15px;
+    margin-bottom:12px;
+    border-radius:10px;
+    font-weight:600;
+    color:var(--text-dark);
+    text-decoration:none;
+    transition:0.3s;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background: var(--primary);
+    color: white;
+}
+
+/* MAIN CONTENT SCROLLS */
 .main-content {
     margin-left: 270px;
-    padding: 40px;
+    padding: 30px;
+    padding-top: 40px;
+    width: 100%;
 }
 
+/* BOX */
 .section-box {
+    background: var(--glass-bg);
     padding: 25px;
-    background: rgba(255,255,255,0.5);
     border-radius: 14px;
-    margin-top: 30px;
+    margin-top: 25px;
+    backdrop-filter: blur(10px);
 }
 
-.section-box h3 {
-    color: var(--primary);
-}
-
+/* Table */
 .table th {
     background: var(--primary);
     color: white;
+    text-align: center;
 }
-
 .table td {
     color: var(--text-dark);
-}
-
-.back-btn {
-    background: var(--primary);
-    color: white;
-    padding: 8px 18px;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: 0.3s;
-    margin-bottom: 20px;
-    display: inline-block;
-}
-
-.back-btn:hover {
-    background: var(--primary-light);
-    color: white;
+    text-align: center;
 }
 </style>
 
+<!-- TOPBAR -->
+<div class="topbar">
+    <div class="logo" style="color:var(--primary);font-weight:700;">Paletra Admin</div>
+
+    <div>
+        <a class="text-dark dropdown-toggle" data-bs-toggle="dropdown">
+            {{ request.user.username }}
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+        </ul>
+    </div>
+</div>
+
 <div class="admin-container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <a href="{% url 'admin_dashboard' %}">Dashboard</a>
+        <a href="{% url 'admin_artists' %}">Artists</a>
+        <a href="{% url 'admin_clients' %}" class="active">Clients</a>
+        <a href="{% url 'logout' %}">Log Out</a>
+    </div>
+
+    <!-- MAIN -->
     <div class="main-content">
 
-        <!-- BACK BUTTON -->
-        <a href="{% url 'admin_dashboard' %}" class="back-btn">← Back</a>
-
-        <h1 style="color:#3b2f27;">Clients</h1>
+        <h1 style="color:var(--text-dark); font-weight:700;">Clients</h1>
 
         <div class="section-box">
             <h3>Registered Clients</h3>
 
             <table class="table table-bordered">
                 <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Joined</th>
-                    </tr>
+                    <tr><th>Name</th><th>Email</th><th>Joined</th></tr>
                 </thead>
-
                 <tbody>
                     {% for c in clients %}
                     <tr>
@@ -85,11 +140,11 @@
                     </tr>
                     {% endfor %}
                 </tbody>
-
             </table>
-        </div>
 
+        </div>
     </div>
+
 </div>
 
 {% endblock %}

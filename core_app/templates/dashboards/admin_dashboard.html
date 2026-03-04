@@ -5,6 +5,16 @@
 {% block content %}
 
 <style>
+/* Remove topbar ONLY from masterss.html */
+.master-topbar,
+header,
+.navbar,
+.top-nav,
+.site-header {
+    display: none !important;
+}
+
+/* Root Colors */
 :root {
     --primary: #8B5E3C;
     --primary-light: #B88967;
@@ -13,82 +23,178 @@
     --text-dark: #3b2f27;
 }
 
+/* Clean Neutral Background for Dashboard */
+body.admin-dashboard {
+    background: #f5f5f5 !important;
+}
+
 /* Topbar */
 .topbar {
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 60px;
-    background: rgba(255,255,255,0.85);
-    backdrop-filter: blur(10px);
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 0 30px; border-bottom: 1px solid rgba(0,0,0,0.1); z-index:1000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 90px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 45px;
+    border-bottom: 1px solid rgba(0,0,0,0.12);
+    z-index: 1000;
 }
-.topbar .logo { font-weight:700; font-size:20px; color:var(--primary); }
-.topbar-right { display:flex; align-items:center; gap:20px; }
+
+.topbar .logo {
+    font-weight: 700;
+    font-size: 24px;
+    color: var(--primary);
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
 
 /* Notification */
-.notification {
-    position: relative;
-    font-size:20px;
-    cursor:pointer;
-    color: var(--text-dark);
-}
+.notification { position: relative; font-size: 20px; cursor: pointer; color: var(--text-dark); }
 .notification-badge {
     position: absolute;
-    top:-6px;
-    right:-6px;
-    background:red;
-    color:#fff;
-    font-size:10px;
-    padding:2px 6px;
-    border-radius:50%;
+    top: -6px; right: -6px;
+    background: red; color: #fff;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 50%;
 }
 
 /* Dropdown */
-.dropdown-menu { min-width:200px; max-height:250px; overflow-y:auto; }
+.dropdown-menu { min-width: 200px; max-height: 250px; overflow-y: auto; }
 
 /* Layout */
-.admin-container { display:flex; margin-top:60px; min-height: calc(100vh - 60px); }
+.admin-container {
+    display: flex;
+    margin-top: 90px;
+    min-height: calc(100vh - 60px);
+}
 
 /* Sidebar */
 .sidebar {
-    width:250px; position:fixed; top:60px; left:0;
-    height:calc(100vh - 60px); padding:30px 20px;
-    background:var(--sidebar-bg); backdrop-filter:blur(18px);
-    border-right:1px solid rgba(255,255,255,0.3);
+    width: 250px;
+    position: fixed;
+    top: 90px;
+    left: 0;
+    height: calc(100vh - 90px);
+    padding: 30px 20px;
+    background: var(--sidebar-bg);
+    backdrop-filter: blur(18px);
+    border-right: 1px solid rgba(255,255,255,0.3);
 }
-.sidebar h2 { color: var(--primary); text-align:center; font-size:26px; font-weight:700; margin-bottom:30px;}
-.sidebar a { display:block; padding:12px 16px; margin-bottom:12px; font-weight:600; text-decoration:none; border-radius:10px; color:var(--text-dark); transition:0.3s;}
-.sidebar a:hover, .sidebar a.active { background: var(--primary); color:white; transform:translateX(6px); }
+.sidebar h2 { 
+    color: var(--primary);
+    text-align: center;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+.sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* space for icons */
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 10px;
+    color: var(--text-dark);
+    transition: 0.3s;
+}
+.sidebar a:hover,
+.sidebar a.active {
+    background: var(--primary);
+    color: white;
+    transform: translateX(6px);
+}
 
 /* Main content */
-.main-content { margin-left:270px; padding:30px; }
+.main-content {
+    margin-left: 270px;
+    padding: 30px;
+}
 
 /* Metrics */
-.metrics-wrap { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px; }
-.metric { background: var(--glass-bg); padding:20px; border-left:6px solid var(--primary); border-radius:14px; backdrop-filter:blur(12px); text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.08); transition:0.3s; }
-.metric:hover { background: rgba(255,255,255,0.7); transform: translateY(-3px);}
-.metric-title { font-size:14px; color:var(--text-dark); }
-.metric-value { font-size:28px; font-weight:bold; color:var(--primary); }
+.metrics-wrap {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+    gap: 20px;
+}
+.metric {
+    background: var(--glass-bg);
+    padding: 20px;
+    border-left: 6px solid var(--primary);
+    border-radius: 14px;
+    backdrop-filter: blur(12px);
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
+.metric:hover { background: rgba(255,255,255,0.7); transform: translateY(-3px); }
+.metric-title { font-size: 14px; color: var(--text-dark); }
+.metric-value { font-size: 28px; font-weight: bold; color: var(--primary); }
 
 /* Section Boxes */
-.section-box { background: rgba(255,255,255,0.55); margin-top:30px; padding:25px; border-radius:14px; backdrop-filter:blur(10px); box-shadow:0 6px 20px rgba(0,0,0,0.05);}
-.section-box h3 { font-size:20px; color:var(--primary); margin-bottom:15px; border-bottom:1px solid rgba(0,0,0,0.1); padding-bottom:6px;}
+.section-box {
+    background: rgba(255,255,255,0.55);
+    margin-top: 30px;
+    padding: 25px;
+    border-radius: 14px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+}
+.section-box h3 {
+    font-size: 20px;
+    color: var(--primary);
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding-bottom: 6px;
+}
 
 /* Table */
-.table th { background: var(--primary); color: #fff; text-align:center;}
-.table td { text-align:center; vertical-align:middle; color:var(--text-dark); }
+.table th {
+    background: var(--primary);
+    color: #fff;
+    text-align: center;
+}
+.table td {
+    text-align: center;
+    vertical-align: middle;
+    color: var(--text-dark);
+}
 
 /* Buttons */
-.btn-approve, .btn-reject { padding:5px 12px; border-radius:6px; color:#fff; text-decoration:none; font-size:0.9rem; }
-.btn-approve { background:#28a745;} .btn-approve:hover { background:#218838;}
-.btn-reject { background:#dc3545;} .btn-reject:hover { background:#c82333;}
+.btn-approve, .btn-reject {
+    padding: 5px 12px;
+    border-radius: 6px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+.btn-approve { background: #28a745; }
+.btn-approve:hover { background: #218838; }
+.btn-reject { background: #dc3545; }
+.btn-reject:hover { background: #c82333; }
 </style>
+
+<!-- Font Awesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <!-- Topbar -->
 <div class="topbar">
-    <div class="logo">Paletra Admin</div>
+    <div class="logo">Paletra</div>
+
     <div class="topbar-right">
-        <!-- Notification Dropdown -->
+
+        <!-- Notifications -->
         <div class="dropdown">
             <div class="notification" id="notifDropdown" data-bs-toggle="dropdown">
                 <i class="fas fa-bell"></i>
@@ -113,12 +219,15 @@
 
         <!-- User Dropdown -->
         <div class="dropdown">
-            <a href="#" class="text-dark dropdown-toggle" data-bs-toggle="dropdown">{{ request.user.username }}</a>
+            <a href="#" class="text-dark dropdown-toggle" data-bs-toggle="dropdown">
+                {{ request.user.username }}
+            </a>
             <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="{% url 'edit_profile' %}">Edit Profile</a></li>
                 <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
             </ul>
         </div>
+
     </div>
 </div>
 
@@ -126,17 +235,16 @@
 
     <!-- Sidebar -->
     <div class="sidebar">
-        <h2>Paletra Admin</h2>
-        <a href="{% url 'admin_dashboard' %}" class="active">Dashboard</a>
-        <a href="{% url 'admin_artists' %}">Artists</a>
-        <a href="{% url 'admin_clients' %}">Clients</a>
-        <a href="{% url 'logout' %}">Log Out</a>
+        <a href="{% url 'admin_dashboard' %}" class="active"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="{% url 'admin_artists' %}"><i class="fas fa-user-pen"></i> Artists</a>
+        <a href="{% url 'admin_clients' %}"><i class="fas fa-user-friends"></i> Clients</a>
+        <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Log Out</a>
     </div>
 
-    <!-- Main Content -->
+    <!-- MAIN CONTENT -->
     <div class="main-content">
 
-        <h1 style="color: var(--text-dark); font-size:32px; margin-bottom:30px;">Welcome Back, Admin 👋</h1>
+        <h1 style="color: var(--text-dark); font-size:32px; margin-bottom:30px;">👋</h1>
 
         <!-- Metrics -->
         <div class="metrics-wrap">
@@ -168,7 +276,7 @@
                         </td>
                     </tr>
                     {% empty %}
-                    <tr><td colspan="4" class="text-center">No pending artists</td></tr>
+                    <tr><td colspan="4">No pending artists</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -179,13 +287,16 @@
             <h3>Latest Users</h3>
             <table class="table table-bordered">
                 <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr></thead>
-                <tbody>{% for u in recent_users %}
+                <tbody>
+                    {% for u in recent_users %}
                     <tr>
                         <td>{{ u.name }}</td>
                         <td>{{ u.email }}</td>
                         <td>{{ u.role }}</td>
                         <td>{{ u.date_joined }}</td>
-                    </tr>{% endfor %}</tbody>
+                    </tr>
+                    {% endfor %}
+                </tbody>
             </table>
         </div>
 
@@ -194,13 +305,16 @@
             <h3>Recent Artists</h3>
             <table class="table table-bordered">
                 <thead><tr><th>Name</th><th>Email</th><th>Approved</th><th>Joined</th></tr></thead>
-                <tbody>{% for a in recent_artists %}
+                <tbody>
+                    {% for a in recent_artists %}
                     <tr>
                         <td>{{ a.name }}</td>
                         <td>{{ a.email }}</td>
                         <td>{{ a.is_approved }}</td>
                         <td>{{ a.date_joined }}</td>
-                    </tr>{% endfor %}</tbody>
+                    </tr>
+                    {% endfor %}
+                </tbody>
             </table>
         </div>
 
@@ -209,12 +323,15 @@
             <h3>Recent Clients</h3>
             <table class="table table-bordered">
                 <thead><tr><th>Name</th><th>Email</th><th>Joined</th></tr></thead>
-                <tbody>{% for c in recent_clients %}
+                <tbody>
+                    {% for c in recent_clients %}
                     <tr>
                         <td>{{ c.name }}</td>
                         <td>{{ c.email }}</td>
                         <td>{{ c.date_joined }}</td>
-                    </tr>{% endfor %}</tbody>
+                    </tr>
+                    {% endfor %}
+                </tbody>
             </table>
         </div>
 
@@ -223,14 +340,17 @@
             <h3>Recent Commissions</h3>
             <table class="table table-bordered">
                 <thead><tr><th>Title</th><th>Client</th><th>Artist</th><th>Status</th><th>Date</th></tr></thead>
-                <tbody>{% for c in recent_commissions %}
+                <tbody>
+                    {% for c in recent_commissions %}
                     <tr>
                         <td>{{ c.title }}</td>
                         <td>{{ c.client.name }}</td>
                         <td>{{ c.artist.name }}</td>
                         <td>{{ c.status }}</td>
                         <td>{{ c.created_at }}</td>
-                    </tr>{% endfor %}</tbody>
+                    </tr>
+                    {% endfor %}
+                </tbody>
             </table>
         </div>
 
@@ -239,14 +359,17 @@
             <h3>Recent Transactions</h3>
             <table class="table table-bordered">
                 <thead><tr><th>User</th><th>Amount</th><th>Type</th><th>Status</th><th>Date</th></tr></thead>
-                <tbody>{% for t in recent_transactions %}
+                <tbody>
+                    {% for t in recent_transactions %}
                     <tr>
                         <td>{{ t.user.name }}</td>
                         <td>₹{{ t.amount }}</td>
                         <td>{{ t.transaction_type }}</td>
                         <td>{{ t.status }}</td>
                         <td>{{ t.created_at }}</td>
-                    </tr>{% endfor %}</tbody>
+                    </tr>
+                    {% endfor %}
+                </tbody>
             </table>
         </div>
 
@@ -254,7 +377,7 @@
 </div>
 
 <script>
-function hideNotifBadge(){
+function hideNotifBadge() {
     const notifCount = document.getElementById('notifCount');
     if(notifCount) notifCount.style.display = 'none';
 }
