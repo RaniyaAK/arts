@@ -71,7 +71,9 @@ from .views.client_views import(
 from .views.common_views import(
     mark_notification_read,
     delete_notification,
-    unread_notification_count
+    unread_notification_count,
+    chatbot_api,
+    
 
 )
 
@@ -143,6 +145,8 @@ urlpatterns = [
     path('notifications/mark-read/', mark_notification_read, name='mark_notification_read'),
     path('notifications/unread-count/', unread_notification_count, name='unread_notification_count'),
     path('notification/delete/<int:notification_id>/', delete_notification, name='delete_notification'),
+
+    path("chatbot-api/", chatbot_api, name="chatbot_api"),
 
 
 
