@@ -1,0 +1,1467 @@
+{% extends "masterss.html" %}
+{% load static %}
+
+{% block nav_links %}
+    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+    <li class="nav-item"><a class="nav-link" href="#dreamers">Dreamers</a></li>
+    <li class="nav-item"><a class="nav-link" href="#creators">Creators</a></li>
+    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+  {% if not request.user.is_authenticated %}
+    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+  {% endif %}
+{% endblock %}
+
+{% block title %}Imprenta | Your Creative Space{% endblock %}
+
+{% block content %}
+
+<!------------ HERO SECTION ------------>
+<section class="hero-section" style="background: url({% static 'images/pin.bg.24.jpeg' %}) center/cover no-repeat;">
+    <div class="hero-bg-shape"></div>
+    <div class="hero-text">
+        <h1>Bring Your Imagination to Life</h1>
+        <p>Whether you’re a creator sharing your art or a dreamer searching for something meaningful, Imprenta connects imagination with craftsmanship.</p>
+        <a href="{% url 'register' %}" class="btn">Step Into Creativity</a>
+    </div>
+    <div class="hero-image">
+        <img src="{% static 'images/pin.hero.5.jpg' %}" alt="Creative Space Hero">
+    </div>
+
+</section>
+
+
+<!-- ABOUT SECTION -->
+<section class="about-simple" id="about" style="background: url({% static 'images/pin.bg.20.jpeg' %}) center/cover no-repeat;">
+    <div class="about-simple-inner">
+
+        <!-- Image -->
+        <div class="about-simple-image">
+            <img src="{% static 'images/pin.4.1.jpeg' %}" alt="Creative Space">
+        </div>
+
+        <!-- Text Content -->
+        <div class="about-simple-text">
+            <h2>About Imprenta</h2>
+            <p>
+                Imprenta is where imagination meets craftsmanship.  
+                We’re a home for creators who wish to share their art and grow,  
+                and for dreamers who want to see their ideas transformed into beautiful, tangible creations.  
+                Here, every story, memory, and emotion is celebrated — whether you’re creating or receiving.
+            </p>
+            <p>
+                Whether you’re a creator seeking inspiration and growth,  
+                or a client looking for a meaningful, handcrafted piece,  
+                Imprenta makes your vision come to life with warmth, care, and elegance.
+            </p>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- DREAMERS SECTION -->
+<section id="dreamers" style="background:url({% static 'images/pin.bg.4.jpeg' %}) center/cover no-repeat; padding:60px 20px;">
+
+<div class="container">
+
+    <div class="section-title">
+        <h2>Why Choose Imprenta?</h2>
+    </div>
+
+    <div class="why-container">
+
+        <div class="why-card">
+            <img src="{% static 'images/pin.gift.jpg' %}">
+            <div>
+            <h4>Thoughtful Gifting</h4>
+            <p>
+                Turn ordinary moments into extraordinary memories with personalized,
+                heartfelt creations — perfect for birthdays, anniversaries, and the
+                people you cherish deeply.
+            </p>
+            </div>
+        </div>
+
+        <div class="why-card">
+            <img src="{% static 'images/pin.memory.2.jpg' %}">
+            <div>
+                <h4>Emotional Keepsakes</h4>
+                <p>
+                    Capture the feeling behind every story. Our artists turn your ideas into
+                    warm, intimate keepsakes that hold meaning for years to come.
+                </p>
+            </div>
+        </div>
+
+        <div class="why-card">
+            <img src="{% static 'images/pin.wall.1.jpg' %}">
+            <div>
+                <h4>Creative Expression</h4>
+                <p>
+                    Fill your space with artwork that reflects your personality, your dreams,
+                    and your aesthetic — handcrafted and made just for you.
+                </p>
+            </div>
+        </div>
+
+        <div class="why-card">
+            <img src="{% static 'images/pin.4.3.jpeg' %}">
+            <div>
+                <h4>Made With Love</h4>
+                <p>
+                    Every piece is crafted with passion, care, and intention — ensuring it
+                    feels uniquely yours and carries a touch of heart in every detail.
+                </p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div style="display:flex; align-items:center; justify-content:center; margin:70px 0;">
+<div style="height:2px; width:80px; background:#C69C73;"></div>
+<span style="margin:0 12px; color:#C69C73;">✦</span>
+<div style="height:2px; width:80px; background:#C69C73;"></div>
+</div>
+
+
+<div class="container">
+
+    <div class="section-title">
+        <h2>How It Works</h2>
+    </div>
+
+<div class="how-creator-container">
+
+    <div class="how-creator-card">
+        <h4>1. Explore Creators</h4>
+        <p>Browse through creators who craft with heart. Each artist has a unique style and story — find the one that speaks to your vision.</p>
+    </div>
+
+    <div class="how-creator-card">
+        <h4>2. Share Your Idea</h4>
+        <p>Tell your story or dream. Every detail helps shape something truly yours.</p>
+    </div>
+
+    <div class="how-creator-card">
+        <h4>3. Collaborate</h4>
+        <p>Work closely with your creator — sharing drafts and ideas until your vision comes to life.</p>
+    </div>
+
+    <div class="how-creator-card">
+        <h4>4. Receive & Enjoy</h4>
+        <p>Once complete, your creation is delivered — a meaningful, handcrafted piece full of emotion.</p>
+    </div>
+
+</div>
+
+</div>
+
+
+<div style="display:flex; align-items:center; justify-content:center; margin:70px 0;">
+<div style="height:2px; width:80px; background:#C69C73;"></div>
+<span style="margin:0 12px; color:#C69C73;">✦</span>
+<div style="height:2px; width:80px; background:#C69C73;"></div>
+
+</div>
+
+
+    <div class="container">
+
+<div class="role-float dreamer-card">
+                <h2>👤 Dreamer</h2>
+            <p>Share your imagination. Collaborate with creators.</p>
+            <a href="{% url 'register' %}?role=client" class="dreamer-btn">Join as Dreamer</a>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- CREATORS SECTION -->
+<section id="creators" style="background: url({% static 'images/pin.bg.jpeg' %}) center/cover no-repeat; padding:80px 20px;">
+
+<div class="container">
+
+    <div class="section-title">
+        <h2>Why Create With Imprenta?</h2>
+    </div>
+
+<div class="why-creator-container">
+
+    <div class="why-creator-card">
+        <img src="{% static 'images/pin.creator.earning.jpg' %}">
+    <div>
+    <h4>Earn Doing What You Love</h4>
+    <p>Turn your creativity into income, and grow at your own pace with full freedom.</p>
+    </div>
+</div>
+
+    <div class="why-creator-card">
+        <img src="{% static 'images/pin.creator.story.jpg' %}">
+    <div>
+    <h4>Bring Stories to Life</h4>
+    <p>Transform emotions, memories, and ideas into handcrafted masterpieces.</p>
+
+</div>
+</div>
+
+    <div class="why-creator-card">
+        <img src="{% static 'images/pin.creator.tools.jpg' %}">
+    <div>
+    <h4>Tools That Support You</h4>
+    <p>Focus on creating while Imprenta handles workflow, requests, and project tracking to make your creative journey smoother.</p>
+    </div>
+    </div>
+
+    <div class="why-creator-card">
+        <img src="{% static 'images/pin.creator.community.jpg' %}">
+    <div>
+    <h4>A Community That Inspires</h4>
+    <p>Connect with passionate creators, share ideas, and grow together in a supportive creative community.</p>    
+</div>
+
+</div>
+</div>
+
+
+<div style="display:flex; align-items:center; justify-content:center; margin:70px 0;">
+<div style="height:2px; width:80px; background:#C69C73;"></div>
+<span style="margin:0 12px; color:#C69C73;">✦</span>
+<div style="height:2px; width:80px; background:#C69C73;"></div>
+</div>
+
+
+<div class="container">
+
+<div class="section-title">
+    <h2>How Creating Works</h2>
+</div>
+
+<div class="how-creator-container">
+
+<div class="how-creator-card">
+    <h4>1. Create Your Profile</h4>
+    <p>Showcase your style and the stories you want to bring to life.</p>
+</div>
+
+<div class="how-creator-card">
+    <h4>2. Receive Requests</h4>
+    <p>Clients share their ideas — choose the ones that fit your creativity.</p>
+</div>
+
+<div class="how-creator-card">
+    <h4>3. Create</h4>
+    <p>Work in your flow, share drafts, and build meaningful creations together.</p>
+</div>
+
+<div class="how-creator-card">
+    <h4>4. Deliver</h4>
+    <p>Complete the journey by sharing your finished piece, ensuring your client is thrilled with your quality, creativity, and heart.</p>
+</div>
+
+</div>
+
+
+<div style="display:flex; align-items:center; justify-content:center; margin:70px 0;">
+<div style="height:2px; width:80px; background:#C69C73;"></div>
+<span style="margin:0 12px; color:#C69C73;">✦</span>
+<div style="height:2px; width:80px; background:#C69C73;"></div>
+
+</div>
+
+
+
+<div style="display:flex; justify-content:center; margin-top:70px;">
+    
+
+<div class="role-float creator-card">
+
+<h2>🎨 Creator</h2>
+
+<p>
+Express your creativity and collaborate with dreamers.
+</p>
+
+<a href="{% url 'register' %}?role=artist" class="creator-btn">
+Join as Creator
+</a>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- CONTACT -->
+<section id="contact">
+    <h2 class="contact-title">Get in Touch</h2>
+    <p class="contact-subtitle" style="margin-bottom:40px;">
+        We’d love to hear from you.
+    </p>
+    <div class="contact-container">
+
+        <div class="contact-left" style="font-size:1.1rem; color:#4A3A32;">
+            <h3 style="color:#4A3A32;">Let's Create Something Beautiful</h3>
+
+            <p style="line-height:1.6; margin-bottom:25px; color:#4A3A32;">
+                Have a project in mind? Tell us your thoughts — we're here to bring them alive.
+            </p>
+
+            <p style="color:#4A3A32;">
+                <i class="fas fa-envelope" style="margin-right:8px; color:#6A4632;"></i>
+                paletra123@gmail.com
+            </p>
+
+            <p style="color:#4A3A32;">
+                <i class="fas fa-phone" style="margin-right:8px; color:#6A4632;"></i>
+                +1 234 567 890
+            </p>
+
+            <div class="social-icons" style="color:#6A4632;">
+                <a href="#"><i class="fab fa-facebook-f" style="color:#6A4632;"></i></a>
+                <a href="#"><i class="fab fa-twitter" style="color:#6A4632;"></i></a>
+                <a href="#"><i class="fab fa-instagram" style="color:#6A4632;"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in" style="color:#6A4632;"></i></a>
+            </div>
+        </div>
+
+        <div class="contact-right">
+            <form method="POST" action="{% url 'contact_submit' %}">
+                {% csrf_token %}
+
+                <div style="text-align:left; width:100%;">
+                    <label>Your Name</label>
+                    <input type="text" name="name" class="no-focus" required>
+                </div>
+
+                <div style="text-align:left; width:100%;">
+                    <label>Email</label>
+                    <input type="email" name="email" class="no-focus" required>
+                </div>
+
+                <div style="text-align:left; width:100%;">
+                    <label>Message</label>
+                    <textarea name="message" rows="4" class="no-focus" required></textarea>
+                </div>
+
+                <div style="width:100%; text-align:center;">
+                    <button class="contact-btn">Send Message</button>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- Chat Button -->
+<div id="chatbot-button">💬</div>
+
+<!-- Chat Window -->
+<div id="chatbot-box">
+    <div id="chat-header">
+        AI Assistant
+        <span id="close-chat">✖</span>
+    </div>
+
+    <div id="chat-messages"></div>
+
+    <div id="typing-indicator">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div id="chat-input-area">
+        <input type="text" id="chat-input" placeholder="Ask something...">
+        <button id="send-btn">Send</button>
+    </div>
+</div>
+
+
+<!-- Chat Window -->
+<div id="chatbot-box">
+    <div id="chat-header">
+        AI Assistant
+        <span id="close-chat">✖</span>
+    </div>
+
+    <div id="chat-messages"></div>
+
+    <div id="chat-input-area">
+        <input type="text" id="chat-input" placeholder="Ask something...">
+        <button id="send-btn">Send</button>
+    </div>
+</div>
+
+
+
+
+<style>
+
+/* ---------------- VARIABLES -------------*/
+
+:root {
+    --mocha: #5A3E2B;
+    --latte-section: #F7EBE1;
+    --cocoa-text: #4B3A32;
+    --caramel-accent: #C69C73;
+    --card-bg: #ffffff;
+    --latte-edge: #E4D3C3;
+    --btn-color: #6A4632;
+    --btn-text: #FFF8E7;
+}
+
+/* -------------------- GENERAL STYLING -------------------*/
+
+body {
+    color: var(--cocoa-text);
+    font-family: 'Quicksand', sans-serif;
+    margin: 0;
+}
+
+h1,h2,h3,h4 { color: var(--mocha); margin:0; }
+p,label { color: var(--cocoa-text); margin:0; }
+a { text-decoration: none; }
+button { border:none; cursor:pointer; font-family: 'Quicksand', sans-serif; }
+
+.no-focus:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #D9B57E !important;
+}
+
+/* -------------------- CONTAINER FIX --------------------- */
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* -------------------- SECTION TITLES --------------------- */
+
+.section-title{
+    text-align:center;
+    margin-bottom:40px;
+}
+
+.section-title h2{
+    font-size:2.4rem;
+    color: var(--mocha);
+    font-weight:700;
+    margin-bottom:10px;
+}
+
+/* ----------------- BUTTONS ------------------ */
+
+.btn {
+    background-color: var(--btn-color);
+    color: var(--btn-text);
+    padding: 12px 32px;
+    border-radius: 40px;
+    font-weight:600;
+    transition: all 0.3s ease;
+}
+.btn:hover {
+    background-color:#CFAF5D;
+    color: var(--mocha);
+}
+
+
+ /* var(--caramel-accent); */
+/* --------------------------- HERO SECTION ----------------------*/
+.hero-section {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 80px 20px;
+    background: var(--latte-section);
+    overflow: hidden;
+    gap: 40px;
+}
+
+.hero-bg-shape {
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 400px;
+    height: 400px;
+    background: rgba(230, 57, 70, 0.1);
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: 0;
+}
+
+.hero-text, .hero-image {
+    flex: 1 1 350px;
+    max-width: 600px;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-text {
+    text-align: left;
+}
+
+.hero-text h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--mocha);
+    margin-bottom: 25px;
+}
+
+.hero-text p {
+    font-size: 1.2rem;
+    line-height: 1.7;
+    margin-bottom: 35px;
+    color: var(--cocoa-text);
+}
+
+.hero-image img {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.18);
+    transition: transform 0.5s ease;
+}
+
+.hero-image img:hover {
+    transform: scale(1.03) rotate(0.5deg);
+}
+
+/* --------------------------  WHY CHOOSE IMPRENTA -----------------------  */
+.why-container {
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:30px;
+    margin:70px auto;
+    max-width:1200px;
+}
+
+.why-card {
+    display:flex;
+    align-items:center;
+    gap:20px;
+    background: var(--card-bg);
+    border-radius:26px;
+    padding:22px;
+    max-width:540px;
+    min-height:150px;
+    box-shadow:0 16px 32px rgba(0,0,0,0.12);
+    border:1px solid #eadac7;
+    transition:0.3s ease;
+}
+
+.why-card:hover {
+    transform:translateY(-6px);
+    box-shadow:0 18px 36px rgba(0,0,0,0.18);
+}
+
+.why-card img {
+    width:135px;
+    height:135px;
+    object-fit:cover;
+    border-radius:18px;
+    box-shadow:0 10px 20px rgba(0,0,0,0.15);
+}
+
+.why-card h4 {
+    margin-bottom:8px;
+    font-size:1.3rem;
+    font-weight:700;
+    color:#5A3E2B;
+}
+
+.why-card p {
+    font-size:1.05rem;
+    line-height:1.55;
+    color:#4B3A32;
+}
+
+/* ----------------------- HOW IT WORKS (CLIENTS) -------------- */
+
+
+.how-section-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+    margin-top: 40px;
+}
+
+.how-section-card {
+    background: var(--card-bg);
+    border-radius:26px;
+    box-shadow:0 10px 24px rgba(0,0,0,0.1);
+    padding:15px;
+    width:220px;
+    text-align:center;
+    transition:0.3s ease;
+}
+
+.how-section-card:hover {
+    transform: translateY(-6px);
+    box-shadow:0 18px 36px rgba(0,0,0,0.18);
+}
+
+.how-section-card h4 { margin-bottom:5px; font-size:1.1rem; font-weight:700; color:#5A3E2B; }
+.how-section-card p { font-size:0.95rem; line-height:1.4; color:#4B3A32; }
+
+/* ----------------  WHY CREATE / CREATOR SECTION -------------- */
+
+.why-creator-section {
+    background: linear-gradient(135deg, #FFF7EF 0%, #FDEAD3 100%);
+    padding: 80px 20px;
+    border-top: 1px solid #eadac7;
+    border-bottom: 1px solid #eadac7;
+}
+
+.creator-title {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.creator-title h2 {
+    font-size: 2.4rem;
+    color: #5A3E2B;
+    font-weight: 700;
+}
+
+.why-creator-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.why-creator-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: #ffffff;
+    border-radius: 30px;
+    padding: 25px;
+    max-width: 540px;
+    min-height: 160px;
+    box-shadow: 0 18px 36px rgba(0,0,0,0.14);
+    border: 1px solid #eadac7;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.why-creator-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.18);
+}
+
+.why-creator-card img {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 20px;
+    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+.why-creator-card h4 {
+    margin-bottom: 8px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #5A3E2B;
+}
+
+.why-creator-card p {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #4B3A32;
+}
+
+/* ---------------------  HOW IT WORKS (CREATORS) -----------------*/
+
+.how-creator-section {
+    background: linear-gradient(135deg, #FFF7EF 0%, #FDF0E5 100%);
+    padding: 80px 20px;
+    border-top: 1px solid #eadac7;
+    border-bottom: 1px solid #eadac7;
+}
+
+.how-creator-title {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.how-creator-title h2 {
+    font-size: 2.4rem;
+    color: #5A3E2B;
+    font-weight: 700;
+}
+
+.how-creator-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+}
+
+.how-creator-card {
+    background: #ffffff;
+    border-radius: 30px;
+    padding: 25px;
+    width: 240px;
+    text-align: center;
+    box-shadow: 0 16px 36px rgba(0,0,0,0.12);
+    border: 1px solid #eadac7;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.how-creator-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.18);
+}
+
+.how-creator-card h4 {
+    margin-bottom: 10px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #5A3E2B;
+}
+
+.how-creator-card p {
+    font-size: 1rem;
+    line-height: 1.55;
+    color: #4B3A32;
+}
+
+#how-creating {
+    margin-bottom: 50px;
+
+
+}
+
+/* ---------------- ROLE PARALLAX FLOAT SECTION ----------------------*/
+.role-parallax-section {
+    position: relative;
+    padding: 120px 20px;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    background: #FFF7EF;
+    overflow: hidden;
+}
+
+.role-parallax-section::before,
+.role-parallax-section::after {
+    content: "";
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    filter: blur(180px);
+    z-index: 0;
+}
+
+.role-parallax-section::before {
+    background: rgba(198, 156, 115, 0.35);
+    top: -150px;
+    left: -100px;
+}
+
+.role-parallax-section::after {
+    background: rgba(106, 70, 50, 0.28);
+    bottom: -180px;
+    right: -120px;
+}
+
+.role-float {
+    position: relative;
+    z-index: 2;
+    width: 320px;
+    padding: 45px 30px;
+    border-radius: 30px;
+    backdrop-filter: blur(18px);
+    background: rgba(255, 255, 255, 0.38);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.14);
+    text-align: center;
+    transition: transform 0.4s ease, box-shadow 0.3s ease;
+}
+
+.role-float:hover {
+    transform: none;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.14);
+}
+
+.role-float h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #5A3E2B;
+}
+
+.role-float p {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    color: #4B3A32;
+}
+
+.dreamer-btn {
+    display: inline-block;
+    padding: 12px 34px;
+    border-radius: 40px;
+    font-weight: 600;
+    background:  #CFAF5D;
+    color:#5A3E2B;
+    transition: 0.3s ease;
+    box-shadow: 0 0 20px rgba(106,70,50,0.3);
+}
+
+.dreamer-btn:hover {
+    background:#E4D3C3;  
+    color: #5A3E2B;
+}
+
+/* -------------  ABOUT SIMPLE  ---------------*/
+.about-simple {
+    padding: 80px 20px;
+    background: #FDF6F0;
+}
+
+.about-simple-inner {
+    max-width: 1100px;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 60px;
+}
+
+.about-simple-image {
+    flex: 1 1 400px;
+    text-align: center;
+}
+
+.about-simple-image img {
+    width: 100%;
+    max-width: 400px;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 20px;
+    box-shadow: 0 14px 32px rgba(0,0,0,0.15);
+    transition: transform 0.3s ease;
+}
+
+.about-simple-image img:hover {
+    transform: scale(1.03) rotate(0.3deg);
+}
+
+.about-simple-text {
+    flex: 1 1 500px;
+}
+
+.about-simple-text h2 {
+    font-size: 2.6rem;
+    color: #5A3E2B;
+    font-weight: 700;
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+.about-simple-text p {
+    font-size: 1.2rem;
+    line-height: 1.75;
+    color: #4B3A32;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+/* --------------------- CONTACT SECTION ------------- */
+
+#contact {
+    background:#CFAF5D;
+    color:#fff;
+    padding:90px 20px;
+    text-align:center;
+}
+
+#contact h2.contact-title,
+#contact p.contact-subtitle {
+    margin: 0 auto 15px auto;
+}
+
+.contact-container {
+    max-width:1000px;
+    margin:auto;
+    display:flex;
+    flex-wrap:wrap;
+    gap:20px;
+    align-items:center;
+}
+
+.contact-left, .contact-right {
+    flex:1 1 350px;
+    border-radius:26px;
+    padding:35px;
+}
+
+.contact-left {
+    background:#ffffff;
+    color:#000;
+    box-shadow:0 12px 28px rgba(0,0,0,0.1);
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    text-align:left;
+}
+
+.contact-left h3 { margin-bottom:10px; }
+
+.contact-left p{
+    margin-bottom:16px;
+}
+
+.social-icons {
+    margin-top:20px;
+    display:flex;
+    align-self:center;   
+    gap:20px;
+    font-size:1.25rem;
+    color:#8C5E4B;
+}
+.contact-right {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(16px);
+    border:1px solid rgba(255,255,255,0.25);
+    box-shadow:0 12px 28px rgba(0,0,0,0.15);
+    color:#000;
+}
+
+.contact-right form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.contact-right form div {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.contact-right input,
+.contact-right textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #D9B57E;
+    border-radius: 8px;
+    font-family:'Quicksand', sans-serif;
+}
+
+.contact-right form div:last-child button.btn {
+    display: block;
+    margin: 0 auto;
+}
+.contact-title{
+    font-size:2.4rem;
+    font-weight:700;
+    margin-bottom:10px;
+}
+
+.contact-subtitle{
+    font-size:1.1rem;
+    margin-bottom:80px;
+    opacity:0.9;
+}
+
+.contact-btn {
+    background-color: var(--btn-color);
+    color: var(--btn-text);
+    padding: 12px 32px;
+    border-radius: 40px;
+    font-weight:600;
+    transition: all 0.3s ease;
+    
+}
+
+
+.contact-btn:hover{
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+/* ---------------- CHATBOT ---------------- */
+
+#chatbot-button{
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #5A3E2B;
+    color: white;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    z-index: 999;
+}
+
+#chatbot-box{
+    position: fixed;
+    bottom: 100px;
+    right: 25px;
+    width: 320px;
+    height: 420px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 999;
+}
+
+#chat-header{
+    background: #5A3E2B;
+    color: white;
+    padding: 12px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+}
+
+#chat-messages{
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 14px;
+}
+
+#chat-input-area{
+    display: flex;
+    border-top: 1px solid #ddd;
+}
+
+#chat-input{
+    flex: 1;
+    border: none;
+    padding: 10px;
+}
+
+#send-btn{
+    background: #CFAF5D;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+/* ---------------- CHATBOT IMPROVED ---------------- */
+
+/* Chat Button */
+#chatbot-button {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #5A3E2B, #6A4632);
+    color: #FFF8E7;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 999;
+}
+
+#chatbot-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.45);
+}
+
+/* Chat Window */
+#chatbot-box {
+    position: fixed;
+    bottom: 100px;
+    right: 25px;
+    width: 360px;
+    height: 480px;
+    background: #FFF8E7;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 999;
+    animation: fadeIn 0.3s ease;
+    font-family: 'Quicksand', sans-serif;
+}
+
+/* Chat Header */
+#chat-header {
+    background: linear-gradient(135deg, #5A3E2B, #6A4632);
+    color: #FFF8E7;
+    padding: 15px;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+/* Close Button */
+#close-chat {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+#close-chat:hover {
+    transform: rotate(90deg);
+    color: #CFAF5D;
+}
+
+/* Chat Messages */
+#chat-messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #FFF5EB;
+}
+
+/* Message bubbles */
+#chat-messages div {
+    padding: 10px 15px;
+    border-radius: 20px;
+    max-width: 80%;
+    word-wrap: break-word;
+    animation: fadeIn 0.3s ease;
+}
+
+#chat-messages div b {
+    display: block;
+    margin-bottom: 5px;
+}
+
+#chat-messages div:nth-child(odd) { /* User */
+    background: #CFAF5D;
+    color: #5A3E2B;
+    align-self: flex-end;
+    border-bottom-right-radius: 5px;
+}
+
+#chat-messages div:nth-child(even) { /* AI */
+    background: #5A3E2B;
+    color: #FFF8E7;
+    align-self: flex-start;
+    border-bottom-left-radius: 5px;
+}
+
+/* Input area */
+#chat-input-area {
+    display: flex;
+    border-top: 1px solid #DDD1B0;
+    padding: 10px;
+    background: #FFF8E7;
+}
+
+#chat-input {
+    flex: 1;
+    border: none;
+    padding: 12px 15px;
+    border-radius: 25px;
+    margin-right: 10px;
+    font-size: 14px;
+    background: #FFF5EB;
+}
+
+#chat-input:focus {
+    outline: none;
+    box-shadow: 0 0 8px rgba(198,156,115,0.6);
+}
+
+/* Send Button */
+#send-btn {
+    background: linear-gradient(135deg, #CFAF5D, #E4D3C3);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#send-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(198,156,115,0.4);
+}
+
+/* typing indicator */
+
+#typing-indicator{
+    display: none;
+    padding: 8px 12px;
+}
+
+#typing-indicator span{
+    width: 7px;
+    height: 7px;
+    margin-right: 4px;
+    background-color: #999;
+    border-radius: 50%;
+    display: inline-block;
+    animation: typing 1.4s infinite;
+}
+
+#typing-indicator span:nth-child(2){
+    animation-delay: 0.2s;
+}
+
+#typing-indicator span:nth-child(3){
+    animation-delay: 0.4s;
+}
+
+@keyframes typing{
+    0%, 80%, 100%{
+        transform: scale(0);
+        opacity: 0.5;
+    }
+    40%{
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(10px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+
+/* ===============================
+   RESPONSIVE
+   =============================== */
+@media screen and (max-width:992px){
+    .hero-section, .about-simple-inner, .contact-container, .why-container, .how-section-container, .why-creator-container, .how-creator-container, .role-parallax-section {
+        flex-direction: column;
+        text-align:center;
+    }
+    .about-simple-text h2,
+    .about-simple-text p {
+        text-align: center;
+    }
+    .about-simple-image img {
+        max-width: 300px;
+        height: 300px;
+    }
+    .contact-left, .contact-right { width:100%; }
+    .contact-right form { align-items: flex-start; } 
+}
+.creator-btn{
+    background:#CFAF5D;
+    color:#6A4632;
+    padding:12px 32px;
+    border-radius:40px;
+    font-weight:600;
+    box-shadow:0 10px 20px rgba(0,0,0,0.2);
+    transition:0.3s;
+    display:inline-block;
+}
+
+.creator-btn:hover{
+    background:#5A3E2B;
+    color:#E4D3C3;
+}
+
+/* Dreamer Card */
+.dreamer-card{
+    background: linear-gradient(135deg,#5A3E2B,#6A4632);
+    color:#FFF8E7;
+    padding:50px 40px;
+    border-radius:28px;
+    width:360px;
+    text-align:center;
+    box-shadow:0 25px 50px rgba(0,0,0,0.25);
+    margin:60px auto 0 auto;
+}
+
+.dreamer-card h2{
+    color:#FFF8E7;
+}
+
+.dreamer-card p{
+    color:#F7EBE1;
+}
+
+
+/* Creator Card  */
+.creator-card{
+    background:#F7EBE1;
+    color:#5A3E2B;
+    padding:50px 40px;
+    border-radius:28px;
+    width:360px;
+    text-align:center;
+    box-shadow:0 25px 50px rgba(0,0,0,0.15);
+    margin-top:70px;
+}
+
+.creator-card h2{
+    color:#5A3E2B;
+}
+
+.creator-card p{
+    color:#4B3A32;
+}
+
+@media(max-width: 768px){
+    .how-creator-container, .how-section-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    .how-creator-card, .how-section-card {
+        width: 90%;
+    }
+    
+    .why-container, .why-creator-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    .why-card, .why-creator-card {
+        width: 90%;
+    }
+    h2 {
+    letter-spacing: 1px;
+}
+}
+</style>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    const chatbotBtn = document.getElementById("chatbot-button");
+    const chatbotBox = document.getElementById("chatbot-box");
+    const closeChat = document.getElementById("close-chat");
+    const chatMessages = document.getElementById("chat-messages");
+    const chatInput = document.getElementById("chat-input");
+    const sendBtn = document.getElementById("send-btn");
+
+    // Track if welcome message has been shown
+    let welcomeShown = false;
+
+    chatbotBtn.onclick = () => {
+        chatbotBox.style.display = "flex";
+
+        if (!welcomeShown) {
+            chatMessages.innerHTML = ""; // clear chat
+            setTimeout(() => {
+                addMessage("Hi there! How can I help you today?", false);
+            }, 500);
+            welcomeShown = true;
+        }
+    };
+
+    closeChat.onclick = () => chatbotBox.style.display = "none";
+
+    sendBtn.onclick = sendMessage;
+
+    chatInput.addEventListener("keypress", function(e) {
+        if(e.key === "Enter") sendMessage();
+    });
+
+    async function sendMessage() {
+
+        let message = chatInput.value.trim();
+        if (!message) return;
+
+        // User message
+        addMessage(message, true);
+
+        chatInput.value = "";
+
+        // SHOW typing animation
+        showTyping();
+
+        try {
+            let response = await fetch("/chatbot-api/", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({message: message})
+            });
+
+            let data = await response.json();
+
+            // HIDE typing animation
+            hideTyping();
+
+            // AI response
+            addMessage(data.reply, false);
+
+        } catch (err) {
+
+            hideTyping();
+            addMessage("Oops! Something went wrong.", false);
+            console.error(err);
+
+        }
+    }
+
+    function addMessage(text, isUser) {
+        const messageDiv = document.createElement("div");
+        messageDiv.textContent = text;
+
+        messageDiv.style.alignSelf = isUser ? "flex-end" : "flex-start";
+        messageDiv.style.background = isUser ? "#CFAF5D" : "#5A3E2B";
+        messageDiv.style.color = isUser ? "#5A3E2B" : "#FFF8E7";
+        messageDiv.style.padding = "10px 15px";
+        messageDiv.style.borderRadius = "20px";
+        messageDiv.style.maxWidth = "80%";
+        messageDiv.style.marginBottom = "8px";
+        messageDiv.style.wordWrap = "break-word";
+
+        chatMessages.appendChild(messageDiv);
+
+        // Smooth auto-scroll
+        chatMessages.scrollTo({
+            top: chatMessages.scrollHeight,
+            behavior: "smooth"
+        });
+    }
+
+});
+
+function showTyping(){
+    document.getElementById("typing-indicator").style.display = "block";
+}
+
+function hideTyping(){
+    document.getElementById("typing-indicator").style.display = "none";
+}
+
+</script>
+
+{% endblock %}
+
+
+
+
