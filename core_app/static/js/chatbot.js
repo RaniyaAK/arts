@@ -13,6 +13,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     chatbotBtn.onclick = () => {
         chatbotBox.style.display = "flex";
+            chatInput.focus();
+
 
         if (!welcomeShown) {
             chatMessages.innerHTML = ""; // clear chat

@@ -27,3 +27,7 @@ button { border:none; cursor:pointer; font-family: 'Quicksand', sans-serif; }
     margin: 0 auto;
     padding: 0 20px;
 }
+
+html{
+    scroll-behavior:smooth;
+}

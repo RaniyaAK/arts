@@ -6,7 +6,7 @@
     <li class="nav-item"><a class="nav-link" href="#dreamers">Dreamers</a></li>
     <li class="nav-item"><a class="nav-link" href="#creators">Creators</a></li>
     <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-  {% if not request.user.is_authenticated %}
+{% if not user.is_authenticated %}
     <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
   {% endif %}
 {% endblock %}
@@ -70,7 +70,7 @@
     <div class="why-container">
 
         <div class="why-card">
-            <img src="{% static 'images/pin.gift.jpg' %}">
+        <img src="{% static 'images/pin.gift.jpg' %}" alt="Personalized gift art" loading="lazy">
             <div>
             <h4>Thoughtful Gifting</h4>
             <p>
@@ -82,7 +82,7 @@
         </div>
 
         <div class="why-card">
-            <img src="{% static 'images/pin.memory.2.jpg' %}">
+            <img src="{% static 'images/pin.memory.2.jpg' %}" alt="heyyy" loading="lazy">
             <div>
                 <h4>Emotional Keepsakes</h4>
                 <p>
@@ -93,7 +93,7 @@
         </div>
 
         <div class="why-card">
-            <img src="{% static 'images/pin.wall.1.jpg' %}">
+            <img src="{% static 'images/pin.wall.1.jpg' %}" alt="hello" loading="lazy">
             <div>
                 <h4>Creative Expression</h4>
                 <p>
@@ -104,7 +104,7 @@
         </div>
 
         <div class="why-card">
-            <img src="{% static 'images/pin.4.3.jpeg' %}">
+            <img src="{% static 'images/pin.4.3.jpeg' %}" alt="heyy" loading="lazy">
             <div>
                 <h4>Made With Love</h4>
                 <p>
@@ -273,8 +273,7 @@
 
 </div>
 
-<div style="display:flex; justify-content:center; margin-top:70px;">
-    
+<div class="creator-wrapper">    
 
 <div class="role-float creator-card">
 
