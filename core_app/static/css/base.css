@@ -1,0 +1,29 @@
+:root {
+    --mocha: #5A3E2B;
+    --latte-section: #F7EBE1;
+    --cocoa-text: #4B3A32;
+    --caramel-accent: #C69C73;
+    --card-bg: #ffffff;
+    --latte-edge: #E4D3C3;
+    --btn-color: #6A4632;
+    --btn-text: #FFF8E7;
+}
+
+/* -------------------- GENERAL STYLING -------------------*/
+
+body {
+    color: var(--cocoa-text);
+    font-family: 'Quicksand', sans-serif;
+    margin: 0;
+}
+
+h1,h2,h3,h4 { color: var(--mocha); margin:0; }
+p,label { color: var(--cocoa-text); margin:0; }
+a { text-decoration: none; }
+button { border:none; cursor:pointer; font-family: 'Quicksand', sans-serif; }
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}

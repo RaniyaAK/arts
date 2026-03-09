@@ -1,0 +1,30 @@
+.btn {
+    background-color: var(--btn-color);
+    color: var(--btn-text);
+    padding: 12px 32px;
+    border-radius: 40px;
+    font-weight:600;
+    transition: all 0.3s ease;
+}
+.btn:hover {
+    background-color:#CFAF5D;
+    color: var(--mocha);
+}
+
+.divider{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:70px 0;
+}
+
+.divider-line{
+    height:2px;
+    width:80px;
+    background:#C69C73;
+}
+
+.divider-star{
+    margin:0 12px;
+    color:#C69C73;
+}
