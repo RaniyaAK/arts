@@ -1143,19 +1143,7 @@ button { border:none; cursor:pointer; font-family: 'Quicksand', sans-serif; }
     margin-bottom: 5px;
 }
 
-#chat-messages div:nth-child(odd) { /* User */
-    background: #CFAF5D;
-    color: #5A3E2B;
-    align-self: flex-end;
-    border-bottom-right-radius: 5px;
-}
 
-#chat-messages div:nth-child(even) { /* AI */
-    background: #5A3E2B;
-    color: #FFF8E7;
-    align-self: flex-start;
-    border-bottom-left-radius: 5px;
-}
 
 /* Input area */
 #chat-input-area {
@@ -1219,6 +1207,28 @@ button { border:none; cursor:pointer; font-family: 'Quicksand', sans-serif; }
 
 #typing-indicator span:nth-child(3){
     animation-delay: 0.4s;
+}
+
+.user-message{
+    align-self: flex-end;   /* USER RIGHT */
+    background:#CFAF5D;
+    color:#5A3E2B;
+    padding:10px 15px;
+    border-radius:20px;
+    max-width:80%;
+    margin-bottom:8px;
+    word-wrap:break-word;
+}
+
+.bot-message{
+    align-self: flex-start; /* AI LEFT */
+    background:#5A3E2B;
+    color:#FFF8E7;
+    padding:10px 15px;
+    border-radius:20px;
+    max-width:80%;
+    margin-bottom:8px;
+    word-wrap:break-word;
 }
 
 @keyframes typing{
@@ -1408,28 +1418,24 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    function addMessage(text, isUser) {
+        function addMessage(text, isUser) {
+
         const messageDiv = document.createElement("div");
         messageDiv.textContent = text;
 
-        messageDiv.style.alignSelf = isUser ? "flex-end" : "flex-start";
-        messageDiv.style.background = isUser ? "#CFAF5D" : "#5A3E2B";
-        messageDiv.style.color = isUser ? "#5A3E2B" : "#FFF8E7";
-        messageDiv.style.padding = "10px 15px";
-        messageDiv.style.borderRadius = "20px";
-        messageDiv.style.maxWidth = "80%";
-        messageDiv.style.marginBottom = "8px";
-        messageDiv.style.wordWrap = "break-word";
+        if(isUser){
+            messageDiv.classList.add("user-message");
+        } else {
+            messageDiv.classList.add("bot-message");
+        }
 
         chatMessages.appendChild(messageDiv);
 
-        // Smooth auto-scroll
         chatMessages.scrollTo({
             top: chatMessages.scrollHeight,
             behavior: "smooth"
         });
     }
-
 });
 
 function showTyping(){
