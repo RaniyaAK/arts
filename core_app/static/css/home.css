@@ -543,15 +543,12 @@
     border-radius: 40px;
     font-weight:600;
     transition: all 0.3s ease;
-    
 }
-
 
 .contact-btn:hover{
     transform: translateY(-3px);
     box-shadow: 0 10px 20px rgba(0,0,0,0.15);
 }
-
 
 
 /* ===============================
@@ -624,7 +621,7 @@
     width:360px;
     text-align:center;
     box-shadow:0 25px 50px rgba(0,0,0,0.15);
-    margin-top:70px;
+    margin:60px auto 0 auto;
 }
 
 .creator-card h2{
@@ -665,4 +662,42 @@
     display:flex;
     justify-content:center;
     margin-top:70px;
+}
+
+.contact-subtitle{
+    margin-bottom:40px;
+}
+
+.contact-left{
+    font-size:1.1rem;
+    color:#4A3A32;
+}
+
+.contact-heading{
+    color:#4A3A32;
+}
+
+.contact-btn-wrapper{
+    width:100%;
+    text-align:center;
+}
+
+.contact-field{
+    text-align:left;
+    width:100%;
+}
+
+.contact-icon{
+    margin-right:8px;
+    color:#6A4632;
+}
+
+.contact-info{
+    color:#4A3A32;
+}
+
+.contact-description{
+    line-height:1.6;
+    margin-bottom:25px;
+    color:#4A3A32;
 }

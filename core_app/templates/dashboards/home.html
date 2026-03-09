@@ -21,7 +21,7 @@
     <div class="hero-text">
         <h1>Bring Your Imagination to Life</h1>
         <p>Whether you’re a creator sharing your art or a dreamer searching for something meaningful, Imprenta connects imagination with craftsmanship.</p>
-        <a href="{% url 'register' %}" class="btn">Step Into Creativity</a>
+        <a href="{% url 'register' %}" class="btn">Get Started</a>
     </div>
     <div class="hero-image">
         <img src="{% static 'images/pin.hero.5.jpg' %}" alt="Creative Space Hero">
@@ -82,7 +82,7 @@
         </div>
 
         <div class="why-card">
-            <img src="{% static 'images/pin.memory.2.jpg' %}" alt="heyyy" loading="lazy">
+            <img src="{% static 'images/pin.memory.2.jpg' %}" alt="Custom memory artwork" loading="lazy">
             <div>
                 <h4>Emotional Keepsakes</h4>
                 <p>
@@ -93,7 +93,7 @@
         </div>
 
         <div class="why-card">
-            <img src="{% static 'images/pin.wall.1.jpg' %}" alt="hello" loading="lazy">
+            <img src="{% static 'images/pin.wall.1.jpg' %}" alt="Handcrafted wall art" loading="lazy">
             <div>
                 <h4>Creative Expression</h4>
                 <p>
@@ -104,7 +104,7 @@
         </div>
 
         <div class="why-card">
-            <img src="{% static 'images/pin.4.3.jpeg' %}" alt="heyy" loading="lazy">
+            <img src="{% static 'images/pin.4.3.jpeg' %}" alt="Personalized handmade gift" loading="lazy">
             <div>
                 <h4>Made With Love</h4>
                 <p>
@@ -191,10 +191,14 @@
 <div class="why-creator-container">
 
     <div class="why-creator-card">
-        <img src="{% static 'images/pin.creator.earning.jpg' %}">
+        <img src="{% static 'images/pin.creator.earning.jpg' %}" alt="Artist earning from creative work" loading="lazy">
     <div>
-    <h4>Earn Doing What You Love</h4>
-    <p>Turn your creativity into income, and grow at your own pace with full freedom.</p>
+    <h4>
+        Earn Doing What You Love
+    </h4>
+    <p>
+        Turn your creativity into income, and grow at your own pace with full freedom.
+    </p>
     </div>
 </div>
 
@@ -297,20 +301,22 @@ Join as Creator
 <!-- CONTACT -->
 <section id="contact">
     <h2 class="contact-title">Get in Touch</h2>
-    <p class="contact-subtitle" style="margin-bottom:40px;">
+    <p class="contact-subtitle">
         We’d love to hear from you.
     </p>
     <div class="contact-container">
 
-        <div class="contact-left" style="font-size:1.1rem; color:#4A3A32;">
-            <h3 style="color:#4A3A32;">Let's Create Something Beautiful</h3>
+        <div class="contact-left">
+            <h3 class="contact-heading">
+                Let's Create Something Beautiful
+            </h3>
 
-            <p style="line-height:1.6; margin-bottom:25px; color:#4A3A32;">
+            <p class="contact-description">
                 Have a project in mind? Tell us your thoughts — we're here to bring them alive.
             </p>
 
-            <p style="color:#4A3A32;">
-                <i class="fas fa-envelope" style="margin-right:8px; color:#6A4632;"></i>
+            <p class="contact-info">
+                <i class="fas fa-envelope contact-icon"></i>
                 paletra123@gmail.com
             </p>
 
@@ -331,22 +337,22 @@ Join as Creator
             <form method="POST" action="{% url 'contact_submit' %}">
                 {% csrf_token %}
 
-                <div style="text-align:left; width:100%;">
+                <div class="contact-field">
                     <label>Your Name</label>
                     <input type="text" name="name" class="no-focus" required>
                 </div>
 
-                <div style="text-align:left; width:100%;">
+                <div class="contact-field">
                     <label>Email</label>
                     <input type="email" name="email" class="no-focus" required>
                 </div>
 
-                <div style="text-align:left; width:100%;">
+                <div class="contact-field">
                     <label>Message</label>
                     <textarea name="message" rows="4" class="no-focus" required></textarea>
                 </div>
 
-                <div style="width:100%; text-align:center;">
+                <div class="contact-btn-wrapper">
                     <button class="contact-btn">Send Message</button>
                 </div>
 
@@ -363,7 +369,7 @@ Join as Creator
 <!-- Chat Window -->
 <div id="chatbot-box">
     <div id="chat-header">
-        AI Assistant
+        Imprenta Assistant
         <span id="close-chat">✖</span>
     </div>
 
