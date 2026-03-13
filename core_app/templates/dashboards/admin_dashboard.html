@@ -5,382 +5,548 @@
 {% block content %}
 
 <style>
-/* Remove topbar ONLY from masterss.html */
+
+/* Hide master navbar */
+
 .master-topbar,
 header,
 .navbar,
 .top-nav,
-.site-header {
-    display: none !important;
+.site-header{
+display:none !important;
 }
 
-/* Root Colors */
-:root {
-    --primary: #8B5E3C;
-    --primary-light: #B88967;
-    --sidebar-bg: rgba(255, 255, 255, 0.08);
-    --glass-bg: rgba(255, 255, 255, 0.45);
-    --text-dark: #3b2f27;
+/* COLORS */
+
+:root{
+--primary:#8B5E3C;
+--sidebar:#1f1f24;
+--bg:#F6F7FB;
+--card:#ffffff;
+--text:#2e2e2e;
+--muted:#777;
+--border:#eeeeee;
 }
 
-/* Clean Neutral Background for Dashboard */
-body.admin-dashboard {
-    background: #f5f5f5 !important;
+/* BODY */
+
+body.admin-dashboard{
+background:var(--bg);
+font-family:'Inter',sans-serif;
+color:var(--text);
 }
 
-/* Topbar */
-.topbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 90px;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(12px);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 45px;
-    border-bottom: 1px solid rgba(0,0,0,0.12);
-    z-index: 1000;
+/* TOPBAR */
+
+.topbar{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:80px;
+background:white;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:0 40px;
+box-shadow:0 6px 20px rgba(0,0,0,0.06);
+z-index:1000;
 }
 
-.topbar .logo {
-    font-weight: 700;
-    font-size: 24px;
-    color: var(--primary);
+.logo{
+font-size:22px;
+font-weight:700;
+color:var(--primary);
+letter-spacing:0.5px;
 }
 
-.topbar-right {
-    display: flex;
-    align-items: center;
-    gap: 28px;
+.topbar-right{
+display:flex;
+align-items:center;
+gap:25px;
+font-weight:500;
 }
 
-/* Notification */
-.notification { position: relative; font-size: 20px; cursor: pointer; color: var(--text-dark); }
-.notification-badge {
-    position: absolute;
-    top: -6px; right: -6px;
-    background: red; color: #fff;
-    font-size: 10px;
-    padding: 2px 6px;
-    border-radius: 50%;
+/* LAYOUT */
+
+.admin-container{
+display:flex;
+margin-top:80px;
 }
 
-/* Dropdown */
-.dropdown-menu { min-width: 200px; max-height: 250px; overflow-y: auto; }
+/* SIDEBAR */
 
-/* Layout */
-.admin-container {
-    display: flex;
-    margin-top: 90px;
-    min-height: calc(100vh - 60px);
-}
-
-/* Sidebar */
-.sidebar {
-    width: 250px;
-    position: fixed;
-    top: 90px;
-    left: 0;
-    height: calc(100vh - 90px);
-    padding: 30px 20px;
-    background: var(--sidebar-bg);
-    backdrop-filter: blur(18px);
-    border-right: 1px solid rgba(255,255,255,0.3);
-}
-.sidebar h2 { 
-    color: var(--primary);
-    text-align: center;
-    font-size: 26px;
-    font-weight: 700;
-    margin-bottom: 30px;
-}
-.sidebar a {
-    display: flex;
-    align-items: center;
-    gap: 10px; /* space for icons */
-    padding: 12px 16px;
-    margin-bottom: 12px;
-    font-weight: 600;
-    text-decoration: none;
-    border-radius: 10px;
-    color: var(--text-dark);
-    transition: 0.3s;
-}
-.sidebar a:hover,
-.sidebar a.active {
-    background: var(--primary);
-    color: white;
-    transform: translateX(6px);
+.sidebar{
+width:240px;
+position:fixed;
+top:80px;
+left:0;
+height:calc(100vh - 80px);
+background:var(--sidebar);
+padding:30px 18px;
 }
 
-/* Main content */
-.main-content {
-    margin-left: 270px;
-    padding: 30px;
+.sidebar a{
+display:flex;
+align-items:center;
+gap:12px;
+padding:13px 14px;
+margin-bottom:12px;
+border-radius:8px;
+color:#cfcfcf;
+text-decoration:none;
+font-size:14px;
+transition:all .25s ease;
 }
 
-/* Metrics */
-.metrics-wrap {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
-    gap: 20px;
-}
-.metric {
-    background: var(--glass-bg);
-    padding: 20px;
-    border-left: 6px solid var(--primary);
-    border-radius: 14px;
-    backdrop-filter: blur(12px);
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    transition: 0.3s;
-}
-.metric:hover { background: rgba(255,255,255,0.7); transform: translateY(-3px); }
-.metric-title { font-size: 14px; color: var(--text-dark); }
-.metric-value { font-size: 28px; font-weight: bold; color: var(--primary); }
-
-/* Section Boxes */
-.section-box {
-    background: rgba(255,255,255,0.55);
-    margin-top: 30px;
-    padding: 25px;
-    border-radius: 14px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.05);
-}
-.section-box h3 {
-    font-size: 20px;
-    color: var(--primary);
-    margin-bottom: 15px;
-    border-bottom: 1px solid rgba(0,0,0,0.1);
-    padding-bottom: 6px;
+.sidebar a:hover{
+background:#2c2c33;
+color:white;
+transform:translateX(3px);
 }
 
-/* Table */
-.table th {
-    background: var(--primary);
-    color: #fff;
-    text-align: center;
-}
-.table td {
-    text-align: center;
-    vertical-align: middle;
-    color: var(--text-dark);
+.sidebar a.active{
+background:var(--primary);
+color:white;
 }
 
-/* Buttons */
-.btn-approve, .btn-reject {
-    padding: 5px 12px;
-    border-radius: 6px;
-    color: #fff;
-    text-decoration: none;
-    font-size: 0.9rem;
+/* MAIN */
+
+.main-content{
+margin-left:240px;
+padding:40px;
+width:100%;
 }
-.btn-approve { background: #28a745; }
-.btn-approve:hover { background: #218838; }
-.btn-reject { background: #dc3545; }
-.btn-reject:hover { background: #c82333; }
+
+.dashboard-title{
+font-size:28px;
+font-weight:700;
+margin-bottom:30px;
+}
+
+/* METRICS */
+
+.metrics-wrap{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:22px;
+margin-bottom:35px;
+}
+
+.metric{
+background:var(--card);
+padding:26px;
+border-radius:14px;
+box-shadow:0 10px 25px rgba(0,0,0,0.05);
+text-align:center;
+transition:all .25s ease;
+border:1px solid var(--border);
+}
+
+.metric:hover{
+transform:translateY(-5px);
+box-shadow:0 14px 30px rgba(0,0,0,0.08);
+}
+
+.metric i{
+font-size:22px;
+color:var(--primary);
+margin-bottom:10px;
+}
+
+.metric-title{
+font-size:13px;
+color:var(--muted);
+margin-bottom:4px;
+}
+
+.metric-value{
+font-size:28px;
+font-weight:700;
+color:var(--primary);
+}
+
+/* ROW */
+
+.dashboard-row{
+display:flex;
+gap:22px;
+margin-bottom:30px;
+}
+
+/* BOX */
+
+.section-box{
+background:white;
+padding:26px;
+border-radius:14px;
+box-shadow:0 10px 25px rgba(0,0,0,0.05);
+border:1px solid var(--border);
+transition:.25s;
+}
+
+.section-box:hover{
+box-shadow:0 14px 30px rgba(0,0,0,0.07);
+}
+
+.section-box.half{
+flex:1;
+}
+
+.section-box h3{
+margin-bottom:18px;
+font-size:18px;
+font-weight:600;
+}
+
+/* CHART */
+
+.chart-box{
+height:300px;
+padding-top:10px;
+}
+
+/* TABLE */
+
+.table{
+width:100%;
+border-collapse:collapse;
+font-size:14px;
+}
+
+.table th{
+font-size:13px;
+color:#888;
+padding:13px;
+text-align:left;
+border-bottom:1px solid var(--border);
+background:#fafafa;
+}
+
+.table td{
+padding:13px;
+border-bottom:1px solid var(--border);
+}
+
+.table tr:hover{
+background:#fafafa;
+transition:.2s;
+}
+
+/* APPROVE BUTTONS */
+
+.btn-approve{
+background:#28a745;
+color:white;
+padding:6px 12px;
+border-radius:6px;
+text-decoration:none;
+font-size:13px;
+margin-right:6px;
+transition:.2s;
+}
+
+.btn-approve:hover{
+background:#23913c;
+}
+
+.btn-reject{
+background:#dc3545;
+color:white;
+padding:6px 12px;
+border-radius:6px;
+text-decoration:none;
+font-size:13px;
+transition:.2s;
+}
+
+.btn-reject:hover{
+background:#b92b3a;
+}
+
 </style>
 
-<!-- Font Awesome CDN -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- Topbar -->
+<!-- TOPBAR -->
+
 <div class="topbar">
-    <div class="logo">Paletra</div>
 
-    <div class="topbar-right">
+<div class="logo">Paletra</div>
 
-        <!-- Notifications -->
-        <div class="dropdown">
-            <div class="notification" id="notifDropdown" data-bs-toggle="dropdown">
-                <i class="fas fa-bell"></i>
-                {% if pending_artists %}
-                <span class="notification-badge" id="notifCount">{{ pending_artists|length }}</span>
-                {% endif %}
-            </div>
-            <ul class="dropdown-menu dropdown-menu-end">
-                {% if pending_artists %}
-                    {% for artist in pending_artists %}
-                    <li>
-                        <a class="dropdown-item" href="{% url 'approve_artist' artist.id %}" onclick="hideNotifBadge()">
-                            You have a request from {{ artist.name }}
-                        </a>
-                    </li>
-                    {% endfor %}
-                {% else %}
-                    <li><span class="dropdown-item">No new notifications</span></li>
-                {% endif %}
-            </ul>
-        </div>
+<div class="topbar-right">
 
-        <!-- User Dropdown -->
-        <div class="dropdown">
-            <a href="#" class="text-dark dropdown-toggle" data-bs-toggle="dropdown">
-                {{ request.user.username }}
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="{% url 'edit_profile' %}">Edit Profile</a></li>
-                <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-            </ul>
-        </div>
+<i class="fas fa-bell"></i>
 
-    </div>
+<div>{{request.user.username}}</div>
+
 </div>
+
+</div>
+
 
 <div class="admin-container">
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <a href="{% url 'admin_dashboard' %}" class="active"><i class="fas fa-home"></i> Dashboard</a>
-        <a href="{% url 'admin_artists' %}"><i class="fas fa-user-pen"></i> Artists</a>
-        <a href="{% url 'admin_clients' %}"><i class="fas fa-user-friends"></i> Clients</a>
-        <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Log Out</a>
-    </div>
+<!-- SIDEBAR -->
 
-    <!-- MAIN CONTENT -->
-    <div class="main-content">
+<div class="sidebar">
 
-        <h1 style="color: var(--text-dark); font-size:32px; margin-bottom:30px;">👋</h1>
+<a href="{% url 'admin_dashboard' %}" class="active">
+<i class="fas fa-home"></i> Dashboard
+</a>
 
-        <!-- Metrics -->
-        <div class="metrics-wrap">
-            <div class="metric"><div class="metric-title">Total Users</div><div class="metric-value">{{ total_users }}</div></div>
-            <div class="metric"><div class="metric-title">Artists</div><div class="metric-value">{{ total_artists }}</div></div>
-            <div class="metric"><div class="metric-title">Clients</div><div class="metric-value">{{ total_clients }}</div></div>
-            <div class="metric"><div class="metric-title">Total Commissions</div><div class="metric-value">{{ total_commissions }}</div></div>
-            <div class="metric"><div class="metric-title">Completed</div><div class="metric-value">{{ completed_commissions }}</div></div>
-            <div class="metric"><div class="metric-title">Pending</div><div class="metric-value">{{ pending_commissions }}</div></div>
-            <div class="metric"><div class="metric-title">Total Revenue</div><div class="metric-value">₹{{ revenue }}</div></div>
-        </div>
+<a href="{% url 'admin_artists' %}">
+<i class="fas fa-palette"></i> Artists
+</a>
 
-        <!-- Pending Artist Approvals -->
-        <div class="section-box">
-            <h3>Pending Artist Approvals</h3>
-            <table class="table table-bordered">
-                <thead>
-                    <tr><th>Name</th><th>Email</th><th>Joined</th><th>Action</th></tr>
-                </thead>
-                <tbody>
-                    {% for a in pending_artists %}
-                    <tr>
-                        <td>{{ a.name }}</td>
-                        <td>{{ a.email }}</td>
-                        <td>{{ a.date_joined }}</td>
-                        <td>
-                            <a href="{% url 'approve_artist' a.id %}" class="btn-approve">Approve</a>
-                            <a href="{% url 'reject_artist' a.id %}" class="btn-reject">Reject</a>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr><td colspan="4">No pending artists</td></tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+<a href="{% url 'admin_clients' %}">
+<i class="fas fa-users"></i> Clients
+</a>
 
-        <!-- Latest Users -->
-        <div class="section-box">
-            <h3>Latest Users</h3>
-            <table class="table table-bordered">
-                <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr></thead>
-                <tbody>
-                    {% for u in recent_users %}
-                    <tr>
-                        <td>{{ u.name }}</td>
-                        <td>{{ u.email }}</td>
-                        <td>{{ u.role }}</td>
-                        <td>{{ u.date_joined }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+<a href="{% url 'admin_transactions' %}">
+<i class="fas fa-receipt"></i> Transactions
+</a>
 
-        <!-- Recent Artists -->
-        <div class="section-box">
-            <h3>Recent Artists</h3>
-            <table class="table table-bordered">
-                <thead><tr><th>Name</th><th>Email</th><th>Approved</th><th>Joined</th></tr></thead>
-                <tbody>
-                    {% for a in recent_artists %}
-                    <tr>
-                        <td>{{ a.name }}</td>
-                        <td>{{ a.email }}</td>
-                        <td>{{ a.is_approved }}</td>
-                        <td>{{ a.date_joined }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+<a href="{% url 'logout' %}">
+<i class="fas fa-sign-out-alt"></i> Logout
+</a>
 
-        <!-- Recent Clients -->
-        <div class="section-box">
-            <h3>Recent Clients</h3>
-            <table class="table table-bordered">
-                <thead><tr><th>Name</th><th>Email</th><th>Joined</th></tr></thead>
-                <tbody>
-                    {% for c in recent_clients %}
-                    <tr>
-                        <td>{{ c.name }}</td>
-                        <td>{{ c.email }}</td>
-                        <td>{{ c.date_joined }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Recent Commissions -->
-        <div class="section-box">
-            <h3>Recent Commissions</h3>
-            <table class="table table-bordered">
-                <thead><tr><th>Title</th><th>Client</th><th>Artist</th><th>Status</th><th>Date</th></tr></thead>
-                <tbody>
-                    {% for c in recent_commissions %}
-                    <tr>
-                        <td>{{ c.title }}</td>
-                        <td>{{ c.client.name }}</td>
-                        <td>{{ c.artist.name }}</td>
-                        <td>{{ c.status }}</td>
-                        <td>{{ c.created_at }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Recent Transactions -->
-        <div class="section-box">
-            <h3>Recent Transactions</h3>
-            <table class="table table-bordered">
-                <thead><tr><th>User</th><th>Amount</th><th>Type</th><th>Status</th><th>Date</th></tr></thead>
-                <tbody>
-                    {% for t in recent_transactions %}
-                    <tr>
-                        <td>{{ t.user.name }}</td>
-                        <td>₹{{ t.amount }}</td>
-                        <td>{{ t.transaction_type }}</td>
-                        <td>{{ t.status }}</td>
-                        <td>{{ t.created_at }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-    </div>
 </div>
 
+
+<!-- MAIN -->
+
+<div class="main-content">
+
+<h1 class="dashboard-title">Admin Dashboard</h1>
+
+<!-- METRICS -->
+
+<div class="metrics-wrap">
+
+<div class="metric">
+<i class="fas fa-users"></i>
+<div class="metric-title">Total Users</div>
+<div class="metric-value">{{total_users}}</div>
+</div>
+
+<div class="metric">
+<i class="fas fa-palette"></i>
+<div class="metric-title">Artists</div>
+<div class="metric-value">{{total_artists}}</div>
+</div>
+
+<div class="metric">
+<i class="fas fa-user"></i>
+<div class="metric-title">Clients</div>
+<div class="metric-value">{{total_clients}}</div>
+</div>
+
+<div class="metric">
+<i class="fas fa-briefcase"></i>
+<div class="metric-title">Commissions</div>
+<div class="metric-value">{{total_commissions}}</div>
+</div>
+
+<div class="metric">
+<i class="fas fa-check-circle"></i>
+<div class="metric-title">Completed</div>
+<div class="metric-value">{{completed_commissions}}</div>
+</div>
+
+<div class="metric">
+<i class="fas fa-clock"></i>
+<div class="metric-title">Pending</div>
+<div class="metric-value">{{pending_commissions}}</div>
+</div>
+
+<div class="metric">
+<i class="fas fa-rupee-sign"></i>
+<div class="metric-title">Revenue</div>
+<div class="metric-value">₹{{revenue}}</div>
+</div>
+
+</div>
+
+
+<!-- CHARTS -->
+
+<div class="dashboard-row">
+
+<div class="section-box half">
+
+<h3>Commission Status</h3>
+
+<div class="chart-box">
+<canvas id="commissionChart"></canvas>
+</div>
+
+</div>
+
+<div class="section-box half">
+
+<h3>User Distribution</h3>
+
+<div class="chart-box">
+<canvas id="userChart"></canvas>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- NEW SECTION : PENDING ARTIST APPROVALS -->
+
+<div class="section-box">
+
+<h3>Pending Artist Approvals</h3>
+
+<table class="table">
+
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Joined</th>
+<th>Action</th>
+</tr>
+
+{% for artist in pending_artists %}
+
+<tr>
+
+<td>{{artist.name}}</td>
+<td>{{artist.email}}</td>
+<td>{{artist.date_joined}}</td>
+
+<td>
+
+<a href="{% url 'approve_artist' artist.id %}" class="btn-approve">
+Approve
+</a>
+
+<a href="{% url 'reject_artist' artist.id %}" class="btn-reject">
+Reject
+</a>
+
+</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+<td colspan="4">No pending artist requests</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+
+<!-- RECENT DATA -->
+
+<div class="dashboard-row">
+
+<div class="section-box half">
+
+<h3>Recent Commissions</h3>
+
+<table class="table">
+
+<tr>
+<th>Title</th>
+<th>Status</th>
+<th>Date</th>
+</tr>
+
+{% for c in recent_commissions|slice:":5" %}
+
+<tr>
+<td>{{c.title}}</td>
+<td>{{c.status}}</td>
+<td>{{c.created_at}}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+
+<div class="section-box half">
+
+<h3>Recent Transactions</h3>
+
+<table class="table">
+
+<tr>
+<th>User</th>
+<th>Amount</th>
+<th>Status</th>
+</tr>
+
+{% for t in recent_transactions|slice:":5" %}
+
+<tr>
+<td>{{t.user.name}}</td>
+<td>₹{{t.amount}}</td>
+<td>{{t.status}}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+
 <script>
-function hideNotifBadge() {
-    const notifCount = document.getElementById('notifCount');
-    if(notifCount) notifCount.style.display = 'none';
+
+/* Commission Chart */
+
+const completed = parseInt("{{ completed_commissions|default:0 }}");
+const pending = parseInt("{{ pending_commissions|default:0 }}");
+
+new Chart(document.getElementById('commissionChart'),{
+type:'doughnut',
+data:{
+labels:['Completed','Pending'],
+datasets:[{
+data:[completed,pending],
+backgroundColor:['#28a745','#ffc107']
+}]
 }
+});
+
+/* User Chart */
+
+const artists = parseInt("{{ total_artists|default:0 }}");
+const clients = parseInt("{{ total_clients|default:0 }}");
+
+new Chart(document.getElementById('userChart'),{
+type:'bar',
+data:{
+labels:['Artists','Clients'],
+datasets:[{
+label:'Users',
+data:[artists,clients],
+backgroundColor:['#8B5E3C','#4e73df']
+}]
+}
+});
+
 </script>
 
 {% endblock %}

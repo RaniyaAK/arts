@@ -33,7 +33,8 @@ from .views.admin_views import(
     admin_clients,
     admin_notifications,
     approve_artist,
-    reject_artist
+    reject_artist,
+    admin_transactions
 
 )
 
@@ -147,6 +148,7 @@ urlpatterns = [
     path('notification/delete/<int:notification_id>/', delete_notification, name='delete_notification'),
 
     path("chatbot-api/", chatbot_api, name="chatbot_api"),
+    path('admin-transactions/',admin_transactions, name='admin_transactions'),
 
 
 

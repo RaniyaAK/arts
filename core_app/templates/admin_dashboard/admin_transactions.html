@@ -1,12 +1,13 @@
 {% extends "masterss.html" %}
-{% block title %}Artists | Admin{% endblock %}
+
+{% block title %}Transactions | Admin{% endblock %}
 {% block body_class %}admin-dashboard{% endblock %}
 
 {% block content %}
 
 <style>
 
-/* Hide master navbar */
+/* Hide default navbar */
 
 .master-topbar,
 header,
@@ -122,14 +123,25 @@ font-weight:700;
 margin-bottom:25px;
 }
 
-/* SECTION BOX */
+/* FILTER BOX */
 
-.section-box{
+.filter-box{
 background:var(--card);
-padding:26px;
+padding:20px;
 border-radius:14px;
 box-shadow:0 10px 25px rgba(0,0,0,0.05);
 border:1px solid var(--border);
+margin-bottom:25px;
+}
+
+/* TABLE CARD */
+
+.table-card{
+background:var(--card);
+border-radius:14px;
+box-shadow:0 10px 25px rgba(0,0,0,0.05);
+border:1px solid var(--border);
+overflow:hidden;
 }
 
 /* TABLE */
@@ -158,45 +170,45 @@ text-align:center;
 background:#fafafa;
 }
 
-/* STATUS */
+/* STATUS BADGES */
 
-.status-approved{
-color:#28a745;
+.status{
+padding:4px 10px;
+border-radius:20px;
+font-size:12px;
 font-weight:600;
 }
 
-.status-pending{
-color:#dc3545;
-font-weight:600;
+.status.completed{
+background:#d4edda;
+color:#155724;
 }
 
-/* ACTION BUTTONS */
+.status.pending{
+background:#fff3cd;
+color:#856404;
+}
 
-.btn-approve{
-background:#28a745;
+.status.failed{
+background:#f8d7da;
+color:#721c24;
+}
+
+/* PAGINATION */
+
+.pagination{
+justify-content:center;
+margin-top:25px;
+}
+
+.page-link{
+color:var(--primary);
+}
+
+.page-item.active .page-link{
+background:var(--primary);
+border-color:var(--primary);
 color:white;
-padding:6px 12px;
-border-radius:6px;
-text-decoration:none;
-font-size:13px;
-margin-right:6px;
-}
-
-.btn-approve:hover{
-background:#23913c;
-}
-
-.btn-reject{
-background:#dc3545;
-color:white;
-padding:6px 12px;
-border-radius:6px;
-text-decoration:none;
-font-size:13px;
-}
-
-.btn-reject:hover{
-background:#b92b3a;
 }
 
 </style>
@@ -230,7 +242,7 @@ background:#b92b3a;
 <i class="fas fa-home"></i> Dashboard
 </a>
 
-<a href="{% url 'admin_artists' %}" class="active">
+<a href="{% url 'admin_artists' %}">
 <i class="fas fa-palette"></i> Artists
 </a>
 
@@ -238,7 +250,7 @@ background:#b92b3a;
 <i class="fas fa-users"></i> Clients
 </a>
 
-<a href="{% url 'admin_transactions' %}">
+<a href="{% url 'admin_transactions' %}" class="active">
 <i class="fas fa-money-bill-wave"></i> Transactions
 </a>
 
@@ -253,66 +265,124 @@ background:#b92b3a;
 
 <div class="main-content">
 
-<h1 class="page-title">Artists</h1>
+<h1 class="page-title">Transactions</h1>
 
-<div class="section-box">
 
-<h3 style="margin-bottom:20px;">Registered Artists</h3>
+<!-- FILTER -->
 
-<table class="table">
+<div class="filter-box">
+
+<form method="GET" class="row g-3">
+
+<div class="col-md-5">
+
+<input
+type="text"
+name="search"
+value="{{search}}"
+class="form-control"
+placeholder="Search by user name"
+>
+
+</div>
+
+<div class="col-md-3">
+
+<select name="status" class="form-select">
+
+<option value="">All Status</option>
+
+<option value="completed"
+{% if status == "completed" %}selected{% endif %}
+>
+Completed
+</option>
+
+<option value="pending"
+{% if status == "pending" %}selected{% endif %}
+>
+Pending
+</option>
+
+<option value="failed"
+{% if status == "failed" %}selected{% endif %}
+>
+Failed
+</option>
+
+</select>
+
+</div>
+
+<div class="col-md-2">
+
+<button class="btn btn-dark w-100">
+Filter
+</button>
+
+</div>
+
+<div class="col-md-2">
+
+<a href="{% url 'admin_transactions' %}" class="btn btn-outline-secondary w-100">
+Reset
+</a>
+
+</div>
+
+</form>
+
+</div>
+
+
+<!-- TABLE -->
+
+<div class="table-card">
+
+<table class="table table-hover mb-0">
 
 <thead>
 
 <tr>
-<th>Name</th>
-<th>Email</th>
+<th>User</th>
+<th>Amount</th>
+<th>Type</th>
 <th>Status</th>
-<th>Joined</th>
-<th>Action</th>
+<th>Date</th>
 </tr>
 
 </thead>
 
 <tbody>
 
-{% for a in artists %}
+{% for t in page_obj %}
 
 <tr>
 
-<td>{{ a.name }}</td>
+<td><strong>{{t.user.name}}</strong></td>
 
-<td>{{ a.email }}</td>
+<td>₹{{t.amount}}</td>
+
+<td>{{t.transaction_type}}</td>
 
 <td>
 
-{% if a.is_approved %}
-<span class="status-approved">Approved</span>
-{% else %}
-<span class="status-pending">Pending</span>
-{% endif %}
+<span class="status {{t.status}}">
+{{t.status}}
+</span>
 
 </td>
 
-<td>{{ a.date_joined }}</td>
+<td>{{t.created_at}}</td>
 
-<td>
+</tr>
 
-{% if not a.is_approved %}
+{% empty %}
 
-<a href="{% url 'approve_artist' a.id %}" class="btn-approve">
-Approve
-</a>
+<tr>
 
-<a href="{% url 'reject_artist' a.id %}" class="btn-reject">
-Reject
-</a>
-
-{% else %}
-
-<span style="color:#999;">—</span>
-
-{% endif %}
-
+<td colspan="5" class="text-center p-4">
+No transactions found
 </td>
 
 </tr>
@@ -324,6 +394,56 @@ Reject
 </table>
 
 </div>
+
+
+<!-- PAGINATION -->
+
+<nav>
+
+<ul class="pagination">
+
+{% if page_obj.has_previous %}
+
+<li class="page-item">
+
+<a class="page-link"
+href="?page={{page_obj.previous_page_number}}&search={{search}}&status={{status}}">
+Previous
+</a>
+
+</li>
+
+{% endif %}
+
+{% for num in page_obj.paginator.page_range %}
+
+<li class="page-item {% if page_obj.number == num %}active{% endif %}">
+
+<a class="page-link"
+href="?page={{num}}&search={{search}}&status={{status}}">
+{{num}}
+</a>
+
+</li>
+
+{% endfor %}
+
+{% if page_obj.has_next %}
+
+<li class="page-item">
+
+<a class="page-link"
+href="?page={{page_obj.next_page_number}}&search={{search}}&status={{status}}">
+Next
+</a>
+
+</li>
+
+{% endif %}
+
+</ul>
+
+</nav>
 
 </div>
 

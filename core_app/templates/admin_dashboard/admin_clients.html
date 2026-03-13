@@ -1,149 +1,258 @@
 {% extends "masterss.html" %}
 {% block title %}Clients | Admin{% endblock %}
+{% block body_class %}admin-dashboard{% endblock %}
 
 {% block content %}
 
 <style>
-/* hide default navbar */
+
+/* Hide master navbar */
+
 .master-topbar,
 header,
 .navbar,
 .top-nav,
-.site-header {
-    display: none !important;
+.site-header{
+display:none !important;
 }
 
-:root {
-    --primary: #8B5E3C;
-    --primary-light: #B88967;
-    --sidebar-bg: rgba(255, 255, 255, 0.1);
-    --glass-bg: rgba(255,255,255,0.6);
-    --text-dark: #3b2f27;
+/* COLORS */
+
+:root{
+--primary:#8B5E3C;
+--sidebar:#1f1f24;
+--bg:#F6F7FB;
+--card:#ffffff;
+--text:#2e2e2e;
+--muted:#777;
+--border:#eeeeee;
 }
 
-/* FIXED TOPBAR */
-.topbar {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 60px;
-    background: rgba(255,255,255,0.9);
-    backdrop-filter: blur(10px);
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 0 30px;
-    border-bottom: 1px solid rgba(0,0,0,0.1);
-    z-index: 2000;
+/* BODY */
+
+body.admin-dashboard{
+background:var(--bg);
+font-family:'Inter',sans-serif;
+color:var(--text);
 }
 
-/* FIXED SIDEBAR */
-.admin-container { display:flex; margin-top:60px; }
+/* TOPBAR */
 
-.sidebar {
-    width:250px;
-    position:fixed;
-    top:60px;
-    left:0;
-    height:calc(100vh - 60px);
-    padding:25px 20px;
-    background:var(--sidebar-bg);
-    backdrop-filter:blur(14px);
-    border-right:1px solid rgba(255,255,255,0.3);
-    z-index: 1500;
-}
-
-.sidebar a {
-    display:block;
-    padding:12px 15px;
-    margin-bottom:12px;
-    border-radius:10px;
-    font-weight:600;
-    color:var(--text-dark);
-    text-decoration:none;
-    transition:0.3s;
+.topbar{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:80px;
+background:white;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:0 40px;
+box-shadow:0 6px 20px rgba(0,0,0,0.06);
+z-index:1000;
 }
 
-.sidebar a:hover,
-.sidebar a.active {
-    background: var(--primary);
-    color: white;
+.logo{
+font-size:22px;
+font-weight:700;
+color:var(--primary);
 }
 
-/* MAIN CONTENT SCROLLS */
-.main-content {
-    margin-left: 270px;
-    padding: 30px;
-    padding-top: 40px;
-    width: 100%;
+.topbar-right{
+display:flex;
+align-items:center;
+gap:25px;
 }
 
-/* BOX */
-.section-box {
-    background: var(--glass-bg);
-    padding: 25px;
-    border-radius: 14px;
-    margin-top: 25px;
-    backdrop-filter: blur(10px);
+/* LAYOUT */
+
+.admin-container{
+display:flex;
+margin-top:80px;
 }
 
-/* Table */
-.table th {
-    background: var(--primary);
-    color: white;
-    text-align: center;
+/* SIDEBAR */
+
+.sidebar{
+width:240px;
+position:fixed;
+top:80px;
+left:0;
+height:calc(100vh - 80px);
+background:var(--sidebar);
+padding:30px 18px;
 }
-.table td {
-    color: var(--text-dark);
-    text-align: center;
+
+.sidebar a{
+display:flex;
+align-items:center;
+gap:12px;
+padding:13px 14px;
+margin-bottom:12px;
+border-radius:8px;
+color:#cfcfcf;
+text-decoration:none;
+font-size:14px;
+transition:all .25s ease;
 }
+
+.sidebar a:hover{
+background:#2c2c33;
+color:white;
+transform:translateX(3px);
+}
+
+.sidebar a.active{
+background:var(--primary);
+color:white;
+}
+
+/* MAIN */
+
+.main-content{
+margin-left:240px;
+padding:40px;
+width:100%;
+}
+
+.page-title{
+font-size:28px;
+font-weight:700;
+margin-bottom:25px;
+}
+
+/* SECTION BOX */
+
+.section-box{
+background:var(--card);
+padding:26px;
+border-radius:14px;
+box-shadow:0 10px 25px rgba(0,0,0,0.05);
+border:1px solid var(--border);
+}
+
+/* TABLE */
+
+.table{
+width:100%;
+border-collapse:collapse;
+font-size:14px;
+}
+
+.table th{
+font-size:13px;
+color:white;
+padding:13px;
+background:var(--primary);
+text-align:center;
+}
+
+.table td{
+padding:13px;
+border-bottom:1px solid var(--border);
+text-align:center;
+}
+
+.table tr:hover{
+background:#fafafa;
+}
+
 </style>
 
-<!-- TOPBAR -->
-<div class="topbar">
-    <div class="logo" style="color:var(--primary);font-weight:700;">Paletra Admin</div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <div>
-        <a class="text-dark dropdown-toggle" data-bs-toggle="dropdown">
-            {{ request.user.username }}
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-        </ul>
-    </div>
+<!-- TOPBAR -->
+
+<div class="topbar">
+
+<div class="logo">Paletra</div>
+
+<div class="topbar-right">
+
+<i class="fas fa-bell"></i>
+
+<div>{{request.user.username}}</div>
+
 </div>
+
+</div>
+
 
 <div class="admin-container">
 
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-        <a href="{% url 'admin_dashboard' %}">Dashboard</a>
-        <a href="{% url 'admin_artists' %}">Artists</a>
-        <a href="{% url 'admin_clients' %}" class="active">Clients</a>
-        <a href="{% url 'logout' %}">Log Out</a>
-    </div>
+<!-- SIDEBAR -->
 
-    <!-- MAIN -->
-    <div class="main-content">
+<div class="sidebar">
 
-        <h1 style="color:var(--text-dark); font-weight:700;">Clients</h1>
+<a href="{% url 'admin_dashboard' %}">
+<i class="fas fa-home"></i> Dashboard
+</a>
 
-        <div class="section-box">
-            <h3>Registered Clients</h3>
+<a href="{% url 'admin_artists' %}">
+<i class="fas fa-palette"></i> Artists
+</a>
 
-            <table class="table table-bordered">
-                <thead>
-                    <tr><th>Name</th><th>Email</th><th>Joined</th></tr>
-                </thead>
-                <tbody>
-                    {% for c in clients %}
-                    <tr>
-                        <td>{{ c.name }}</td>
-                        <td>{{ c.email }}</td>
-                        <td>{{ c.date_joined }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+<a href="{% url 'admin_clients' %}" class="active">
+<i class="fas fa-users"></i> Clients
+</a>
 
-        </div>
-    </div>
+<a href="{% url 'admin_transactions' %}">
+<i class="fas fa-money-bill-wave"></i> Transactions
+</a>
+
+<a href="{% url 'logout' %}">
+<i class="fas fa-sign-out-alt"></i> Logout
+</a>
+
+</div>
+
+
+<!-- MAIN CONTENT -->
+
+<div class="main-content">
+
+<h1 class="page-title">Clients</h1>
+
+<div class="section-box">
+
+<h3 style="margin-bottom:20px;">Registered Clients</h3>
+
+<table class="table">
+
+<thead>
+
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Joined</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for c in clients %}
+
+<tr>
+
+<td>{{ c.name }}</td>
+
+<td>{{ c.email }}</td>
+
+<td>{{ c.date_joined }}</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
 
 </div>
 

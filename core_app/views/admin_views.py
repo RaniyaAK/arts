@@ -59,3 +59,35 @@ def admin_notifications(request):
     return render(request, "notifications/admin_notifications.html", {
         "notifications": notifications
     })
+
+from django.shortcuts import render
+from django.core.paginator import Paginator
+from ..models import Transaction
+
+
+def admin_transactions(request):
+
+    transactions = Transaction.objects.all().order_by('-created_at')
+
+    # Search
+    search = request.GET.get('search')
+    if search:
+        transactions = transactions.filter(user__name__icontains=search)
+
+    # Filter by status
+    status = request.GET.get('status')
+    if status:
+        transactions = transactions.filter(status=status)
+
+    # Pagination
+    paginator = Paginator(transactions, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'page_obj': page_obj,
+        'search': search,
+        'status': status
+    }
+
+    return render(request, 'admin_dashboard/admin_transactions.html', context)
