@@ -203,8 +203,7 @@
 </div>
 
     <div class="why-creator-card">
-        <img src="{% static 'images/pin.creator.story.jpg' %}">
-    <div>
+        <img src="{% static 'images/pin.creator.story.jpg' %}" alt="Artist storytelling artwork"><div>
     <h4>Bring Stories to Life</h4>
     <p>Transform emotions, memories, and ideas into handcrafted masterpieces.</p>
 
@@ -221,10 +220,11 @@
 
     <div class="why-creator-card">
         <img src="{% static 'images/pin.creator.community.jpg' %}">
-    <div>
-    <h4>A Community That Inspires</h4>
-    <p>Connect with passionate creators, share ideas, and grow together in a supportive creative community.</p>    
-</div>
+        <div>
+            <h4>A Community That Inspires</h4>
+            <p>Connect with passionate creators, share ideas, and grow together in a supportive creative community.</p>    
+        </div>
+    </div>
 
 </div>
 </div>
@@ -386,6 +386,105 @@ Join as Creator
         <button id="send-btn">Send</button>
     </div>
 </div>
+
+<footer class="site-footer">
+
+<div class="container">
+
+<div class="footer-container">
+
+<!-- Brand Story -->
+<div class="footer-col footer-brand">
+<h3 class="footer-logo">Imprenta</h3>
+<p>
+A creative space where dreamers share ideas and creators transform them into meaningful handcrafted art.
+Every piece begins with imagination and ends with something unforgettable.
+</p>
+
+<div class="footer-social">
+<a href="#"><i class="fab fa-facebook-f"></i></a>
+<a href="#"><i class="fab fa-instagram"></i></a>
+<a href="#"><i class="fab fa-twitter"></i></a>
+<a href="#"><i class="fab fa-linkedin-in"></i></a>
+</div>
+
+</div>
+
+
+<!-- Explore -->
+<div class="footer-col">
+<h4>Explore</h4>
+<ul>
+<li><a href="#about">About Imprenta</a></li>
+<li><a href="#dreamers">For Dreamers</a></li>
+<li><a href="#creators">For Creators</a></li>
+<li><a href="#contact">Collaborate</a></li>
+</ul>
+</div>
+
+
+<!-- Community -->
+<div class="footer-col">
+<h4>Community</h4>
+<ul>
+<li><a href="#">Featured Creators</a></li>
+<li><a href="#">Creative Stories</a></li>
+<li><a href="#">Inspiration Gallery</a></li>
+<li><a href="#">Creative Blog</a></li>
+</ul>
+</div>
+
+
+<!-- Join CTA -->
+<div class="footer-col footer-cta">
+
+<h4>Start Your Journey</h4>
+
+<p>
+Whether you want to bring an idea to life or share your creativity with the world,
+Imprenta welcomes you.
+</p>
+
+<div class="footer-buttons">
+
+<a href="{% url 'register' %}?role=client" class="footer-btn dreamer">
+Become a Dreamer
+</a>
+
+<a href="{% url 'register' %}?role=artist" class="footer-btn creator">
+Become a Creator
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- Divider -->
+<div class="footer-divider"></div>
+
+
+<!-- Bottom -->
+<div class="footer-bottom">
+
+<p>
+© 2026 Imprenta — Crafted with imagination ✦
+</p>
+
+<div class="footer-bottom-links">
+<a href="#">Privacy</a>
+<a href="#">Terms</a>
+<a href="#">Guidelines</a>
+</div>
+
+</div>
+
+</div>
+
+</footer>
+
 
 <script src="{% static 'js/chatbot.js' %}"></script>
 
