@@ -1,552 +1,184 @@
 {% extends "masterss.html" %}
+{% load static %}
+
 {% block title %}Admin Dashboard | Paletra{% endblock %}
 {% block body_class %}admin-dashboard{% endblock %}
 
 {% block content %}
 
-<style>
-
-/* Hide master navbar */
-
-.master-topbar,
-header,
-.navbar,
-.top-nav,
-.site-header{
-display:none !important;
-}
-
-/* COLORS */
-
-:root{
---primary:#8B5E3C;
---sidebar:#1f1f24;
---bg:#F6F7FB;
---card:#ffffff;
---text:#2e2e2e;
---muted:#777;
---border:#eeeeee;
-}
-
-/* BODY */
-
-body.admin-dashboard{
-background:var(--bg);
-font-family:'Inter',sans-serif;
-color:var(--text);
-}
-
-/* TOPBAR */
-
-.topbar{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:80px;
-background:white;
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:0 40px;
-box-shadow:0 6px 20px rgba(0,0,0,0.06);
-z-index:1000;
-}
-
-.logo{
-font-size:22px;
-font-weight:700;
-color:var(--primary);
-letter-spacing:0.5px;
-}
-
-.topbar-right{
-display:flex;
-align-items:center;
-gap:25px;
-font-weight:500;
-}
-
-/* LAYOUT */
-
-.admin-container{
-display:flex;
-margin-top:80px;
-}
-
-/* SIDEBAR */
-
-.sidebar{
-width:240px;
-position:fixed;
-top:80px;
-left:0;
-height:calc(100vh - 80px);
-background:var(--sidebar);
-padding:30px 18px;
-}
-
-.sidebar a{
-display:flex;
-align-items:center;
-gap:12px;
-padding:13px 14px;
-margin-bottom:12px;
-border-radius:8px;
-color:#cfcfcf;
-text-decoration:none;
-font-size:14px;
-transition:all .25s ease;
-}
-
-.sidebar a:hover{
-background:#2c2c33;
-color:white;
-transform:translateX(3px);
-}
-
-.sidebar a.active{
-background:var(--primary);
-color:white;
-}
-
-/* MAIN */
-
-.main-content{
-margin-left:240px;
-padding:40px;
-width:100%;
-}
-
-.dashboard-title{
-font-size:28px;
-font-weight:700;
-margin-bottom:30px;
-}
-
-/* METRICS */
-
-.metrics-wrap{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:22px;
-margin-bottom:35px;
-}
-
-.metric{
-background:var(--card);
-padding:26px;
-border-radius:14px;
-box-shadow:0 10px 25px rgba(0,0,0,0.05);
-text-align:center;
-transition:all .25s ease;
-border:1px solid var(--border);
-}
-
-.metric:hover{
-transform:translateY(-5px);
-box-shadow:0 14px 30px rgba(0,0,0,0.08);
-}
-
-.metric i{
-font-size:22px;
-color:var(--primary);
-margin-bottom:10px;
-}
-
-.metric-title{
-font-size:13px;
-color:var(--muted);
-margin-bottom:4px;
-}
-
-.metric-value{
-font-size:28px;
-font-weight:700;
-color:var(--primary);
-}
-
-/* ROW */
-
-.dashboard-row{
-display:flex;
-gap:22px;
-margin-bottom:30px;
-}
-
-/* BOX */
-
-.section-box{
-background:white;
-padding:26px;
-border-radius:14px;
-box-shadow:0 10px 25px rgba(0,0,0,0.05);
-border:1px solid var(--border);
-transition:.25s;
-}
-
-.section-box:hover{
-box-shadow:0 14px 30px rgba(0,0,0,0.07);
-}
-
-.section-box.half{
-flex:1;
-}
-
-.section-box h3{
-margin-bottom:18px;
-font-size:18px;
-font-weight:600;
-}
-
-/* CHART */
-
-.chart-box{
-height:300px;
-padding-top:10px;
-}
-
-/* TABLE */
-
-.table{
-width:100%;
-border-collapse:collapse;
-font-size:14px;
-}
-
-.table th{
-font-size:13px;
-color:#888;
-padding:13px;
-text-align:left;
-border-bottom:1px solid var(--border);
-background:#fafafa;
-}
-
-.table td{
-padding:13px;
-border-bottom:1px solid var(--border);
-}
-
-.table tr:hover{
-background:#fafafa;
-transition:.2s;
-}
-
-/* APPROVE BUTTONS */
-
-.btn-approve{
-background:#28a745;
-color:white;
-padding:6px 12px;
-border-radius:6px;
-text-decoration:none;
-font-size:13px;
-margin-right:6px;
-transition:.2s;
-}
-
-.btn-approve:hover{
-background:#23913c;
-}
-
-.btn-reject{
-background:#dc3545;
-color:white;
-padding:6px 12px;
-border-radius:6px;
-text-decoration:none;
-font-size:13px;
-transition:.2s;
-}
-
-.btn-reject:hover{
-background:#b92b3a;
-}
-
-</style>
-
+<link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- TOPBAR -->
-
 <div class="topbar">
-
-<div class="logo">Paletra</div>
-
-<div class="topbar-right">
-
-<i class="fas fa-bell"></i>
-
-<div>{{request.user.username}}</div>
-
+    <div class="logo">Paletra</div>
+    <div class="topbar-right">
+        <div class="notification">
+            <i class="fas fa-bell"></i>
+            <span>{{ new_artist_count|default:0 }}</span>
+        </div>
+        <div>{{ request.user.username }}</div>
+    </div>
 </div>
-
-</div>
-
 
 <div class="admin-container">
 
-<!-- SIDEBAR -->
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <a href="{% url 'admin_dashboard' %}" class="active"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="{% url 'admin_artists' %}"><i class="fas fa-palette"></i> Artists</a>
+        <a href="{% url 'admin_clients' %}"><i class="fas fa-users"></i> Clients</a>
+        <a href="{% url 'admin_transactions' %}"><i class="fas fa-receipt"></i> Transactions</a>
+        <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
 
-<div class="sidebar">
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
 
-<a href="{% url 'admin_dashboard' %}" class="active">
-<i class="fas fa-home"></i> Dashboard
-</a>
+        <h1 class="dashboard-title">Admin Dashboard</h1>
 
-<a href="{% url 'admin_artists' %}">
-<i class="fas fa-palette"></i> Artists
-</a>
+        <!-- METRICS -->
+        <div class="metrics-wrap">
+            <div class="metric"><i class="fas fa-users"></i><div class="metric-title">Total Users</div><div class="metric-value">{{ total_users }}</div></div>
+            <div class="metric"><i class="fas fa-palette"></i><div class="metric-title">Artists</div><div class="metric-value">{{ total_artists }}</div></div>
+            <div class="metric"><i class="fas fa-user"></i><div class="metric-title">Clients</div><div class="metric-value">{{ total_clients }}</div></div>
+            <div class="metric"><i class="fas fa-briefcase"></i><div class="metric-title">Commissions</div><div class="metric-value">{{ total_commissions }}</div></div>
+            <div class="metric"><i class="fas fa-check-circle"></i><div class="metric-title">Completed</div><div class="metric-value">{{ completed_commissions }}</div></div>
+            <div class="metric"><i class="fas fa-clock"></i><div class="metric-title">Pending</div><div class="metric-value">{{ pending_commissions }}</div></div>
+            <div class="metric"><i class="fas fa-rupee-sign"></i><div class="metric-title">Revenue</div><div class="metric-value">₹{{ revenue }}</div></div>
+        </div>
 
-<a href="{% url 'admin_clients' %}">
-<i class="fas fa-users"></i> Clients
-</a>
+        <!-- CHARTS -->
+        <div class="dashboard-row">
 
-<a href="{% url 'admin_transactions' %}">
-<i class="fas fa-receipt"></i> Transactions
-</a>
+            <div class="section-box half">
+                <h3>Commission Status</h3>
+                <div class="chart-box"><canvas id="commissionChart"></canvas></div>
+            </div>
 
-<a href="{% url 'logout' %}">
-<i class="fas fa-sign-out-alt"></i> Logout
-</a>
+            <div class="section-box half">
+                <h3>User Distribution</h3>
+                <div class="chart-box"><canvas id="userChart"></canvas></div>
+            </div>
 
+        </div>
+
+        <!-- NEW ANALYTICS -->
+        <div class="dashboard-row">
+
+            <div class="section-box half">
+                <h3>Revenue Growth</h3>
+                <div class="chart-box"><canvas id="revenueChart"></canvas></div>
+            </div>
+
+            <div class="section-box half">
+                <h3>Monthly Commissions</h3>
+                <div class="chart-box"><canvas id="monthlyCommissionChart"></canvas></div>
+            </div>
+
+        </div>
+
+        <!-- PENDING ARTISTS -->
+        <div class="section-box">
+            <h3>Pending Artist Approvals</h3>
+            <div class="table-wrap">
+                <table class="table">
+                    <tr>
+                        <th>Name</th><th>Email</th><th>Joined</th><th>Action</th>
+                    </tr>
+                    {% for artist in pending_artists %}
+                    <tr>
+                        <td>{{ artist.name }}</td>
+                        <td>{{ artist.email }}</td>
+                        <td>{{ artist.date_joined }}</td>
+                        <td>
+                            <a href="{% url 'approve_artist' artist.id %}" class="btn-approve">Approve</a>
+                            <a href="{% url 'reject_artist' artist.id %}" class="btn-reject">Reject</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4">No pending artist requests</td></tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+
+    </div>
 </div>
 
-
-<!-- MAIN -->
-
-<div class="main-content">
-
-<h1 class="dashboard-title">Admin Dashboard</h1>
-
-<!-- METRICS -->
-
-<div class="metrics-wrap">
-
-<div class="metric">
-<i class="fas fa-users"></i>
-<div class="metric-title">Total Users</div>
-<div class="metric-value">{{total_users}}</div>
-</div>
-
-<div class="metric">
-<i class="fas fa-palette"></i>
-<div class="metric-title">Artists</div>
-<div class="metric-value">{{total_artists}}</div>
-</div>
-
-<div class="metric">
-<i class="fas fa-user"></i>
-<div class="metric-title">Clients</div>
-<div class="metric-value">{{total_clients}}</div>
-</div>
-
-<div class="metric">
-<i class="fas fa-briefcase"></i>
-<div class="metric-title">Commissions</div>
-<div class="metric-value">{{total_commissions}}</div>
-</div>
-
-<div class="metric">
-<i class="fas fa-check-circle"></i>
-<div class="metric-title">Completed</div>
-<div class="metric-value">{{completed_commissions}}</div>
-</div>
-
-<div class="metric">
-<i class="fas fa-clock"></i>
-<div class="metric-title">Pending</div>
-<div class="metric-value">{{pending_commissions}}</div>
-</div>
-
-<div class="metric">
-<i class="fas fa-rupee-sign"></i>
-<div class="metric-title">Revenue</div>
-<div class="metric-value">₹{{revenue}}</div>
-</div>
-
-</div>
-
-
-<!-- CHARTS -->
-
-<div class="dashboard-row">
-
-<div class="section-box half">
-
-<h3>Commission Status</h3>
-
-<div class="chart-box">
-<canvas id="commissionChart"></canvas>
-</div>
-
-</div>
-
-<div class="section-box half">
-
-<h3>User Distribution</h3>
-
-<div class="chart-box">
-<canvas id="userChart"></canvas>
-</div>
-
-</div>
-
-</div>
-
-
-<!-- NEW SECTION : PENDING ARTIST APPROVALS -->
-
-<div class="section-box">
-
-<h3>Pending Artist Approvals</h3>
-
-<table class="table">
-
-<tr>
-<th>Name</th>
-<th>Email</th>
-<th>Joined</th>
-<th>Action</th>
-</tr>
-
-{% for artist in pending_artists %}
-
-<tr>
-
-<td>{{artist.name}}</td>
-<td>{{artist.email}}</td>
-<td>{{artist.date_joined}}</td>
-
-<td>
-
-<a href="{% url 'approve_artist' artist.id %}" class="btn-approve">
-Approve
-</a>
-
-<a href="{% url 'reject_artist' artist.id %}" class="btn-reject">
-Reject
-</a>
-
-</td>
-
-</tr>
-
-{% empty %}
-
-<tr>
-<td colspan="4">No pending artist requests</td>
-</tr>
-
-{% endfor %}
-
-</table>
-
-</div>
-
-
-<!-- RECENT DATA -->
-
-<div class="dashboard-row">
-
-<div class="section-box half">
-
-<h3>Recent Commissions</h3>
-
-<table class="table">
-
-<tr>
-<th>Title</th>
-<th>Status</th>
-<th>Date</th>
-</tr>
-
-{% for c in recent_commissions|slice:":5" %}
-
-<tr>
-<td>{{c.title}}</td>
-<td>{{c.status}}</td>
-<td>{{c.created_at}}</td>
-</tr>
-
-{% endfor %}
-
-</table>
-
-</div>
-
-
-<div class="section-box half">
-
-<h3>Recent Transactions</h3>
-
-<table class="table">
-
-<tr>
-<th>User</th>
-<th>Amount</th>
-<th>Status</th>
-</tr>
-
-{% for t in recent_transactions|slice:":5" %}
-
-<tr>
-<td>{{t.user.name}}</td>
-<td>₹{{t.amount}}</td>
-<td>{{t.status}}</td>
-</tr>
-
-{% endfor %}
-
-</table>
-
-</div>
-
-</div>
-
-
-</div>
-
-</div>
-
-
+<!-- CHARTS SCRIPT -->
 <script>
+/* ------------------ Revenue Growth ------------------ */
+const revenueData = JSON.parse('{{ monthly_revenue|default:"[]"|escapejs }}');
 
-/* Commission Chart */
-
-const completed = parseInt("{{ completed_commissions|default:0 }}");
-const pending = parseInt("{{ pending_commissions|default:0 }}");
-
-new Chart(document.getElementById('commissionChart'),{
-type:'doughnut',
-data:{
-labels:['Completed','Pending'],
-datasets:[{
-data:[completed,pending],
-backgroundColor:['#28a745','#ffc107']
-}]
-}
+new Chart(document.getElementById('revenueChart'), {
+    type: 'line',
+    data: {
+        labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+        datasets: [{
+            label: 'Revenue',
+            data: revenueData,
+            borderColor: '#1E88E5',           // blue
+            backgroundColor: 'rgba(30,136,229,0.1)',
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: { responsive: true, plugins: { legend: { position: 'top' } } }
 });
 
-/* User Chart */
 
-const artists = parseInt("{{ total_artists|default:0 }}");
-const clients = parseInt("{{ total_clients|default:0 }}");
+/* ------------------ Monthly Commissions ------------------ */
+const commissionData = JSON.parse('{{ monthly_commissions|default:"[]"|escapejs }}');
 
-new Chart(document.getElementById('userChart'),{
-type:'bar',
-data:{
-labels:['Artists','Clients'],
-datasets:[{
-label:'Users',
-data:[artists,clients],
-backgroundColor:['#8B5E3C','#4e73df']
-}]
-}
+new Chart(document.getElementById('monthlyCommissionChart'), {
+    type: 'bar',
+    data: {
+        labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+        datasets: [{
+            label: 'Commissions',
+            data: commissionData,
+            backgroundColor: '#E53935'  // changed from orange to deep red
+        }]
+    },
+    options: { responsive: true, plugins: { legend: { position: 'top' } } }
 });
 
+
+/* ------------------ User Distribution ------------------ */
+const totalArtists = parseInt('{{ total_artists|default:0 }}');
+const totalClients = parseInt('{{ total_clients|default:0 }}');
+
+new Chart(document.getElementById('userChart'), {
+    type: 'bar',
+    data: {
+        labels: ['Artists','Clients'],
+        datasets: [{
+            label: 'Users',
+            data: [totalArtists, totalClients],
+            backgroundColor: ['#43A047', '#8E24AA']  // green + purple
+        }]
+    },
+    options: { responsive: true, plugins: { legend: { position: 'top' } } }
+});
+
+
+/* ------------------ Commission Status ------------------ */
+const completed = parseInt('{{ completed_commissions|default:0 }}');
+const pending = parseInt('{{ pending_commissions|default:0 }}');
+
+new Chart(document.getElementById('commissionChart'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Completed','Pending'],
+        datasets: [{
+            data: [completed, pending],
+            backgroundColor: ['#28a745','#FFC107']  // green + yellow
+        }]
+    },
+    options: { responsive: true, plugins: { legend: { position: 'top' } } }
+});
 </script>
 
 {% endblock %}

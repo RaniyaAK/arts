@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
-from django.contrib.auth import authenticate, login, logout, get_user_model
-from django.contrib import messages
+from django.db.models.functions import ExtractMonth
+from django.contrib.auth import get_user_model
 
-from ..models import Artwork, Activity, Commission, Transaction,Notification
+from ..models import Artwork, Activity, Commission, Transaction, Notification
 
 User = get_user_model()
 
@@ -15,37 +15,22 @@ def home(request):
 
 @login_required
 def artist_dashboard(request):
-
     if request.user.role != 'artist':
         return redirect('login')
 
     if not request.user.is_profile_complete:
         return redirect('complete_profile')
 
+    # ------------------ ARTWORKS & ACTIVITIES ------------------
+    artworks = Artwork.objects.filter(artist=request.user).order_by('-created_at')
+    activities = Activity.objects.filter(user=request.user).order_by('-created_at')[:10]
 
-    artworks = Artwork.objects.filter(
-        artist=request.user
-    ).order_by('-created_at')
+    # ------------------ COMMISSIONS & REVENUE ------------------
+    commissions = Commission.objects.filter(artist=request.user)
 
-    activities = Activity.objects.filter(
-        user=request.user
-    ).order_by('-created_at')[:10]
-
-    commissions = Commission.objects.filter(
-        artist=request.user
-    )
-
-    advance_revenue = commissions.filter(
-        advance_paid=True
-    ).aggregate(
+    advance_revenue = commissions.filter(advance_paid=True).aggregate(
         total=Sum('advance_amount')
     )['total'] or 0
-
-    balance_revenue = commissions.filter(
-        balance_paid=True
-    ).aggregate(
-        total=Sum('total_price') - Sum('advance_amount')
-    )
 
     balance_revenue = sum(
         (c.total_price - c.advance_amount)
@@ -65,7 +50,6 @@ def artist_dashboard(request):
     })
 
 
-
 @login_required
 def client_dashboard(request):
     if request.user.role != 'client':
@@ -77,10 +61,7 @@ def client_dashboard(request):
     search_query = request.GET.get('search', '')
 
     if search_query:
-        featured_artists = User.objects.filter(
-            role='artist',
-            name__icontains=search_query
-        )
+        featured_artists = User.objects.filter(role='artist', name__icontains=search_query)
     else:
         featured_artists = User.objects.filter(role='artist')
 
@@ -88,23 +69,17 @@ def client_dashboard(request):
     artworks = all_artworks[:6]
     artwork_count = all_artworks.count()
 
-    transactions = Transaction.objects.filter(
-        user=request.user
-    ).order_by('-created_at')
+    transactions = Transaction.objects.filter(user=request.user).order_by('-created_at')
 
-    return render(
-        request,
-        'dashboards/client_dashboard.html',
-        {
-            'artworks': artworks,
-            'featured_artists': featured_artists,
-            'artwork_count': artwork_count,
-            'transactions': transactions,  
-        }
-    )
+    return render(request, 'dashboards/client_dashboard.html', {
+        'artworks': artworks,
+        'featured_artists': featured_artists,
+        'artwork_count': artwork_count,
+        'transactions': transactions,
+    })
 
 
-
+@login_required
 def admin_dashboard(request):
     if not request.user.is_superuser:
         return redirect("login")
@@ -119,7 +94,9 @@ def admin_dashboard(request):
     completed_commissions = Commission.objects.filter(status="delivered").count()
 
     total_transactions = Transaction.objects.count()
-    revenue = Transaction.objects.filter(status="completed").aggregate(Sum("amount"))["amount__sum"] or 0
+    revenue = Transaction.objects.filter(status="completed").aggregate(
+        total=Sum("amount")
+    )["total"] or 0
 
     # ------------------ RECENT LISTS ------------------
     recent_users = User.objects.order_by("-date_joined")[:5]
@@ -129,16 +106,34 @@ def admin_dashboard(request):
     recent_artists = User.objects.filter(role="artist").order_by("-date_joined")[:5]
     recent_clients = User.objects.filter(role="client").order_by("-date_joined")[:5]
 
-    # ------------------ PENDING ARTIST APPROVALS ------------------
+    # ------------------ PENDING ARTISTS ------------------
     pending_artists = User.objects.filter(role="artist", is_approved=False).order_by("-date_joined")
 
-    # ------------------ NEW ARTIST NOTIFICATIONS ------------------
+    # ------------------ NOTIFICATIONS ------------------
     new_artist_notifications = Notification.objects.filter(
         receiver=request.user,
         notification_type='new_artist'
     ).order_by('-created_at')
-
     new_artist_count = new_artist_notifications.filter(is_read=False).count()
+
+    # ------------------ DYNAMIC CHART DATA ------------------
+    # Monthly Revenue (Jan-Dec)
+    monthly_revenue = [0]*12
+    transactions = Transaction.objects.filter(status="completed").annotate(
+        month=ExtractMonth('created_at')
+    ).values('month').annotate(total=Sum('amount')).order_by('month')
+
+    for t in transactions:
+        monthly_revenue[t['month'] - 1] = float(t['total'] or 0)
+
+    # Monthly Commissions (Jan-Dec)
+    monthly_commissions = [0]*12
+    commissions = Commission.objects.annotate(
+        month=ExtractMonth('created_at')
+    ).values('month').annotate(total=Sum('total_price')).order_by('month')
+
+    for c in commissions:
+        monthly_commissions[c['month'] - 1] = float(c['total'] or 0)
 
     # ------------------ RENDER ------------------
     return render(request, "dashboards/admin_dashboard.html", {
@@ -159,11 +154,14 @@ def admin_dashboard(request):
         "recent_artists": recent_artists,
         "recent_clients": recent_clients,
 
-        # Pending artist approvals
+        # Pending artists
         "pending_artists": pending_artists,
 
-        # New artist notifications
+        # Notifications
         "new_artist_notifications": new_artist_notifications,
         "new_artist_count": new_artist_count,
-    })
 
+        # Chart data
+        "monthly_revenue": monthly_revenue,
+        "monthly_commissions": monthly_commissions,
+    })
