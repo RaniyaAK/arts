@@ -198,8 +198,8 @@ searchInput.addEventListener('input', function () {
     height: 36px;
     border-radius: 50%;
 
-    background: #9e9c9c; 
-    border: 2px solid #c0c0c0;
+    background: #a8a8a8; 
+    border: 2px solid #9a9a9a;
 
     display: flex;
     align-items: center;
@@ -211,22 +211,20 @@ searchInput.addEventListener('input', function () {
     transition: all 0.25s ease;
 }
 
-/* icon */
+
 .edge-toggle i{
     font-size:14px;
-    color:#333;
+    color:#000; 
     transition: transform 0.2s ease;
 }
 
-/* hover effect */
 .edge-toggle:hover{
-    background:#ffffff;   /* white */
-    border-color:#c0c0c0;
+    background:#ffffff; 
+    border-color:#9a9a9a;
     box-shadow:0 6px 14px rgba(0,0,0,0.15);
     transform:translateY(-50%) scale(1.1);
 }
 
-/* click effect */
 .edge-toggle:active{
     transform:translateY(-50%) scale(0.95);
 }

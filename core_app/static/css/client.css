@@ -1,0 +1,46 @@
+
+.artist-card .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+.edge-toggle {
+    position: absolute;
+    top: 50%;
+    right: -18px;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+
+    background: #9e9c9c; 
+    border: 2px solid #c0c0c0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    z-index: 10;
+
+    transition: all 0.25s ease;
+}
+
+/* icon */
+.edge-toggle i{
+    font-size:14px;
+    color:#333;
+    transition: transform 0.2s ease;
+}
+
+/* hover effect */
+.edge-toggle:hover{
+    background:#ffffff;   /* white */
+    border-color:#c0c0c0;
+    box-shadow:0 6px 14px rgba(0,0,0,0.15);
+    transform:translateY(-50%) scale(1.1);
+}
+
+/* click effect */
+.edge-toggle:active{
+    transform:translateY(-50%) scale(0.95);
+}
