@@ -1,8 +1,13 @@
 {% extends "masterss.html" %}
 
+{% load static %}
+
 {% block title %}Client Dashboard | Paletra{% endblock %}
 
 {% block content %}
+
+<link rel="stylesheet" href="{% static 'css/client_dashboard.css' %}">
+
 <div class="container py-5">
 
     <!-- Header -->
@@ -184,50 +189,6 @@ searchInput.addEventListener('input', function () {
 });
 </script>
 
-<style>
-.artist-card .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
-}
-.edge-toggle {
-    position: absolute;
-    top: 50%;
-    right: -18px;
-    transform: translateY(-50%);
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
 
-    background: #a8a8a8; 
-    border: 2px solid #9a9a9a;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    cursor: pointer;
-    z-index: 10;
-
-    transition: all 0.25s ease;
-}
-
-
-.edge-toggle i{
-    font-size:14px;
-    color:#000; 
-    transition: transform 0.2s ease;
-}
-
-.edge-toggle:hover{
-    background:#ffffff; 
-    border-color:#9a9a9a;
-    box-shadow:0 6px 14px rgba(0,0,0,0.15);
-    transform:translateY(-50%) scale(1.1);
-}
-
-.edge-toggle:active{
-    transform:translateY(-50%) scale(0.95);
-}
-</style>
 
 {% endblock %}
