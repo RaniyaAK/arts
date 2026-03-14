@@ -1,5 +1,4 @@
 {% extends "masterss.html" %}
-
 {% load static %}
 
 {% block title %}Client Dashboard | Paletra{% endblock %}
@@ -10,185 +9,239 @@
 
 <div class="container py-5">
 
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="text-primary-color">
-            Welcome, {{ request.user.name }} 👤
-        </h2>
+<!-- Header -->
+<div class="dashboard-header d-flex justify-content-between align-items-center mb-4">
 
-        <div class="d-flex align-items-center gap-3">
+<h2 class="text-primary-color">
+Welcome, {{ request.user.name }} 👤
+</h2>
 
-            <a href="{% url 'client_commissions' %}"
-               class="btn btn-outline-dark rounded-pill">
-                My Commissions
-            </a>
+<div class="d-flex align-items-center gap-3">
 
-            <!-- NEW: Transactions Button -->
-            <a href="{% url 'client_transactions' %}"
-               class="btn btn-outline-dark rounded-pill">
-                My Transactions
-            </a>
-        </div>
-    </div>
+<a href="{% url 'client_commissions' %}"
+class="btn btn-outline-dark rounded-pill">
+My Commissions
+</a>
 
-    <!-- Search Artists -->
-    <div class="mb-4">
-        <div class="d-flex align-items-center px-3"
-             style="border:1px solid #ced4da;border-radius:30px;background:#fff;">
-            <i class="fas fa-search text-muted me-2"></i>
-            <input type="text"
-                   id="artistSearch"
-                   class="form-control border-0 shadow-none"
-                   placeholder="Search artists by name...">
-        </div>
-    </div>
+<a href="{% url 'client_transactions' %}"
+class="btn btn-outline-dark rounded-pill">
+My Transactions
+</a>
 
-    <!-- Featured Artists -->
-    <h4 class="text-primary-color mb-3">Featured Artists</h4>
+</div>
+</div>
 
-    <p id="noArtistsMsg" class="text-muted" style="display:none;">
-        No artists found.
-    </p>
+<!-- Search -->
+<div class="artist-search mb-4">
 
-    <div class="d-flex flex-wrap mb-5 gap-3" id="artistContainer">
-        {% for artist in featured_artists %}
-        <div class="artist-card mb-4 {% if forloop.counter > 6 %}extra-artist{% endif %}"
-            style="flex:0 0 calc(16.66% - 15px); position:relative; {% if forloop.counter > 6 %}display:none;{% endif %}">
+<div class="search-box d-flex align-items-center px-3">
 
-            {% if forloop.counter == 6 and featured_artists|length > 6 %}
-            <div class="edge-toggle toggle-btn">
-                <i class="fas fa-plus"></i>
-            </div>
-            {% endif %}
+<i class="fas fa-search text-muted me-2"></i>
 
-            <div class="card shadow-sm rounded-4 p-3 text-center"
-                 style="height:280px;display:flex;flex-direction:column;justify-content:center;">
-
-                <div class="mb-3">
-                    {% if artist.profile_image %}
-                        <a href="{% url 'artist_profile' artist.id %}">
-                            <img src="{{ artist.profile_image.url }}"
-                                 class="rounded-circle"
-                                 style="width:80px;height:80px;object-fit:cover;">
-                        </a>
-                    {% else %}
-                        <a href="{% url 'artist_profile' artist.id %}">
-                            <i class="fas fa-user fa-3x text-primary-color"></i>
-                        </a>
-                    {% endif %}
-                </div>
-
-                <h6 class="fw-semibold artist-name mb-2">
-                    <a href="{% url 'artist_profile' artist.id %}"
-                       class="text-decoration-none text-dark">
-                        {{ artist.name }}
-                    </a>
-                </h6>
-
-                <a href="{% url 'request_commission' artist.id %}"
-                   class="btn btn-sm bg-primary-color text-cream rounded-pill mt-2">
-                    Request
-                </a>
-
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-
-    <!-- Latest Artworks -->
-    <h4 class="text-primary-color mb-3">Latest Artworks</h4>
-
-    <div class="row">
-        {% for artwork in artworks %}
-        <div class="col-md-4 mb-4">
-            <div class="card shadow-sm h-100 rounded-4">
-                <img src="{{ artwork.image.url }}"
-                     class="card-img-top rounded-4"
-                     style="height:250px;object-fit:cover;">
-
-                <div class="card-body d-flex align-items-center">
-                    <div class="w-100">
-                        <a href="{% url 'artist_profile' artwork.artist.id %}"
-                           class="text-decoration-none text-dark small">
-                            By {{ artwork.artist.name }}
-                        </a>
-                        <div class="mt-2">
-                            <strong>{{ artwork.artwork_title }}</strong>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% empty %}
-        <p>No artworks available yet.</p>
-        {% endfor %}
-    </div>
-
-    {% if artwork_count > 6 %}
-    <div class="text-end mt-3">
-        <a href="{% url 'all_artworks' %}"
-           class="btn bg-primary-color text-cream rounded-pill">
-            See All →
-        </a>
-    </div>
-    {% endif %}
+<input
+type="text"
+id="artistSearch"
+class="form-control border-0 shadow-none"
+placeholder="Search artists by name..."
+>
 
 </div>
 
-<!-- EXPAND / COLLAPSE -->
+</div>
+
+<!-- Featured Artists -->
+
+<h4 class="text-primary-color mb-3">Featured Artists</h4>
+
+<p id="noArtistsMsg" class="text-muted no-artists">
+No artists found.
+</p>
+
+<div class="artist-container d-flex flex-wrap mb-5 gap-3" id="artistContainer">
+
+{% for artist in featured_artists %}
+
+<div class="artist-card {% if forloop.counter > 6 %}extra-artist{% endif %}"
+
+{% if forloop.counter > 6 %}style="display:none"{% endif %}>
+
+{% if forloop.counter == 6 and featured_artists|length > 6 %}
+
+<div class="edge-toggle toggle-btn">
+<i class="fas fa-plus"></i>
+</div>
+
+{% endif %}
+
+<div class="card artist-card-inner shadow-sm rounded-4 p-3 text-center">
+
+<div class="artist-avatar mb-3">
+
+{% if artist.profile_image %}
+
+<a href="{% url 'artist_profile' artist.id %}">
+<img src="{{ artist.profile_image.url }}" class="artist-img">
+</a>
+
+{% else %}
+
+<a href="{% url 'artist_profile' artist.id %}">
+<i class="fas fa-user fa-3x text-primary-color"></i>
+</a>
+
+{% endif %}
+
+</div>
+
+<h6 class="fw-semibold artist-name mb-2">
+
+<a href="{% url 'artist_profile' artist.id %}"
+class="text-decoration-none text-dark">
+
+{{ artist.name }}
+
+</a>
+
+</h6>
+
+<a href="{% url 'request_commission' artist.id %}"
+class="btn btn-sm bg-primary-color text-cream rounded-pill mt-2">
+
+Request
+
+</a>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+<!-- Artworks -->
+
+<h4 class="text-primary-color mb-3">Latest Artworks</h4>
+
+<div class="row">
+
+{% for artwork in artworks %}
+
+<div class="col-md-4 mb-4">
+
+<div class="card shadow-sm h-100 rounded-4 artwork-card">
+
+<img src="{{ artwork.image.url }}"
+class="card-img-top artwork-img">
+
+<div class="card-body d-flex align-items-center">
+
+<div class="w-100">
+
+<a href="{% url 'artist_profile' artwork.artist.id %}"
+class="text-decoration-none text-dark small">
+
+By {{ artwork.artist.name }}
+
+</a>
+
+<div class="mt-2">
+
+<strong>{{ artwork.artwork_title }}</strong>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% empty %}
+
+<p>No artworks available yet.</p>
+
+{% endfor %}
+
+</div>
+
+{% if artwork_count > 6 %}
+
+<div class="text-end mt-3">
+
+<a href="{% url 'all_artworks' %}"
+class="btn bg-primary-color text-cream rounded-pill">
+
+See All →
+
+</a>
+
+</div>
+
+{% endif %}
+
+</div>
+
+<!-- JS (unchanged) -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    const extras = document.querySelectorAll(".extra-artist");
-    const cards = document.querySelectorAll(".artist-card");
-    let expanded = false;
+const extras = document.querySelectorAll(".extra-artist");
+const cards = document.querySelectorAll(".artist-card");
+let expanded = false;
 
-    document.addEventListener("click", function (e) {
-        const btn = e.target.closest(".toggle-btn");
-        if (!btn) return;
+document.addEventListener("click", function (e) {
 
-        expanded = !expanded;
+const btn = e.target.closest(".toggle-btn");
+if (!btn) return;
 
-        extras.forEach(card => {
-            card.style.display = expanded ? "inline-block" : "none";
-        });
+expanded = !expanded;
 
-        btn.remove();
+extras.forEach(card => {
+card.style.display = expanded ? "block" : "none";
+});
 
-        const targetCard = expanded ? cards[cards.length - 1] : cards[5];
+btn.remove();
 
-        const toggle = document.createElement("div");
-        toggle.className = "edge-toggle toggle-btn";
-        toggle.innerHTML = `<i class="fas fa-${expanded ? 'minus' : 'plus'}"></i>`;
+const targetCard = expanded ? cards[cards.length - 1] : cards[5];
 
-        targetCard.appendChild(toggle);
-    });
+const toggle = document.createElement("div");
+toggle.className = "edge-toggle toggle-btn";
+toggle.innerHTML = `<i class="fas fa-${expanded ? 'minus' : 'plus'}"></i>`;
+
+targetCard.appendChild(toggle);
+
+});
 });
 </script>
 
-<!-- SEARCH -->
 <script>
 const searchInput = document.getElementById('artistSearch');
 const artistCards = document.querySelectorAll('.artist-card');
 const noArtistsMsg = document.getElementById('noArtistsMsg');
 
 searchInput.addEventListener('input', function () {
-    const value = this.value.toLowerCase();
-    let visible = 0;
 
-    artistCards.forEach(card => {
-        const name = card.querySelector('.artist-name').innerText.toLowerCase();
-        if (name.includes(value)) {
-            card.style.display = 'inline-block';
-            visible++;
-        } else {
-            card.style.display = 'none';
-        }
-    });
+const value = this.value.toLowerCase();
+let visible = 0;
 
-    noArtistsMsg.style.display = visible === 0 ? 'block' : 'none';
+artistCards.forEach(card => {
+
+const name = card.querySelector('.artist-name').innerText.toLowerCase();
+
+if (name.includes(value)) {
+card.style.display = 'block';
+visible++;
+} else {
+card.style.display = 'none';
+}
+
+});
+
+noArtistsMsg.style.display = visible === 0 ? 'block' : 'none';
+
 });
 </script>
-
-
 
 {% endblock %}

@@ -1,44 +1,90 @@
-.artist-card .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+/* Search */
+
+.search-box{
+border:1px solid #ced4da;
+border-radius:30px;
+background:#fff;
 }
 
-.edge-toggle {
-    position: absolute;
-    top: 50%;
-    right: -18px;
-    transform: translateY(-50%);
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
+/* Artist grid */
 
-    background: #9e9c9c; 
-    border: 2px solid #c0c0c0;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    cursor: pointer;
-    z-index: 10;
-
-    transition: all 0.25s ease;
+.artist-card{
+flex:0 0 calc(16.66% - 15px);
+position:relative;
+margin-bottom:1rem;
 }
 
+/* Artist card */
+
+.artist-card-inner{
+height:280px;
+display:flex;
+flex-direction:column;
+justify-content:center;
+transition:all .25s ease;
+}
+
+.artist-card-inner:hover{
+transform:translateY(-5px);
+box-shadow:0 12px 25px rgba(0,0,0,0.15);
+}
+
+/* Artist image */
+
+.artist-img{
+width:80px;
+height:80px;
+object-fit:cover;
+border-radius:50%;
+}
+
+/* Toggle button */
+
+.edge-toggle{
+position:absolute;
+top:50%;
+right:-18px;
+transform:translateY(-50%);
+width:36px;
+height:36px;
+border-radius:50%;
+background:#a8a8a8;
+border:2px solid #9a9a9a;
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+z-index:10;
+transition:all .25s ease;
+}
 
 .edge-toggle i{
-    font-size:14px;
-    color:#333;
-    transition: transform 0.2s ease;
+font-size:14px;
+color:#000;
+transition:transform .2s ease;
 }
 
 .edge-toggle:hover{
-    background:#ffffff;  
-    border-color:#c0c0c0;
-    box-shadow:0 6px 14px rgba(0,0,0,0.15);
-    transform:translateY(-50%) scale(1.1);
+background:#fff;
+transform:translateY(-50%) scale(1.1);
+box-shadow:0 6px 14px rgba(0,0,0,0.15);
+}
+
+.edge-toggle:hover i{
+transform:rotate(90deg);
 }
 
 .edge-toggle:active{
-    transform:translateY(-50%) scale(0.95);
+transform:translateY(-50%) scale(.95);
+}
+
+/* Artworks */
+
+.artwork-img{
+height:250px;
+object-fit:cover;
+}
+
+.no-artists{
+display:none;
 }
