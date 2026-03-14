@@ -1,166 +1,23 @@
 {% extends "masterss.html" %}
+{% load static %}
+
 {% block title %}Clients | Admin{% endblock %}
 {% block body_class %}admin-dashboard{% endblock %}
 
 {% block content %}
 
-<style>
-
-/* Hide master navbar */
-
-.master-topbar,
-header,
-.navbar,
-.top-nav,
-.site-header{
-display:none !important;
-}
-
-/* COLORS */
-
-:root{
---primary:#8B5E3C;
---sidebar:#1f1f24;
---bg:#F6F7FB;
---card:#ffffff;
---text:#2e2e2e;
---muted:#777;
---border:#eeeeee;
-}
-
-/* BODY */
-
-body.admin-dashboard{
-background:var(--bg);
-font-family:'Inter',sans-serif;
-color:var(--text);
-}
-
-/* TOPBAR */
-
-.topbar{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:80px;
-background:white;
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:0 40px;
-box-shadow:0 6px 20px rgba(0,0,0,0.06);
-z-index:1000;
-}
-
-.logo{
-font-size:22px;
-font-weight:700;
-color:var(--primary);
-}
-
-.topbar-right{
-display:flex;
-align-items:center;
-gap:25px;
-}
-
-/* LAYOUT */
-
-.admin-container{
-display:flex;
-margin-top:80px;
-}
-
-/* SIDEBAR */
-
-.sidebar{
-width:240px;
-position:fixed;
-top:80px;
-left:0;
-height:calc(100vh - 80px);
-background:var(--sidebar);
-padding:30px 18px;
-}
-
-.sidebar a{
-display:flex;
-align-items:center;
-gap:12px;
-padding:13px 14px;
-margin-bottom:12px;
-border-radius:8px;
-color:#cfcfcf;
-text-decoration:none;
-font-size:14px;
-transition:all .25s ease;
-}
-
-.sidebar a:hover{
-background:#2c2c33;
-color:white;
-transform:translateX(3px);
-}
-
-.sidebar a.active{
-background:var(--primary);
-color:white;
-}
-
-/* MAIN */
-
-.main-content{
-margin-left:240px;
-padding:40px;
-width:100%;
-}
-
-.page-title{
-font-size:28px;
-font-weight:700;
-margin-bottom:25px;
-}
-
-/* SECTION BOX */
-
-.section-box{
-background:var(--card);
-padding:26px;
-border-radius:14px;
-box-shadow:0 10px 25px rgba(0,0,0,0.05);
-border:1px solid var(--border);
-}
-
-/* TABLE */
-
-.table{
-width:100%;
-border-collapse:collapse;
-font-size:14px;
-}
-
-.table th{
-font-size:13px;
-color:white;
-padding:13px;
-background:var(--primary);
-text-align:center;
-}
-
-.table td{
-padding:13px;
-border-bottom:1px solid var(--border);
-text-align:center;
-}
-
-.table tr:hover{
-background:#fafafa;
-}
-
-</style>
-
+<link rel="stylesheet" href="{% static 'css/admin_clients.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+#noResultMsg{
+display:none;
+text-align:center;
+color:#777;
+margin-top:15px;
+font-weight:500;
+}
+</style>
 
 <!-- TOPBAR -->
 
@@ -169,15 +26,11 @@ background:#fafafa;
 <div class="logo">Paletra</div>
 
 <div class="topbar-right">
-
 <i class="fas fa-bell"></i>
-
 <div>{{request.user.username}}</div>
-
 </div>
 
 </div>
-
 
 <div class="admin-container">
 
@@ -207,41 +60,92 @@ background:#fafafa;
 
 </div>
 
-
-<!-- MAIN CONTENT -->
+<!-- MAIN -->
 
 <div class="main-content">
 
+<div class="page-header">
 <h1 class="page-title">Clients</h1>
+</div>
+
+<!-- STAT CARD -->
+
+<div class="stat-card">
+
+<div class="stat-icon">
+<i class="fas fa-users"></i>
+</div>
+
+<div>
+<div class="stat-text">Total Clients</div>
+<div class="stat-number">{{clients|length}}</div>
+</div>
+
+</div>
 
 <div class="section-box">
 
-<h3 style="margin-bottom:20px;">Registered Clients</h3>
+<!-- SEARCH -->
 
-<table class="table">
+<div class="search-wrapper">
+
+<div class="search-box">
+<i class="fas fa-search text-muted me-2"></i>
+
+<input
+type="text"
+id="clientSearch"
+placeholder="Search clients by name or email"
+>
+
+</div>
+
+</div>
+
+<p id="noResultMsg">No clients match your search</p>
+
+<table class="table" id="clientTable">
 
 <thead>
-
 <tr>
 <th>Name</th>
 <th>Email</th>
 <th>Joined</th>
 </tr>
-
 </thead>
 
 <tbody>
 
 {% for c in clients %}
 
+<tr class="client-row">
+
+<td>
+
+<div class="client-info">
+
+<div class="client-avatar">
+<i class="fas fa-user"></i>
+</div>
+
+{{c.name}}
+
+</div>
+
+</td>
+
+<td>{{c.email}}</td>
+
+<td>{{c.date_joined|date:"M d, Y"}}</td>
+
+</tr>
+
+{% empty %}
+
 <tr>
-
-<td>{{ c.name }}</td>
-
-<td>{{ c.email }}</td>
-
-<td>{{ c.date_joined }}</td>
-
+<td colspan="3" class="empty-row">
+No clients found
+</td>
 </tr>
 
 {% endfor %}
@@ -255,5 +159,40 @@ background:#fafafa;
 </div>
 
 </div>
+
+<script>
+
+const searchInput = document.getElementById("clientSearch");
+const rows = document.querySelectorAll(".client-row");
+const noResult = document.getElementById("noResultMsg");
+
+searchInput.addEventListener("input", function(){
+
+const value = this.value.toLowerCase().trim();
+let visibleCount = 0;
+
+rows.forEach(row => {
+
+const name = row.children[0].textContent.toLowerCase();
+const email = row.children[1].textContent.toLowerCase();
+
+if(name.includes(value) || email.includes(value)){
+row.style.display = "table-row";
+visibleCount++;
+}else{
+row.style.display = "none";
+}
+
+});
+
+if(rows.length > 0 && visibleCount === 0 && value !== ""){
+noResult.style.display = "block";
+}else{
+noResult.style.display = "none";
+}
+
+});
+
+</script>
 
 {% endblock %}

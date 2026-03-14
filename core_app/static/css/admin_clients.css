@@ -1,0 +1,300 @@
+/* Hide master navbar */
+
+.master-topbar,
+header,
+.navbar,
+.top-nav,
+.site-header{
+display:none !important;
+}
+
+/* COLORS */
+
+:root{
+--primary:#8B5E3C;
+--sidebar:#1f1f24;
+--bg:#F6F7FB;
+--card:#ffffff;
+--text:#2e2e2e;
+--muted:#777;
+--border:#eeeeee;
+}
+
+/* BODY */
+
+body.admin-dashboard{
+background:var(--bg);
+font-family:'Inter',sans-serif;
+color:var(--text);
+margin:0;
+}
+
+/* TOPBAR */
+
+.topbar{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:80px;
+background:white;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:0 40px;
+box-shadow:0 6px 20px rgba(0,0,0,0.06);
+z-index:1000;
+}
+
+.logo{
+font-size:22px;
+font-weight:700;
+color:var(--primary);
+}
+
+.topbar-right{
+display:flex;
+align-items:center;
+gap:25px;
+font-weight:500;
+color:var(--text);
+}
+
+/* LAYOUT */
+
+.admin-container{
+display:flex;
+margin-top:80px;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:240px;
+position:fixed;
+top:80px;
+left:0;
+height:calc(100vh - 80px);
+background:var(--sidebar);
+padding:30px 18px;
+}
+
+.sidebar a{
+display:flex;
+align-items:center;
+gap:12px;
+padding:13px 14px;
+margin-bottom:12px;
+border-radius:8px;
+color:#cfcfcf;
+text-decoration:none;
+font-size:14px;
+transition:all .25s ease;
+}
+
+.sidebar a:hover{
+background:#2c2c33;
+color:white;
+transform:translateX(3px);
+}
+
+.sidebar a.active{
+background:var(--primary);
+color:white;
+}
+
+/* MAIN */
+
+.main-content{
+margin-left:240px;
+padding:40px;
+width:100%;
+color:var(--text);
+}
+
+/* HEADER */
+
+.page-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+}
+
+.page-title{
+font-size:28px;
+font-weight:700;
+color:var(--text);
+}
+
+/* STAT CARD */
+
+.stat-card{
+background:white;
+border-radius:12px;
+padding:20px;
+width:220px;
+box-shadow:0 8px 20px rgba(0,0,0,0.05);
+border:1px solid var(--border);
+display:flex;
+align-items:center;
+gap:15px;
+margin-bottom:30px;
+}
+
+.stat-icon{
+width:45px;
+height:45px;
+border-radius:10px;
+background:#f4efe9;
+display:flex;
+align-items:center;
+justify-content:center;
+color:var(--primary);
+font-size:18px;
+}
+
+.stat-text{
+font-size:13px;
+color:var(--muted);
+}
+
+.stat-number{
+font-size:22px;
+font-weight:700;
+color:var(--primary);
+}
+
+/* SECTION */
+
+.section-box{
+background:var(--card);
+color:var(--text);
+padding:26px;
+border-radius:14px;
+box-shadow:0 10px 25px rgba(0,0,0,0.05);
+border:1px solid var(--border);
+}
+
+/* SEARCH */
+
+.search-wrapper{
+margin-bottom:15px;
+max-width:360px;
+}
+
+.search-box{
+display:flex;
+align-items:center;
+background:#fff;
+border:1px solid var(--border);
+border-radius:30px;
+padding:10px 16px;
+box-shadow:0 3px 10px rgba(0,0,0,0.04);
+}
+
+.search-box input{
+border:none;
+outline:none;
+flex:1;
+font-size:14px;
+background:none;
+color:var(--text);
+}
+
+/* TABLE */
+
+.table{
+width:100%;
+border-collapse:collapse;
+font-size:14px;
+background:white;
+}
+
+.table th{
+font-size:13px;
+color:white;
+padding:14px;
+background:var(--primary);
+text-align:center;
+font-weight:600;
+letter-spacing:.3px;
+}
+
+.table td{
+padding:14px;
+border-bottom:1px solid var(--border);
+text-align:center;
+color:#2e2e2e;
+font-weight:500;
+}
+
+/* ROW HOVER */
+
+.table tbody tr{
+transition:all .18s ease;
+}
+
+.table tbody tr:hover{
+background:#f5f5f5;
+cursor:pointer;
+transform:scale(1.01);
+box-shadow:0 4px 10px rgba(0,0,0,0.04);
+}
+
+/* CLIENT INFO */
+
+.client-info{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:10px;
+}
+
+.client-avatar{
+width:36px;
+height:36px;
+border-radius:50%;
+background:#f4efe9;
+display:flex;
+align-items:center;
+justify-content:center;
+color:var(--primary);
+font-weight:600;
+}
+
+/* STATUS */
+
+.status-active{
+color:#28a745;
+font-weight:600;
+}
+
+.status-blocked{
+color:#dc3545;
+font-weight:600;
+}
+
+/* EMPTY */
+
+.empty-row{
+text-align:center;
+padding:30px;
+color:var(--muted);
+}
+
+/* NO RESULT MESSAGE */
+
+#noResultMsg{
+display:none;
+font-size:14px;
+color:#888;
+margin:10px 0 15px 0;
+}
+
+.client-info{
+display:flex;
+align-items:center;
+gap:10px;
+justify-content:flex-start;
+}
