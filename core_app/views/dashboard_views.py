@@ -94,6 +94,7 @@ def admin_dashboard(request):
     completed_commissions = Commission.objects.filter(status="delivered").count()
 
     total_transactions = Transaction.objects.count()
+
     revenue = Transaction.objects.filter(status="completed").aggregate(
         total=Sum("amount")
     )["total"] or 0
@@ -107,36 +108,53 @@ def admin_dashboard(request):
     recent_clients = User.objects.filter(role="client").order_by("-date_joined")[:5]
 
     # ------------------ PENDING ARTISTS ------------------
-    pending_artists = User.objects.filter(role="artist", is_approved=False).order_by("-date_joined")
+    pending_artists = User.objects.filter(
+        role="artist",
+        is_approved=False
+    ).order_by("-date_joined")
 
     # ------------------ NOTIFICATIONS ------------------
     new_artist_notifications = Notification.objects.filter(
         receiver=request.user,
-        notification_type='new_artist'
-    ).order_by('-created_at')
-    new_artist_count = new_artist_notifications.filter(is_read=False).count()
+        notification_type="new_artist",
+        is_read=False
+    ).order_by("-created_at")
 
-    # ------------------ DYNAMIC CHART DATA ------------------
-    # Monthly Revenue (Jan-Dec)
-    monthly_revenue = [0]*12
-    transactions = Transaction.objects.filter(status="completed").annotate(
+    new_artist_count = new_artist_notifications.count()
+
+    # ------------------ MONTHLY REVENUE ------------------
+    monthly_revenue = [0] * 12
+
+    transactions = Transaction.objects.filter(
+        status="completed"
+    ).annotate(
         month=ExtractMonth('created_at')
-    ).values('month').annotate(total=Sum('amount')).order_by('month')
+    ).values(
+        'month'
+    ).annotate(
+        total=Sum('amount')
+    ).order_by('month')
 
     for t in transactions:
         monthly_revenue[t['month'] - 1] = float(t['total'] or 0)
 
-    # Monthly Commissions (Jan-Dec)
-    monthly_commissions = [0]*12
+    # ------------------ MONTHLY COMMISSIONS ------------------
+    monthly_commissions = [0] * 12
+
     commissions = Commission.objects.annotate(
         month=ExtractMonth('created_at')
-    ).values('month').annotate(total=Sum('total_price')).order_by('month')
+    ).values(
+        'month'
+    ).annotate(
+        total=Sum('total_price')
+    ).order_by('month')
 
     for c in commissions:
         monthly_commissions[c['month'] - 1] = float(c['total'] or 0)
 
     # ------------------ RENDER ------------------
     return render(request, "dashboards/admin_dashboard.html", {
+
         # Metrics
         "total_users": total_users,
         "total_artists": total_artists,

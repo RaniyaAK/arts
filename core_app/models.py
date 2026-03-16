@@ -168,6 +168,7 @@ class Commission(models.Model):
 # ---------------- NOTIFICATION ----------------
 class Notification(models.Model):
     NOTIFICATION_TYPES = [
+        ('new_artist', 'New Artist Request'),
         ('commission_request', 'Commission Request'),
         ('advance_paid', 'Advance Paid'),
         ('accepted', 'Accepted'),

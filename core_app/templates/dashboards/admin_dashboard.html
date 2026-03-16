@@ -1,5 +1,8 @@
+
 {% extends "masterss.html" %}
 {% load static %}
+{% load humanize %}
+
 
 {% block title %}Admin Dashboard | Paletra{% endblock %}
 {% block body_class %}admin-dashboard{% endblock %}
@@ -14,10 +17,15 @@
 <div class="topbar">
     <div class="logo">Paletra</div>
     <div class="topbar-right">
-        <div class="notification">
+        <a href="{% url 'admin_artists' %}" class="notification">
             <i class="fas fa-bell"></i>
-            <span>{{ new_artist_count|default:0 }}</span>
-        </div>
+
+
+            {% if new_artist_count %}
+            <span>{{ new_artist_count }}</span>
+            {% endif %}
+
+        </a>
         <div>{{ request.user.username }}</div>
     </div>
 </div>
@@ -46,7 +54,7 @@
             <div class="metric"><i class="fas fa-briefcase"></i><div class="metric-title">Commissions</div><div class="metric-value">{{ total_commissions }}</div></div>
             <div class="metric"><i class="fas fa-check-circle"></i><div class="metric-title">Completed</div><div class="metric-value">{{ completed_commissions }}</div></div>
             <div class="metric"><i class="fas fa-clock"></i><div class="metric-title">Pending</div><div class="metric-value">{{ pending_commissions }}</div></div>
-            <div class="metric"><i class="fas fa-rupee-sign"></i><div class="metric-title">Revenue</div><div class="metric-value">₹{{ revenue }}</div></div>
+            <div class="metric"><i class="fas fa-rupee-sign"></i><div class="metric-title">Revenue</div><div class="metric-value">₹{{ revenue|intcomma }}</div></div>
         </div>
 
         <!-- CHARTS -->
@@ -91,14 +99,18 @@
                     <tr>
                         <td>{{ artist.name }}</td>
                         <td>{{ artist.email }}</td>
-                        <td>{{ artist.date_joined }}</td>
+                        <td>{{ artist.date_joined|date:"M d, Y" }}</td>
                         <td>
                             <a href="{% url 'approve_artist' artist.id %}" class="btn-approve">Approve</a>
                             <a href="{% url 'reject_artist' artist.id %}" class="btn-reject">Reject</a>
                         </td>
                     </tr>
                     {% empty %}
-                    <tr><td colspan="4">No pending artist requests</td></tr>
+                    <tr>
+                    <td colspan="4" style="text-align:center;color:#888;">
+                    No pending artist approvals 🎉
+                    </td>
+                    </tr>
                     {% endfor %}
                 </table>
             </div>
@@ -110,7 +122,7 @@
 <!-- CHARTS SCRIPT -->
 <script>
 /* ------------------ Revenue Growth ------------------ */
-const revenueData = JSON.parse('{{ monthly_revenue|default:"[]"|escapejs }}');
+const revenueData = JSON.parse('{{ monthly_revenue|default:"[0,0,0,0,0,0,0,0,0,0,0,0]"|escapejs }}');
 
 new Chart(document.getElementById('revenueChart'), {
     type: 'line',
@@ -130,7 +142,7 @@ new Chart(document.getElementById('revenueChart'), {
 
 
 /* ------------------ Monthly Commissions ------------------ */
-const commissionData = JSON.parse('{{ monthly_commissions|default:"[]"|escapejs }}');
+const commissionData = JSON.parse('{{ monthly_commissions|default:"[0,0,0,0,0,0,0,0,0,0,0,0]"|escapejs }}');
 
 new Chart(document.getElementById('monthlyCommissionChart'), {
     type: 'bar',
