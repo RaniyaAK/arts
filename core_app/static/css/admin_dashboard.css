@@ -52,6 +52,11 @@ font-weight:500;
 
 .notification{
 position:relative;
+display:flex;
+align-items:center;
+cursor:pointer;
+text-decoration:none;
+padding:6px;
 }
 
 .notification span{
@@ -78,7 +83,9 @@ left:0;
 height:calc(100vh - 80px);
 background:var(--sidebar);
 padding:30px 18px;
+transition:left 0.3s ease;
 }
+
 
 .sidebar a{
 display:flex;
@@ -90,14 +97,15 @@ border-radius:8px;
 color:#cfcfcf;
 text-decoration:none;
 font-size:14px;
-transition:.25s;
+transition:all 0.25s ease;
 }
 
 .sidebar a:hover{
 background:#2c2c33;
 color:white;
-transform:translateX(4px);
+transform:translateX(2px);
 }
+
 
 .sidebar a.active{
 background:var(--primary);
@@ -176,7 +184,9 @@ height:300px;
 .table-wrap{
 max-height:260px;
 overflow-y:auto;
+scrollbar-width:thin;
 }
+
 
 .table{
 width:100%;
@@ -190,12 +200,17 @@ padding:13px;
 text-align:left;
 border-bottom:1px solid var(--border);
 background:#fafafa;
+position:sticky;
+top:0;
+z-index:1;
 }
+
 
 .table td{
 padding:13px;
 border-bottom:1px solid var(--border);
 }
+
 
 .btn-approve{
 background:#28a745;
@@ -214,28 +229,52 @@ border-radius:6px;
 text-decoration:none;
 font-size:13px;
 }
-.notification{
-position:relative;
-display:flex;
-align-items:center;
-cursor:pointer;
-text-decoration:none;
-padding:6px;
-}
-
-.notification span{
-position:absolute;
-top:-5px;
-right:-8px;
-background:#ff4d4d;
-color:white;
-font-size:10px;
-padding:3px 6px;
-border-radius:20px;
-pointer-events:none;
-}
 
 a.notification i{
-color:#CFAF5D !important;
+color:var(--primary);
 font-size:18px;
+}
+
+.section-box h3 {
+    margin-bottom: 25px;
+}
+
+.chart-box canvas{
+max-width:100%;
+}
+
+/* ================= MOBILE SIDEBAR ================= */
+
+/* Hide on desktop */
+.menu-toggle{
+    display:none !important;
+    font-size:20px;
+    cursor:pointer;
+}
+
+/* Mobile only */
+@media (max-width:768px){
+
+.menu-toggle{
+    display:block !important;
+}
+
+/* Hide sidebar initially */
+.sidebar{
+    left:-240px;
+    transition:0.3s ease;
+    z-index:2000;
+}
+
+/* Show sidebar */
+.sidebar.active{
+    left:0;
+}
+
+/* Full width content */
+.main-content{
+    margin-left:0;
+    padding:20px;
+}
+
 }

@@ -15,6 +15,7 @@
 
 <!-- TOPBAR -->
 <div class="topbar">
+    <i class="fas fa-bars menu-toggle" onclick="toggleSidebar()"></i>
     <div class="logo">Paletra</div>
     <div class="topbar-right">
         <a href="{% url 'admin_artists' %}" class="notification">
@@ -190,6 +191,38 @@ new Chart(document.getElementById('commissionChart'), {
         }]
     },
     options: { responsive: true, plugins: { legend: { position: 'top' } } }
+});
+</script>
+
+<script>
+function toggleSidebar(){
+    document.querySelector('.sidebar').classList.toggle('active');
+}
+</script>
+
+<script>
+document.addEventListener('click', function(e){
+    const sidebar = document.querySelector('.sidebar');
+    const toggle = document.querySelector('.menu-toggle');
+
+    if (window.innerWidth <= 768) {
+        if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
+            sidebar.classList.remove('active');
+        }
+    }
+});
+</script>
+
+<script>
+document.addEventListener('click', function(e){
+    const sidebar = document.querySelector('.sidebar');
+    const toggle = document.querySelector('.menu-toggle');
+
+    if (window.innerWidth <= 768){
+        if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
+            sidebar.classList.remove('active');
+        }
+    }
 });
 </script>
 
