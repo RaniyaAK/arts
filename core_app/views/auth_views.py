@@ -43,12 +43,14 @@ def register_view(request):
         user.save()
 
         if user.role == "artist":
-            admin_user = User.objects.filter(is_superuser=True).first()
-            if admin_user:
+
+            admins = User.objects.filter(is_superuser=True)
+
+            for admin in admins:
                 Notification.objects.create(
-                    receiver=admin_user,
-                    message=f"New artist registered: {user.name}",
-                    notification_type="new_artist"
+                    receiver=admin,
+                    notification_type="new_artist",
+                    message=f"New artist registered: {user.username}"
                 )
 
         if user.role == "artist":

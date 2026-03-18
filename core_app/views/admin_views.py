@@ -4,10 +4,17 @@ from django.contrib import messages
 
 from ..models import User, Notification
 
-
+@login_required
 def admin_artists(request):
     if not request.user.is_superuser:
         return redirect("home")
+
+    # Mark new artist notifications as read
+    Notification.objects.filter(
+        receiver=request.user,
+        notification_type="new_artist",
+        is_read=False
+    ).update(is_read=True)
 
     # Fetch only artists
     artists = User.objects.filter(role="artist").order_by("-date_joined")
@@ -15,8 +22,8 @@ def admin_artists(request):
     context = {
         "artists": artists
     }
-    return render(request, "admin_dashboard/admin_artists.html", context)
 
+    return render(request, "admin_dashboard/admin_artists.html", context)
 
 
 def admin_clients(request):
