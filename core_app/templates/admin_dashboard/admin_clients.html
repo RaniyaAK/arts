@@ -17,11 +17,44 @@ color:#777;
 margin-top:15px;
 font-weight:500;
 }
+
+/* ================= MOBILE SIDEBAR ================= */
+
+.menu-toggle{
+display:none;
+font-size:20px;
+cursor:pointer;
+}
+
+@media (max-width:768px){
+
+.menu-toggle{
+display:block;
+}
+
+.sidebar{
+left:-240px;
+transition:0.3s ease;
+z-index:2000;
+}
+
+.sidebar.active{
+left:0;
+}
+
+.main-content{
+margin-left:0;
+padding:20px;
+}
+
+}
 </style>
 
 <!-- TOPBAR -->
 
 <div class="topbar">
+
+<i class="fas fa-bars menu-toggle" onclick="toggleSidebar()"></i>
 
 <div class="logo">Paletra</div>
 
@@ -191,6 +224,23 @@ noResult.style.display = "block";
 noResult.style.display = "none";
 }
 
+});
+
+/* SIDEBAR TOGGLE */
+
+function toggleSidebar(){
+    document.querySelector('.sidebar').classList.toggle('active');
+}
+
+document.addEventListener('click', function(e){
+    const sidebar = document.querySelector('.sidebar');
+    const toggle = document.querySelector('.menu-toggle');
+
+    if (window.innerWidth <= 768){
+        if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
+            sidebar.classList.remove('active');
+        }
+    }
 });
 
 </script>

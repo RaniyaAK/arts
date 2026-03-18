@@ -262,7 +262,6 @@ max-width:100%;
 /* Hide sidebar initially */
 .sidebar{
     left:-240px;
-    transition:0.3s ease;
     z-index:2000;
 }
 
@@ -278,3 +277,4 @@ max-width:100%;
 }
 
 }
+

@@ -4,329 +4,307 @@
 
 {% block content %}
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <style>
-
 /* Hide master navbar */
-
 .master-topbar,
 header,
 .navbar,
 .top-nav,
 .site-header{
-display:none !important;
+    display:none !important;
 }
 
 /* COLORS */
-
 :root{
---primary:#8B5E3C;
---sidebar:#1f1f24;
---bg:#F6F7FB;
---card:#ffffff;
---text:#2e2e2e;
---muted:#777;
---border:#eeeeee;
+    --primary:#8B5E3C;
+    --sidebar:#1f1f24;
+    --bg:#F6F7FB;
+    --card:#ffffff;
+    --text:#2e2e2e;
+    --muted:#777;
+    --border:#eeeeee;
 }
 
 /* BODY */
-
 body.admin-dashboard{
-background:var(--bg);
-font-family:'Inter',sans-serif;
-color:var(--text);
+    background:var(--bg);
+    font-family:'Inter',sans-serif;
+    color:var(--text);
 }
 
 /* TOPBAR */
-
 .topbar{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:80px;
-background:white;
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:0 40px;
-box-shadow:0 6px 20px rgba(0,0,0,0.06);
-z-index:1000;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:80px;
+    background:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 20px;
+    box-shadow:0 6px 20px rgba(0,0,0,0.06);
+    z-index:1000;
 }
 
 .logo{
-font-size:22px;
-font-weight:700;
-color:var(--primary);
+    font-size:22px;
+    font-weight:700;
+    color:var(--primary);
 }
 
 .topbar-right{
-display:flex;
-align-items:center;
-gap:25px;
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+/* Hamburger Menu Icon */
+.menu-toggle{
+    display:none;
+    font-size:24px;
+    cursor:pointer;
 }
 
 /* LAYOUT */
-
 .admin-container{
-display:flex;
-margin-top:80px;
+    display:flex;
+    margin-top:80px;
 }
 
 /* SIDEBAR */
-
 .sidebar{
-width:240px;
-position:fixed;
-top:80px;
-left:0;
-height:calc(100vh - 80px);
-background:var(--sidebar);
-padding:30px 18px;
+    width:240px;
+    position:fixed;
+    top:80px;
+    left:0;
+    height:calc(100vh - 80px);
+    background:var(--sidebar);
+    padding:30px 18px;
+    transition:left 0.3s ease;
 }
 
 .sidebar a{
-display:flex;
-align-items:center;
-gap:12px;
-padding:13px 14px;
-margin-bottom:12px;
-border-radius:8px;
-color:#cfcfcf;
-text-decoration:none;
-font-size:14px;
-transition:all .25s ease;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:13px 14px;
+    margin-bottom:12px;
+    border-radius:8px;
+    color:#cfcfcf;
+    text-decoration:none;
+    font-size:14px;
+    transition:all .25s ease;
 }
 
 .sidebar a:hover{
-background:#2c2c33;
-color:white;
-transform:translateX(3px);
+    background:#2c2c33;
+    color:white;
+    transform:translateX(3px);
 }
 
 .sidebar a.active{
-background:var(--primary);
-color:white;
+    background:var(--primary);
+    color:white;
 }
 
 /* MAIN */
-
 .main-content{
-margin-left:240px;
-padding:40px;
-width:100%;
+    margin-left:240px;
+    padding:40px;
+    width:100%;
+    transition: margin-left 0.3s ease;
 }
 
 .page-title{
-font-size:28px;
-font-weight:700;
-margin-bottom:25px;
+    font-size:28px;
+    font-weight:700;
+    margin-bottom:25px;
 }
 
 /* SECTION BOX */
-
 .section-box{
-background:var(--card);
-padding:26px;
-border-radius:14px;
-box-shadow:0 10px 25px rgba(0,0,0,0.05);
-border:1px solid var(--border);
+    background:var(--card);
+    padding:26px;
+    border-radius:14px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.05);
+    border:1px solid var(--border);
 }
 
 /* TABLE */
-
 .table{
-width:100%;
-border-collapse:collapse;
-font-size:14px;
+    width:100%;
+    border-collapse:collapse;
+    font-size:14px;
 }
 
 .table th{
-font-size:13px;
-color:white;
-padding:13px;
-background:var(--primary);
-text-align:center;
+    font-size:13px;
+    color:white;
+    padding:13px;
+    background:var(--primary);
+    text-align:center;
 }
 
 .table td{
-padding:13px;
-border-bottom:1px solid var(--border);
-text-align:center;
+    padding:13px;
+    border-bottom:1px solid var(--border);
+    text-align:center;
 }
 
 .table tr:hover{
-background:#fafafa;
+    background:#fafafa;
 }
 
 /* STATUS */
-
 .status-approved{
-color:#28a745;
-font-weight:600;
+    color:#28a745;
+    font-weight:600;
 }
 
 .status-pending{
-color:#dc3545;
-font-weight:600;
+    color:#dc3545;
+    font-weight:600;
 }
 
-/* ACTION BUTTONS */
-
+/* BUTTONS */
 .btn-approve{
-background:#28a745;
-color:white;
-padding:6px 12px;
-border-radius:6px;
-text-decoration:none;
-font-size:13px;
-margin-right:6px;
+    background:#28a745;
+    color:white;
+    padding:6px 12px;
+    border-radius:6px;
+    text-decoration:none;
+    font-size:13px;
+    margin-right:6px;
 }
 
 .btn-approve:hover{
-background:#23913c;
+    background:#23913c;
 }
 
 .btn-reject{
-background:#dc3545;
-color:white;
-padding:6px 12px;
-border-radius:6px;
-text-decoration:none;
-font-size:13px;
+    background:#dc3545;
+    color:white;
+    padding:6px 12px;
+    border-radius:6px;
+    text-decoration:none;
+    font-size:13px;
 }
 
 .btn-reject:hover{
-background:#b92b3a;
+    background:#b92b3a;
 }
 
+/* RESPONSIVE MOBILE */
+@media (max-width: 991px){
+    .menu-toggle{
+        display:block;
+    }
+    .sidebar{
+        left:-240px;
+        z-index:2000;
+    }
+    .sidebar.active{
+        left:0;
+    }
+    .main-content{
+        margin-left:0;
+        padding:20px;
+    }
+}
 </style>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 <!-- TOPBAR -->
-
 <div class="topbar">
-
-<div class="logo">Paletra</div>
-
-<div class="topbar-right">
-
-<i class="fas fa-bell"></i>
-
-<div>{{request.user.username}}</div>
-
+    <div class="d-flex align-items-center gap-3">
+        <i class="fas fa-bars menu-toggle" onclick="toggleSidebar()"></i>
+        <div class="logo">Paletra</div>
+    </div>
+    <div class="topbar-right">
+        <i class="fas fa-bell"></i>
+        <div>{{ request.user.username }}</div>
+    </div>
 </div>
-
-</div>
-
 
 <div class="admin-container">
 
-<!-- SIDEBAR -->
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <a href="{% url 'admin_dashboard' %}"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="{% url 'admin_artists' %}" class="active"><i class="fas fa-palette"></i> Artists</a>
+        <a href="{% url 'admin_clients' %}"><i class="fas fa-users"></i> Clients</a>
+        <a href="{% url 'admin_transactions' %}"><i class="fas fa-money-bill-wave"></i> Transactions</a>
+        <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
 
-<div class="sidebar">
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
 
-<a href="{% url 'admin_dashboard' %}">
-<i class="fas fa-home"></i> Dashboard
-</a>
+        <h1 class="page-title">Artists</h1>
 
-<a href="{% url 'admin_artists' %}" class="active">
-<i class="fas fa-palette"></i> Artists
-</a>
+        <div class="section-box">
+            <h3 style="margin-bottom:20px;">Registered Artists</h3>
 
-<a href="{% url 'admin_clients' %}">
-<i class="fas fa-users"></i> Clients
-</a>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Joined</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in artists %}
+                    <tr>
+                        <td>{{ a.name }}</td>
+                        <td>{{ a.email }}</td>
+                        <td>
+                            {% if a.is_approved %}
+                                <span class="status-approved">Approved</span>
+                            {% else %}
+                                <span class="status-pending">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ a.date_joined }}</td>
+                        <td>
+                            {% if not a.is_approved %}
+                                <a href="{% url 'approve_artist' a.id %}" class="btn-approve">Approve</a>
+                                <a href="{% url 'reject_artist' a.id %}" class="btn-reject">Reject</a>
+                            {% else %}
+                                <span style="color:#999;">—</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-<a href="{% url 'admin_transactions' %}">
-<i class="fas fa-money-bill-wave"></i> Transactions
-</a>
-
-<a href="{% url 'logout' %}">
-<i class="fas fa-sign-out-alt"></i> Logout
-</a>
-
-</div>
-
-
-<!-- MAIN CONTENT -->
-
-<div class="main-content">
-
-<h1 class="page-title">Artists</h1>
-
-<div class="section-box">
-
-<h3 style="margin-bottom:20px;">Registered Artists</h3>
-
-<table class="table">
-
-<thead>
-
-<tr>
-<th>Name</th>
-<th>Email</th>
-<th>Status</th>
-<th>Joined</th>
-<th>Action</th>
-</tr>
-
-</thead>
-
-<tbody>
-
-{% for a in artists %}
-
-<tr>
-
-<td>{{ a.name }}</td>
-
-<td>{{ a.email }}</td>
-
-<td>
-
-{% if a.is_approved %}
-<span class="status-approved">Approved</span>
-{% else %}
-<span class="status-pending">Pending</span>
-{% endif %}
-
-</td>
-
-<td>{{ a.date_joined }}</td>
-
-<td>
-
-{% if not a.is_approved %}
-
-<a href="{% url 'approve_artist' a.id %}" class="btn-approve">
-Approve
-</a>
-
-<a href="{% url 'reject_artist' a.id %}" class="btn-reject">
-Reject
-</a>
-
-{% else %}
-
-<span style="color:#999;">—</span>
-
-{% endif %}
-
-</td>
-
-</tr>
-
-{% endfor %}
-
-</tbody>
-
-</table>
+    </div>
 
 </div>
 
-</div>
+<script>
+function toggleSidebar(){
+    document.querySelector('.sidebar').classList.toggle('active');
+}
 
-</div>
+// Click outside sidebar to close on mobile
+document.addEventListener('click', function(e){
+    const sidebar = document.querySelector('.sidebar');
+    const toggle = document.querySelector('.menu-toggle');
+
+    if (window.innerWidth <= 991){
+        if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
+            sidebar.classList.remove('active');
+        }
+    }
+});
+</script>
 
 {% endblock %}
