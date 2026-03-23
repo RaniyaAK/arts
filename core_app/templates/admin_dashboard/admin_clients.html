@@ -6,243 +6,135 @@
 
 {% block content %}
 
+<!-- CSS -->
+ <link rel="stylesheet" href="{% static 'css/admin_base.css' %}">
 <link rel="stylesheet" href="{% static 'css/admin_clients.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<style>
-#noResultMsg{
-display:none;
-text-align:center;
-color:#777;
-margin-top:15px;
-font-weight:500;
-}
-
-/* ================= MOBILE SIDEBAR ================= */
-
-.menu-toggle{
-display:none;
-font-size:20px;
-cursor:pointer;
-}
-
-@media (max-width:768px){
-
-.menu-toggle{
-display:block;
-}
-
-.sidebar{
-left:-240px;
-transition:0.3s ease;
-z-index:2000;
-}
-
-.sidebar.active{
-left:0;
-}
-
-.main-content{
-margin-left:0;
-padding:20px;
-}
-
-}
-</style>
-
 <!-- TOPBAR -->
-
 <div class="topbar">
-
-<i class="fas fa-bars menu-toggle" onclick="toggleSidebar()"></i>
-
-<div class="logo">Paletra</div>
-
-<div class="topbar-right">
-<i class="fas fa-bell"></i>
-<div>{{request.user.username}}</div>
-</div>
-
+    <i class="fas fa-bars menu-toggle" onclick="toggleSidebar()"></i>
+    <div class="logo">Paletra</div>
+    <div class="topbar-right">
+        <i class="fas fa-bell"></i>
+        <div>{{ request.user.username }}</div>
+    </div>
 </div>
 
 <div class="admin-container">
 
-<!-- SIDEBAR -->
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <a href="{% url 'admin_dashboard' %}"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="{% url 'admin_artists' %}"><i class="fas fa-palette"></i> Artists</a>
+        <a href="{% url 'admin_clients' %}" class="active"><i class="fas fa-users"></i> Clients</a>
+        <a href="{% url 'admin_transactions' %}"><i class="fas fa-money-bill-wave"></i> Transactions</a>
+        <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
 
-<div class="sidebar">
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
 
-<a href="{% url 'admin_dashboard' %}">
-<i class="fas fa-home"></i> Dashboard
-</a>
+        <div class="page-header">
+            <h1 class="page-title">Clients</h1>
+        </div>
 
-<a href="{% url 'admin_artists' %}">
-<i class="fas fa-palette"></i> Artists
-</a>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div>
+                <div class="stat-text">Total Clients</div>
+                <div class="stat-number">{{ clients|length }}</div>
+            </div>
+        </div>
 
-<a href="{% url 'admin_clients' %}" class="active">
-<i class="fas fa-users"></i> Clients
-</a>
+        <div class="section-box">
 
-<a href="{% url 'admin_transactions' %}">
-<i class="fas fa-money-bill-wave"></i> Transactions
-</a>
+            <div class="search-wrapper">
+                <div class="search-box">
+                    <i class="fas fa-search text-muted me-2"></i>
+                    <input type="text" id="clientSearch" placeholder="Search clients by name or email">
+                </div>
+            </div>
 
-<a href="{% url 'logout' %}">
-<i class="fas fa-sign-out-alt"></i> Logout
-</a>
+            <p id="noResultMsg">No clients match your search</p>
 
+            <table class="table" id="clientTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Joined</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in clients %}
+                    <tr class="client-row">
+                        <td>
+                            <div class="client-info">
+                                <div class="client-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                {{ c.name }}
+                            </div>
+                        </td>
+                        <td>{{ c.email }}</td>
+                        <td>{{ c.date_joined|date:"M d, Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="empty-row">No clients found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
 </div>
 
-<!-- MAIN -->
-
-<div class="main-content">
-
-<div class="page-header">
-<h1 class="page-title">Clients</h1>
-</div>
-
-<!-- STAT CARD -->
-
-<div class="stat-card">
-
-<div class="stat-icon">
-<i class="fas fa-users"></i>
-</div>
-
-<div>
-<div class="stat-text">Total Clients</div>
-<div class="stat-number">{{clients|length}}</div>
-</div>
-
-</div>
-
-<div class="section-box">
-
-<!-- SEARCH -->
-
-<div class="search-wrapper">
-
-<div class="search-box">
-<i class="fas fa-search text-muted me-2"></i>
-
-<input
-type="text"
-id="clientSearch"
-placeholder="Search clients by name or email"
->
-
-</div>
-
-</div>
-
-<p id="noResultMsg">No clients match your search</p>
-
-<table class="table" id="clientTable">
-
-<thead>
-<tr>
-<th>Name</th>
-<th>Email</th>
-<th>Joined</th>
-</tr>
-</thead>
-
-<tbody>
-
-{% for c in clients %}
-
-<tr class="client-row">
-
-<td>
-
-<div class="client-info">
-
-<div class="client-avatar">
-<i class="fas fa-user"></i>
-</div>
-
-{{c.name}}
-
-</div>
-
-</td>
-
-<td>{{c.email}}</td>
-
-<td>{{c.date_joined|date:"M d, Y"}}</td>
-
-</tr>
-
-{% empty %}
-
-<tr>
-<td colspan="3" class="empty-row">
-No clients found
-</td>
-</tr>
-
-{% endfor %}
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-
-</div>
-
+<!-- JS -->
 <script>
+    // SEARCH FUNCTIONALITY
+    const searchInput = document.getElementById("clientSearch");
+    const rows = document.querySelectorAll(".client-row");
+    const noResult = document.getElementById("noResultMsg");
 
-const searchInput = document.getElementById("clientSearch");
-const rows = document.querySelectorAll(".client-row");
-const noResult = document.getElementById("noResultMsg");
+    searchInput.addEventListener("input", function(){
+        const value = this.value.toLowerCase().trim();
+        let visibleCount = 0;
 
-searchInput.addEventListener("input", function(){
+        rows.forEach(row => {
+            const name = row.children[0].textContent.toLowerCase();
+            const email = row.children[1].textContent.toLowerCase();
 
-const value = this.value.toLowerCase().trim();
-let visibleCount = 0;
+            if(name.includes(value) || email.includes(value)){
+                row.style.display = "table-row";
+                visibleCount++;
+            } else {
+                row.style.display = "none";
+            }
+        });
 
-rows.forEach(row => {
+        noResult.style.display = (rows.length > 0 && visibleCount === 0 && value !== "") ? "block" : "none";
+    });
 
-const name = row.children[0].textContent.toLowerCase();
-const email = row.children[1].textContent.toLowerCase();
-
-if(name.includes(value) || email.includes(value)){
-row.style.display = "table-row";
-visibleCount++;
-}else{
-row.style.display = "none";
-}
-
-});
-
-if(rows.length > 0 && visibleCount === 0 && value !== ""){
-noResult.style.display = "block";
-}else{
-noResult.style.display = "none";
-}
-
-});
-
-/* SIDEBAR TOGGLE */
-
-function toggleSidebar(){
-    document.querySelector('.sidebar').classList.toggle('active');
-}
-
-document.addEventListener('click', function(e){
-    const sidebar = document.querySelector('.sidebar');
-    const toggle = document.querySelector('.menu-toggle');
-
-    if (window.innerWidth <= 768){
-        if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
-            sidebar.classList.remove('active');
-        }
+    // SIDEBAR TOGGLE
+    function toggleSidebar(){
+        document.querySelector('.sidebar').classList.toggle('active');
     }
-});
 
+    document.addEventListener('click', function(e){
+        const sidebar = document.querySelector('.sidebar');
+        const toggle = document.querySelector('.menu-toggle');
+
+        if (window.innerWidth <= 768){
+            if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
+                sidebar.classList.remove('active');
+            }
+        }
+    });
 </script>
 
 {% endblock %}

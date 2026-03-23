@@ -1,0 +1,72 @@
+/* SEARCH */
+.search-wrapper{
+    margin-bottom:20px;
+}
+
+.search-box{
+    display:flex;
+    align-items:center;
+    background:#f1f3f6;
+    padding:10px 15px;
+    border-radius:10px;
+    border:1px solid transparent;
+    max-width:400px;
+    transition:0.25s;
+}
+
+.search-box i{
+    color:#999;
+}
+
+.search-box input{
+    border:none;
+    outline:none;
+    background:transparent;
+    margin-left:10px;
+    width:100%;
+}
+
+/* Focus */
+.search-box:focus-within{
+    border:1px solid var(--primary);
+    background:white;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* STATUS */
+.status-approved{
+    color:#28a745;
+    font-weight:600;
+}
+
+.status-pending{
+    color:#dc3545;
+    font-weight:600;
+}
+
+/* BUTTONS */
+.btn-approve{
+    background:#28a745;
+    color:white;
+    padding:6px 12px;
+    border-radius:6px;
+    text-decoration:none;
+    font-size:13px;
+}
+
+.btn-approve:hover{
+    background:#23913c;
+}
+
+.btn-reject{
+    background:#dc3545;
+    color:white;
+    padding:6px 12px;
+    border-radius:6px;
+    text-decoration:none;
+    font-size:13px;
+}
+
+.btn-reject:hover{
+    background:#b92b3a;
+}

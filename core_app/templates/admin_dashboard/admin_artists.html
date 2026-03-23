@@ -1,221 +1,13 @@
 {% extends "masterss.html" %}
 {% block title %}Artists | Admin{% endblock %}
 {% block body_class %}admin-dashboard{% endblock %}
-
+{% load static %}
 {% block content %}
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/admin_base.css' %}">
+<link rel="stylesheet" href="{% static 'css/admin_artists.css' %}">
 
-<style>
-/* Hide master navbar */
-.master-topbar,
-header,
-.navbar,
-.top-nav,
-.site-header{
-    display:none !important;
-}
-
-/* COLORS */
-:root{
-    --primary:#8B5E3C;
-    --sidebar:#1f1f24;
-    --bg:#F6F7FB;
-    --card:#ffffff;
-    --text:#2e2e2e;
-    --muted:#777;
-    --border:#eeeeee;
-}
-
-/* BODY */
-body.admin-dashboard{
-    background:var(--bg);
-    font-family:'Inter',sans-serif;
-    color:var(--text);
-}
-
-/* TOPBAR */
-.topbar{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:80px;
-    background:white;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:0 20px;
-    box-shadow:0 6px 20px rgba(0,0,0,0.06);
-    z-index:1000;
-}
-
-.logo{
-    font-size:22px;
-    font-weight:700;
-    color:var(--primary);
-}
-
-.topbar-right{
-    display:flex;
-    align-items:center;
-    gap:15px;
-}
-
-/* Hamburger Menu Icon */
-.menu-toggle{
-    display:none;
-    font-size:24px;
-    cursor:pointer;
-}
-
-/* LAYOUT */
-.admin-container{
-    display:flex;
-    margin-top:80px;
-}
-
-/* SIDEBAR */
-.sidebar{
-    width:240px;
-    position:fixed;
-    top:80px;
-    left:0;
-    height:calc(100vh - 80px);
-    background:var(--sidebar);
-    padding:30px 18px;
-    transition:left 0.3s ease;
-}
-
-.sidebar a{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:13px 14px;
-    margin-bottom:12px;
-    border-radius:8px;
-    color:#cfcfcf;
-    text-decoration:none;
-    font-size:14px;
-    transition:all .25s ease;
-}
-
-.sidebar a:hover{
-    background:#2c2c33;
-    color:white;
-    transform:translateX(3px);
-}
-
-.sidebar a.active{
-    background:var(--primary);
-    color:white;
-}
-
-/* MAIN */
-.main-content{
-    margin-left:240px;
-    padding:40px;
-    width:100%;
-    transition: margin-left 0.3s ease;
-}
-
-.page-title{
-    font-size:28px;
-    font-weight:700;
-    margin-bottom:25px;
-}
-
-/* SECTION BOX */
-.section-box{
-    background:var(--card);
-    padding:26px;
-    border-radius:14px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.05);
-    border:1px solid var(--border);
-}
-
-/* TABLE */
-.table{
-    width:100%;
-    border-collapse:collapse;
-    font-size:14px;
-}
-
-.table th{
-    font-size:13px;
-    color:white;
-    padding:13px;
-    background:var(--primary);
-    text-align:center;
-}
-
-.table td{
-    padding:13px;
-    border-bottom:1px solid var(--border);
-    text-align:center;
-}
-
-.table tr:hover{
-    background:#fafafa;
-}
-
-/* STATUS */
-.status-approved{
-    color:#28a745;
-    font-weight:600;
-}
-
-.status-pending{
-    color:#dc3545;
-    font-weight:600;
-}
-
-/* BUTTONS */
-.btn-approve{
-    background:#28a745;
-    color:white;
-    padding:6px 12px;
-    border-radius:6px;
-    text-decoration:none;
-    font-size:13px;
-    margin-right:6px;
-}
-
-.btn-approve:hover{
-    background:#23913c;
-}
-
-.btn-reject{
-    background:#dc3545;
-    color:white;
-    padding:6px 12px;
-    border-radius:6px;
-    text-decoration:none;
-    font-size:13px;
-}
-
-.btn-reject:hover{
-    background:#b92b3a;
-}
-
-/* RESPONSIVE MOBILE */
-@media (max-width: 991px){
-    .menu-toggle{
-        display:block;
-    }
-    .sidebar{
-        left:-240px;
-        z-index:2000;
-    }
-    .sidebar.active{
-        left:0;
-    }
-    .main-content{
-        margin-left:0;
-        padding:20px;
-    }
-}
-</style>
 
 <!-- TOPBAR -->
 <div class="topbar">
@@ -243,7 +35,17 @@ body.admin-dashboard{
     <!-- MAIN CONTENT -->
     <div class="main-content">
 
+
         <h1 class="page-title">Artists</h1>
+
+        <div class="search-wrapper">
+                <div class="search-box">
+                    <i class="fas fa-search text-muted me-2"></i>
+                    <input type="text" id="artistSearch" placeholder="Search artists by name or email">
+                </div>
+        </div>
+
+        <p id="noResultMsg" style="display:none;">No artists match your search</p>
 
         <div class="section-box">
             <h3 style="margin-bottom:20px;">Registered Artists</h3>
@@ -260,7 +62,7 @@ body.admin-dashboard{
                 </thead>
                 <tbody>
                     {% for a in artists %}
-                    <tr>
+                    <tr class="artist-row">
                         <td>{{ a.name }}</td>
                         <td>{{ a.email }}</td>
                         <td>
@@ -306,5 +108,34 @@ document.addEventListener('click', function(e){
     }
 });
 </script>
+
+
+<script>
+
+    // SEARCH FUNCTIONALITY
+    const searchInput = document.getElementById("artistSearch");
+    const rows = document.querySelectorAll(".artist-row");
+    const noResult = document.getElementById("noResultMsg");
+
+    searchInput.addEventListener("input", function(){
+        const value = this.value.toLowerCase().trim();
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const name = row.children[0].textContent.toLowerCase();
+            const email = row.children[1].textContent.toLowerCase();
+
+            if(name.includes(value) || email.includes(value)){
+                row.style.display = "table-row";
+                visibleCount++;
+            } else {
+                row.style.display = "none";
+            }
+        });
+
+        noResult.style.display = (rows.length > 0 && visibleCount === 0 && value !== "") ? "block" : "none";
+    });
+</script>
+
 
 {% endblock %}
