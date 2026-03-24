@@ -85,9 +85,17 @@ def admin_dashboard(request):
         return redirect("login")
 
     # ------------------ METRICS ------------------
-    total_users = User.objects.count()
-    total_artists = User.objects.filter(role="artist").count()
-    total_clients = User.objects.filter(role="client").count()
+    total_users = User.objects.filter(is_superuser=False).count()
+
+    total_artists = User.objects.filter(
+        role="artist",
+        is_superuser=False
+    ).count()
+
+    total_clients = User.objects.filter(
+        role="client",
+        is_superuser=False
+    ).count()
 
     total_commissions = Commission.objects.count()
     pending_commissions = Commission.objects.filter(status="pending").count()
@@ -183,3 +191,4 @@ def admin_dashboard(request):
         "monthly_revenue": monthly_revenue,
         "monthly_commissions": monthly_commissions,
     })
+

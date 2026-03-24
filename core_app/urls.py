@@ -22,9 +22,9 @@ from .views.profile_views import(
 
 from .views.dashboard_views import(
     home,
-    artist_dashboard,
     admin_dashboard,
-    client_dashboard
+    artist_dashboard,
+    client_dashboard,
 
 )
 
@@ -34,7 +34,8 @@ from .views.admin_views import(
     admin_notifications,
     approve_artist,
     reject_artist,
-    admin_transactions
+    admin_transactions,
+    admin_commissions,
 
 )
 
@@ -74,7 +75,6 @@ from .views.common_views import(
     delete_notification,
     unread_notification_count,
     chatbot_api,
-    
 
 )
 
@@ -82,7 +82,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('', home, name='home'),
-
 
     # auth
     path('register/', register_view, name='register'),
@@ -110,6 +109,8 @@ urlpatterns = [
     path("admin-clients/", admin_clients, name="admin_clients"),
     path('approve-artist/<int:user_id>/', approve_artist, name='approve_artist'),
     path('reject-artist/<int:user_id>/', reject_artist, name='reject_artist'),
+    path('admin-transactions/',admin_transactions, name='admin_transactions'),
+    path('admin-commissions/',admin_commissions, name='admin_commissions'),
 
 
     # artist_dashboard
@@ -124,7 +125,6 @@ urlpatterns = [
     path('commission/<int:commission_id>/cancel/', cancel_commission, name='cancel_commission'),
     path('commission/<int:commission_id>/<str:status>/', update_commission_status, name='update_commission_status'),
     
-
 
     # client_dashboard
     path('request-commission/<int:artist_id>/', request_commission, name='request_commission'),
@@ -148,14 +148,11 @@ urlpatterns = [
     path('notification/delete/<int:notification_id>/', delete_notification, name='delete_notification'),
 
     path("chatbot-api/", chatbot_api, name="chatbot_api"),
-    path('admin-transactions/',admin_transactions, name='admin_transactions'),
-
 
 
 ]
 
     # path('artist/revenue/', views.artist_revenue, name='artist_revenue'),
-
 
 
 

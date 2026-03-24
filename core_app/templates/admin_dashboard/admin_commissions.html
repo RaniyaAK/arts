@@ -1,0 +1,105 @@
+{% extends "masterss.html" %}
+
+{% block title %}Commissions | Admin{% endblock %}
+{% block body_class %}admin-dashboard{% endblock %}
+{% load static %}
+
+{% block content %}
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/admin_commissions.css' %}">
+
+<!-- TOPBAR -->
+<div class="topbar">
+    <div class="logo">Paletra</div>
+    <div class="topbar-right">
+        <i class="fas fa-bell"></i>
+        <div>{{ request.user.username }}</div>
+    </div>
+</div>
+
+<div class="admin-container">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+    <a href="{% url 'admin_dashboard' %}">
+        <i class="fas fa-home"></i> Dashboard
+    </a>
+
+    <a href="{% url 'admin_artists' %}">
+        <i class="fas fa-palette"></i> Artists
+    </a>
+
+    <a href="{% url 'admin_clients' %}">
+        <i class="fas fa-users"></i> Clients
+    </a>
+
+    <a href="{% url 'admin_commissions' %}" class="active">
+        <i class="fas fa-briefcase"></i> Commissions
+    </a>
+
+    <a href="{% url 'admin_transactions' %}">
+        <i class="fas fa-money-bill-wave"></i> Transactions
+    </a>
+
+    <a href="{% url 'logout' %}">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
+
+</div>
+
+<!-- MAIN -->
+<div class="main-content">
+
+<h1 class="page-title">All Commissions</h1>
+
+<div class="table-card">
+
+<table class="table">
+
+<tr>
+<th>#</th>
+<th>ID</th>
+<th>Title</th>
+<th>Client</th>
+<th>Artist</th>
+<th>Status</th>
+<th>Price</th>
+<th>Date</th>
+</tr>
+
+{% for c in commissions %}
+<tr>
+<td>{{ forloop.counter }}</td>
+<td>{{ c.commission_id }}</td>
+<td>{{ c.title }}</td>
+<td>{{ c.client.username }}</td>
+<td>{{ c.artist.username }}</td>
+
+<td>
+<span class="status {{ c.status }}">
+{{ c.status }}
+</span>
+</td>
+
+<td>₹{{ c.total_price }}</td>
+<td>{{ c.created_at|date:"M d, Y" }}</td>
+</tr>
+{% empty %}
+<tr>
+<td colspan="8" style="text-align:center;padding:20px;">
+No commissions found
+</td>
+</tr>
+{% endfor %}
+
+</table>
+
+</div>
+
+</div>
+</div>
+
+{% endblock %}

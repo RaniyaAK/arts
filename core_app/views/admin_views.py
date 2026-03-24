@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.core.paginator import Paginator
 
-from ..models import User, Notification
+
+from ..models import User, Notification, Commission, Transaction
+
 
 @login_required
 def admin_artists(request):
@@ -67,9 +70,18 @@ def admin_notifications(request):
         "notifications": notifications
     })
 
-from django.shortcuts import render
-from django.core.paginator import Paginator
-from ..models import Transaction
+
+
+@login_required
+def admin_commissions(request):
+    if not request.user.is_superuser:
+        return redirect("login")
+
+    commissions = Commission.objects.all().order_by("-created_at")
+
+    return render(request, "admin_dashboard/admin_commissions.html", {
+        "commissions": commissions
+    })
 
 
 def admin_transactions(request):
