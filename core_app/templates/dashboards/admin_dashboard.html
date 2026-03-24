@@ -94,11 +94,11 @@
             <div class="table-wrap">
                 <table class="table">
                     <tr>
-                        <th>Name</th><th>Email</th><th>Joined</th><th>Action</th>
+                        <th>User Name</th><th>Email</th><th>Joined</th><th>Action</th>
                     </tr>
                     {% for artist in pending_artists %}
                     <tr>
-                        <td>{{ artist.name }}</td>
+                        <td>{{ artist.username }}</td>
                         <td>{{ artist.email }}</td>
                         <td>{{ artist.date_joined|date:"M d, Y" }}</td>
                         <td>
