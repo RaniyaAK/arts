@@ -205,19 +205,6 @@ document.addEventListener('click', function(e){
     const sidebar = document.querySelector('.sidebar');
     const toggle = document.querySelector('.menu-toggle');
 
-    if (window.innerWidth <= 768) {
-        if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
-            sidebar.classList.remove('active');
-        }
-    }
-});
-</script>
-
-<script>
-document.addEventListener('click', function(e){
-    const sidebar = document.querySelector('.sidebar');
-    const toggle = document.querySelector('.menu-toggle');
-
     if (window.innerWidth <= 768){
         if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
             sidebar.classList.remove('active');
