@@ -92,14 +92,15 @@ body.admin-dashboard {
 .sidebar a {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 13px 20px;
+    gap: 15px;
+    padding: 19px 25px;
     color: #cfcfcf;
     text-decoration: none;
     border-left: 4px solid transparent;
     font-size: 14px;
     transition: all 0.25s ease;
 }
+
 
 .sidebar a i {
     min-width: 20px;
@@ -126,6 +127,7 @@ body.admin-dashboard {
     margin-left: 240px;
     padding: 80px 30px 30px;
     min-height: 100vh;
+    transition: margin-left 0.3s ease;
 }
 
 /* ===== CARDS (Reusable) ===== */
@@ -187,7 +189,7 @@ body.admin-dashboard {
     background: #a63d3d;
 }
 
-/* ===== SCROLLBAR (optional premium touch) ===== */
+/* ===== SCROLLBAR ===== */
 .sidebar::-webkit-scrollbar {
     width: 6px;
 }
@@ -199,7 +201,6 @@ body.admin-dashboard {
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 991px) {
-
     .sidebar {
         transform: translateX(-100%);
     }
@@ -211,5 +212,18 @@ body.admin-dashboard {
     .main-content {
         margin-left: 0;
         padding: 80px 20px 20px;
+    }
+
+    /* Show hamburger only on mobile */
+    .menu-toggle {
+        display: block;
+    }
+}
+
+
+/* Force hide hamburger on desktop */
+@media (min-width: 992px) {
+    .menu-toggle {
+        display: none !important;
     }
 }

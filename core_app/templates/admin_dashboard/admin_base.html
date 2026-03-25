@@ -6,13 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Admin Panel{% endblock %}</title>
 
-    <!-- Common CSS -->
     <link rel="stylesheet" href="{% static 'css/admin_base.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     {% block extra_css %}{% endblock %}
 </head>
-
 <body class="admin-dashboard">
 
 <!-- TOPBAR -->
@@ -64,13 +62,25 @@
     {% block admin_content %}{% endblock %}
 </div>
 
-<!-- JS (kept here as you want ✅) -->
+<!-- JS -->
 <script>
 const toggleBtn = document.getElementById("menuToggle");
 const sidebar = document.getElementById("sidebar");
+const mainContent = document.querySelector(".main-content");
 
 toggleBtn.addEventListener("click", () => {
     sidebar.classList.toggle("active");
+    if (window.innerWidth > 991) {
+        mainContent.style.marginLeft = sidebar.classList.contains("active") ? "0" : "240px";
+    }
+});
+
+window.addEventListener("resize", () => {
+    if (window.innerWidth > 991) {
+        mainContent.style.marginLeft = sidebar.classList.contains("active") ? "0" : "240px";
+    } else {
+        mainContent.style.marginLeft = "0";
+    }
 });
 
 document.addEventListener('click', function(e){
@@ -83,6 +93,5 @@ document.addEventListener('click', function(e){
 </script>
 
 {% block extra_js %}{% endblock %}
-
 </body>
 </html>
