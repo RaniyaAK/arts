@@ -1,79 +1,87 @@
-/* HEADER */
-.page-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:30px;
+/* ===========================
+   ADMIN CLIENTS PAGE CSS
+   Pastel / Soft / Matching Artists Theme
+=========================== */
+
+/* Search Box */
+.search-wrapper {
+    margin-bottom: 20px;
 }
 
-/* STAT CARD */
-.stat-card{
-    background:white;
-    border-radius:12px;
-    padding:20px;
-    width:220px;
-    box-shadow:0 8px 20px rgba(0,0,0,0.05);
-    border:1px solid var(--border);
-    display:flex;
-    align-items:center;
-    gap:15px;
-    margin-bottom:30px;
+.search-box {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 6px 12px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.stat-icon{
-    width:45px;
-    height:45px;
-    border-radius:10px;
-    background:#f4efe9;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:var(--primary);
+.search-box input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 14px;
+    color: #2e2e2e;
+    background: transparent;
 }
 
-.stat-number{
-    font-size:22px;
-    font-weight:700;
+/* Client Avatar & Info */
+.client-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-/* SEARCH */
-.search-wrapper{
-    margin-bottom:15px;
-    max-width:360px;
+.client-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #FFD3B6; /* soft pastel orange */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #e65100;
+    font-size: 14px;
 }
 
-.search-box{
-    display:flex;
-    align-items:center;
-    background:white;
-    border:1px solid var(--border);
-    border-radius:30px;
-    padding:10px 16px;
-    box-shadow:0 3px 10px rgba(0,0,0,0.04);
+/* Table */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 14px;
 }
 
-.search-box input{
-    border:none;
-    outline:none;
-    flex:1;
-    background:none;
+.table th,
+.table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
 }
 
-/* CLIENT INFO */
-.client-info{
-    display:flex;
-    align-items:center;
-    gap:10px;
+.table th {
+    background: #FAF3E0; /* pastel cream header */
+    font-weight: 600;
 }
 
-.client-avatar{
-    width:36px;
-    height:36px;
-    border-radius:50%;
-    background:#f4efe9;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:var(--primary);
+/* Empty Row */
+.empty-row {
+    padding: 20px 0;
+    text-align: center;
+    color: #888;
 }
 
+/* No Result Message */
+#noResultMsg {
+    margin-top: 10px;
+    color: #777;
+    font-style: italic;
+    font-size: 14px;
+}

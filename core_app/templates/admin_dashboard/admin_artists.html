@@ -1,142 +1,97 @@
-{% extends "masterss.html" %}
-{% block title %}Artists | Admin{% endblock %}
-{% block body_class %}admin-dashboard{% endblock %}
+{% extends "admin_dashboard/admin_base.html" %}
 {% load static %}
-{% block content %}
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="{% static 'css/admin_base.css' %}">
+{% block title %}Artists | Admin{% endblock %}
+
+{% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/admin_artists.css' %}">
+{% endblock %}
 
+{% block admin_content %}
 
-<!-- TOPBAR -->
-<div class="topbar">
-    <div class="d-flex align-items-center gap-3">
-        <i class="fas fa-bars menu-toggle" onclick="toggleSidebar()"></i>
-        <div class="logo">Paletra</div>
-    </div>
-    <div class="topbar-right">
-        <i class="fas fa-bell"></i>
-        <div>{{ request.user.username }}</div>
+<h1 class="page-title">Artists</h1>
+
+<div class="search-wrapper">
+    <div class="search-box">
+        <i class="fas fa-search text-muted me-2"></i>
+        <input type="text" id="artistSearch" placeholder="Search artists by name or email">
     </div>
 </div>
 
-<div class="admin-container">
+<p id="noResultMsg" style="display:none;">No artists match your search</p>
 
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-        <a href="{% url 'admin_dashboard' %}"><i class="fas fa-home"></i> Dashboard</a>
-        <a href="{% url 'admin_artists' %}" class="active"><i class="fas fa-palette"></i> Artists</a>
-        <a href="{% url 'admin_clients' %}"><i class="fas fa-users"></i> Clients</a>
-        <a href="{% url 'admin_commissions' %}"><i class="fas fa-money-bill-wave"></i> Commissions</a>
-        <a href="{% url 'admin_transactions' %}"><i class="fas fa-money-bill-wave"></i> Transactions</a>
-        <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
-    </div>
+<div class="section-box">
+    <h3 style="margin-bottom:20px;">Registered Artists</h3>
 
-    <!-- MAIN CONTENT -->
-    <div class="main-content">
-
-
-        <h1 class="page-title">Artists</h1>
-
-        <div class="search-wrapper">
-                <div class="search-box">
-                    <i class="fas fa-search text-muted me-2"></i>
-                    <input type="text" id="artistSearch" placeholder="Search artists by name or email">
-                </div>
-        </div>
-
-        <p id="noResultMsg" style="display:none;">No artists match your search</p>
-
-        <div class="section-box">
-            <h3 style="margin-bottom:20px;">Registered Artists</h3>
-
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Status</th>
-                        <th>Joined</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for a in artists %}
-                    <tr class="artist-row">
-                        <td>{{ a.name }}</td>
-                        <td>{{ a.email }}</td>
-                        <td>
-                            {% if a.is_approved %}
-                                <span class="status-approved">Approved</span>
-                            {% else %}
-                                <span class="status-pending">Pending</span>
-                            {% endif %}
-                        </td>
-                        <td>{{ a.date_joined }}</td>
-                        <td>
-                            {% if not a.is_approved %}
-                                <a href="{% url 'approve_artist' a.id %}" class="btn-approve">Approve</a>
-                                <a href="{% url 'reject_artist' a.id %}" class="btn-reject">Reject</a>
-                            {% else %}
-                                <span style="color:#999;">—</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-    </div>
-
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in artists %}
+            <tr class="artist-row">
+                <td>{{ a.name }}</td>
+                <td>{{ a.email }}</td>
+                <td>
+                    {% if a.is_approved %}
+                        <span class="status-approved">Approved</span>
+                    {% else %}
+                        <span class="status-pending">Pending</span>
+                    {% endif %}
+                </td>
+                <td>{{ a.date_joined|date:"M d, Y" }}</td>
+                <td>
+                    {% if not a.is_approved %}
+                        <a href="{% url 'approve_artist' a.id %}" class="btn-approve">Approve</a>
+                        <a href="{% url 'reject_artist' a.id %}" class="btn-reject">Reject</a>
+                    {% else %}
+                        <span style="color:#999;">—</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="empty-row">
+                    No artists found
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
 <script>
-function toggleSidebar(){
-    document.querySelector('.sidebar').classList.toggle('active');
-}
+// SEARCH FUNCTIONALITY
+const searchInput = document.getElementById("artistSearch");
+const rows = document.querySelectorAll(".artist-row");
+const noResult = document.getElementById("noResultMsg");
 
-// Click outside sidebar to close on mobile
-document.addEventListener('click', function(e){
-    const sidebar = document.querySelector('.sidebar');
-    const toggle = document.querySelector('.menu-toggle');
+searchInput.addEventListener("input", function(){
+    const value = this.value.toLowerCase().trim();
+    let visibleCount = 0;
 
-    if (window.innerWidth <= 991){
-        if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
-            sidebar.classList.remove('active');
+    rows.forEach(row => {
+        const name = row.children[0].textContent.toLowerCase();
+        const email = row.children[1].textContent.toLowerCase();
+
+        if(name.includes(value) || email.includes(value)){
+            row.style.display = "table-row";
+            visibleCount++;
+        } else {
+            row.style.display = "none";
         }
-    }
+    });
+
+    noResult.style.display = (rows.length > 0 && visibleCount === 0 && value !== "") ? "block" : "none";
 });
 </script>
-
-
-<script>
-
-    // SEARCH FUNCTIONALITY
-    const searchInput = document.getElementById("artistSearch");
-    const rows = document.querySelectorAll(".artist-row");
-    const noResult = document.getElementById("noResultMsg");
-
-    searchInput.addEventListener("input", function(){
-        const value = this.value.toLowerCase().trim();
-        let visibleCount = 0;
-
-        rows.forEach(row => {
-            const name = row.children[0].textContent.toLowerCase();
-            const email = row.children[1].textContent.toLowerCase();
-
-            if(name.includes(value) || email.includes(value)){
-                row.style.display = "table-row";
-                visibleCount++;
-            } else {
-                row.style.display = "none";
-            }
-        });
-
-        noResult.style.display = (rows.length > 0 && visibleCount === 0 && value !== "") ? "block" : "none";
-    });
-</script>
-
-
 {% endblock %}

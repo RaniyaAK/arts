@@ -1,0 +1,144 @@
+/* Section boxes */
+.section-box {
+    background: #fff8f0; /* soft pastel cream */
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
+
+/* Filter box */
+.filter-box .filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.filter-input, .filter-select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 0.95rem;
+    flex: 1;
+}
+
+.btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    text-decoration: none;
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: #FDEBD0; /* soft pastel orange */
+    color: #8B5E3C;
+}
+
+.btn-primary:hover {
+    background-color: #FCD9A1;
+}
+
+.btn-secondary {
+    background-color: #E8F6EF; /* soft pastel green */
+    color: #2E7D32;
+}
+
+.btn-secondary:hover {
+    background-color: #C8E6C9;
+}
+
+/* Table card */
+.table-card table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.table-card th {
+    background-color: #FFF3E0; /* pastel header */
+    color: #5D4037;
+    font-weight: 600;
+    padding: 12px;
+    text-align: left;
+}
+
+.table-card td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.table-card tr:hover {
+    background-color: #FFF8E1;
+}
+
+/* Status badges */
+.status {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    display: inline-block;
+}
+
+.status.completed {
+    background-color: #A8E6CF;
+    color: #2E7D32;
+}
+
+.status.pending {
+    background-color: #FFD3B6;
+    color: #8B5E3C;
+}
+
+.status.failed {
+    background-color: #FF8B94;
+    color: #C62828;
+}
+
+/* Empty row */
+.empty-row {
+    font-style: italic;
+    color: #888;
+    text-align: center;
+}
+
+/* Pagination */
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 15px;
+}
+
+.page-link {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    text-decoration: none;
+    color: #5D4037;
+}
+
+.page-link.active {
+    background-color: #FDEBD0;
+    color: #8B5E3C;
+    font-weight: 600;
+}
+
+.page-link:hover:not(.active) {
+    background-color: #FFF3E0;
+}
+
+/* Responsive filter box */
+@media (max-width: 768px) {
+    .filter-box .filter-form {
+        flex-direction: column;
+    }
+    .filter-input, .filter-select, .btn {
+        width: 100%;
+    }
+}

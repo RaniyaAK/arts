@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Panel{% endblock %}</title>
+
+    <!-- Common CSS -->
+    <link rel="stylesheet" href="{% static 'css/admin_base.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="admin-dashboard">
+
+<!-- TOPBAR -->
+<div class="topbar">
+    <div class="d-flex align-items-center gap-3">
+        <i class="fas fa-bars menu-toggle" id="menuToggle"></i>
+        <div class="logo">Paletra</div>
+    </div>
+    <div class="topbar-right">
+        <i class="fas fa-bell"></i>
+        <div>{{ request.user.username }}</div>
+    </div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+    <a href="{% url 'admin_dashboard' %}" 
+       class="{% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
+        <i class="fas fa-home"></i> Dashboard
+    </a>
+
+    <a href="{% url 'admin_artists' %}" 
+       class="{% if request.resolver_match.url_name == 'admin_artists' %}active{% endif %}">
+        <i class="fas fa-palette"></i> Artists
+    </a>
+
+    <a href="{% url 'admin_clients' %}" 
+       class="{% if request.resolver_match.url_name == 'admin_clients' %}active{% endif %}">
+        <i class="fas fa-users"></i> Clients
+    </a>
+
+    <a href="{% url 'admin_commissions' %}" 
+       class="{% if request.resolver_match.url_name == 'admin_commissions' %}active{% endif %}">
+        <i class="fas fa-briefcase"></i> Commissions
+    </a>
+
+    <a href="{% url 'admin_transactions' %}" 
+       class="{% if request.resolver_match.url_name == 'admin_transactions' %}active{% endif %}">
+        <i class="fas fa-money-bill-wave"></i> Transactions
+    </a>
+
+    <a href="{% url 'logout' %}">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+    {% block admin_content %}{% endblock %}
+</div>
+
+<!-- JS (kept here as you want ✅) -->
+<script>
+const toggleBtn = document.getElementById("menuToggle");
+const sidebar = document.getElementById("sidebar");
+
+toggleBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("active");
+});
+
+document.addEventListener('click', function(e){
+    if (window.innerWidth <= 768){
+        if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+            sidebar.classList.remove('active');
+        }
+    }
+});
+</script>
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>
