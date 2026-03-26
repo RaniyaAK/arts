@@ -36,6 +36,7 @@ from .views.admin_views import(
     reject_artist,
     admin_transactions,
     admin_commissions,
+    get_notifications,
 
 )
 
@@ -112,6 +113,7 @@ urlpatterns = [
     path('admin-transactions/',admin_transactions, name='admin_transactions'),
     path('admin-commissions/',admin_commissions, name='admin_commissions'),
     path('admin-notifications/',admin_notifications, name='admin_notifications'),
+    path('notifications/list/', get_notifications, name='get_notifications'),
 
 
     # artist_dashboard

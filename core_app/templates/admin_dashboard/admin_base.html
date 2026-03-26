@@ -20,7 +20,17 @@
         <div class="logo">Paletra</div>
     </div>
     <div class="topbar-right">
-        <i class="fas fa-bell"></i>
+        <div class="notif-wrapper">
+    <i class="fas fa-bell" id="notifToggle"></i>
+    <span id="notifCount" class="notif-badge" style="display:none;"></span>
+
+    <div class="notif-dropdown" id="notifDropdown">
+        <div class="notif-header">Notifications</div>
+        <div id="notifList">
+            <p class="empty">No notifications</p>
+        </div>
+    </div>
+</div>
         <div>{{ request.user.username }}</div>
     </div>
 </div>
@@ -90,6 +100,96 @@ document.addEventListener('click', function(e){
         }
     }
 });
+</script>
+
+<script>
+const toggle = document.getElementById("notifToggle");
+const dropdown = document.getElementById("notifDropdown");
+const list = document.getElementById("notifList");
+const badge = document.getElementById("notifCount");
+
+// toggle dropdown
+toggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+
+    dropdown.style.display =
+        dropdown.style.display === "block" ? "none" : "block";
+
+    if (dropdown.style.display === "block") {
+        loadNotifications();
+        markAsRead();
+    }
+});
+
+// close when clicking outside
+document.addEventListener("click", () => {
+    dropdown.style.display = "none";
+});
+
+// prevent closing when clicking inside
+dropdown.addEventListener("click", (e) => {
+    e.stopPropagation();
+});
+
+// fetch notifications
+function loadNotifications() {
+    fetch("{% url 'get_notifications' %}")
+        .then(res => res.json())
+        .then(data => {
+
+            if (data.notifications.length === 0) {
+                list.innerHTML = "<p class='empty'>No notifications</p>";
+                return;
+            }
+
+            let html = "";
+
+            data.notifications.forEach(n => {
+                html += `
+                    <div class="notif-item ${n.is_read ? '' : 'unread'}">
+                        ${n.message}
+                    </div>
+                `;
+            });
+
+            list.innerHTML = html;
+        });
+}
+
+// unread count
+function fetchUnreadCount() {
+    fetch("{% url 'unread_notification_count' %}")
+        .then(res => res.json())
+        .then(data => {
+            if (data.count > 0) {
+                badge.style.display = "inline-block";
+                badge.textContent = data.count;
+            } else {
+                badge.style.display = "none";
+            }
+        });
+}
+
+// CSRF
+function getCSRFToken() {
+    return document.cookie.split('; ')
+        .find(row => row.startsWith('csrftoken='))
+        ?.split('=')[1];
+}
+
+// mark read
+function markAsRead() {
+    fetch("{% url 'mark_notification_read' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": getCSRFToken()
+        }
+    }).then(fetchUnreadCount);
+}
+
+// auto refresh
+fetchUnreadCount();
+setInterval(fetchUnreadCount, 5000);
 </script>
 
 {% block extra_js %}{% endblock %}

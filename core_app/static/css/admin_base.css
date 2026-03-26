@@ -219,7 +219,56 @@ body.admin-dashboard {
         display: block;
     }
 }
+.notif-wrapper {
+    position: relative;
+    cursor: pointer;
+}
 
+.notif-badge {
+    position: absolute;
+    top: -5px;
+    right: -8px;
+    background: red;
+    color: #fff;
+    font-size: 11px;
+    padding: 3px 6px;
+    border-radius: 50%;
+}
+
+.notif-dropdown {
+    position: absolute;
+    right: 0;
+    top: 35px;
+    width: 300px;
+    max-height: 350px;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    display: none;
+    z-index: 1000;
+}
+
+.notif-header {
+    padding: 10px;
+    font-weight: 600;
+    border-bottom: 1px solid #eee;
+}
+
+.notif-item {
+    padding: 10px;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.notif-item.unread {
+    background: #f5f7ff;
+}
+
+.empty {
+    padding: 15px;
+    text-align: center;
+    color: gray;
+}
 
 /* Force hide hamburger on desktop */
 @media (min-width: 992px) {

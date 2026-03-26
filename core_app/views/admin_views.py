@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.http import JsonResponse
 
 
 from ..models import User, Notification, Commission, Transaction
@@ -110,3 +111,19 @@ def admin_transactions(request):
     }
 
     return render(request, 'admin_dashboard/admin_transactions.html', context)
+
+@login_required
+def get_notifications(request):
+    notifications = Notification.objects.filter(
+        receiver=request.user
+    ).order_by('-created_at')[:10]
+
+    data = [
+        {
+            "message": n.message,
+            "is_read": n.is_read
+        }
+        for n in notifications
+    ]
+
+    return JsonResponse({"notifications": data})
