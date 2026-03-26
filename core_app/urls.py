@@ -111,6 +111,7 @@ urlpatterns = [
     path('reject-artist/<int:user_id>/', reject_artist, name='reject_artist'),
     path('admin-transactions/',admin_transactions, name='admin_transactions'),
     path('admin-commissions/',admin_commissions, name='admin_commissions'),
+    path('admin-notifications/',admin_notifications, name='admin_notifications'),
 
 
     # artist_dashboard
