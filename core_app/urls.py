@@ -126,6 +126,8 @@ urlpatterns = [
     path('artist/transactions/', artist_transactions, name='artist_transactions'),
     path('commission/set-total-price/<int:commission_id>/', set_total_price,name='set_total_price'),
     path('commission/<int:commission_id>/cancel/', cancel_commission, name='cancel_commission'),
+    path('commission/<int:commission_id>/balance-choice/', pay_balance_choice, name='pay_balance_choice'),
+
     path('commission/<int:commission_id>/<str:status>/', update_commission_status, name='update_commission_status'),
     
 
@@ -136,7 +138,6 @@ urlpatterns = [
     path('commission/paypal/success/<int:commission_id>/', paypal_success, name='paypal_success'),
     path("commission/paypal/balance-success/<int:commission_id>/", paypal_success_balance,name="paypal_success_balance"),
     path('client-notifications/', client_notifications, name='client_notifications'),
-    path('commission/<int:commission_id>/balance-choice/', pay_balance_choice, name='pay_balance_choice'),
     path('commission/<int:commission_id>/balance-online/', pay_balance_online, name='pay_balance_online'),
     path('client/transactions/', client_transactions, name='client_transactions'),
     path('payment-success/<int:transaction_id>/', payment_success, name='payment_success'),
