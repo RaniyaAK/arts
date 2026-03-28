@@ -1,23 +1,37 @@
 /* ===========================
-   ADMIN CLIENTS PAGE CSS
-   Pastel / Soft / Matching Artists Theme
+   CLIENTS PAGE (BROWN THEME)
 =========================== */
 
-/* Search Box */
+/* ===========================
+   SEARCH
+=========================== */
+
 .search-wrapper {
-    margin-bottom: 20px;
+    margin: 25px 0 20px; /* 👈 space from heading */
 }
 
 .search-box {
     display: flex;
     align-items: center;
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 6px 12px;
-    width: 100%;
-    max-width: 400px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    gap: 12px; /* 👈 better spacing inside */
+    background: #fffdf9;
+    border: 1px solid #eadfce;
+    border-radius: 12px;
+    padding: 12px 16px; /* 👈 thicker box */
+    max-width: 420px;
+    box-shadow: 0 4px 10px rgba(139,94,60,0.08);
+    transition: all 0.25s ease;
+}
+
+/* focus effect */
+.search-box:focus-within {
+    border-color: #CFAF5D;
+    box-shadow: 0 6px 14px rgba(207,175,93,0.2);
+}
+
+.search-box i {
+    color: #8B5E3C;
+    font-size: 14px;
 }
 
 .search-box input {
@@ -25,63 +39,108 @@
     outline: none;
     flex: 1;
     font-size: 14px;
-    color: #2e2e2e;
+    padding: 4px 0; /* 👈 vertical breathing */
     background: transparent;
 }
 
-/* Client Avatar & Info */
+/* ===========================
+   CLIENT INFO
+=========================== */
+
 .client-info {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px; /* 👈 slightly more spacing */
 }
+
+/* ===========================
+   AVATAR
+=========================== */
 
 .client-avatar {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    background: #FFD3B6; /* soft pastel orange */
+    background: #8B5E3C;
+    color: #fff;
     display: flex;
-    justify-content: center;
     align-items: center;
-    color: #e65100;
+    justify-content: center;
     font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    box-shadow: 0 3px 8px rgba(139,94,60,0.25);
 }
 
-/* Table */
+/* ===========================
+   TABLE
+=========================== */
+
 .table {
     width: 100%;
     border-collapse: collapse;
     background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
+    border-radius: 10px;
     overflow: hidden;
-    font-size: 14px;
-}
-
-.table th,
-.table td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid #e0e0e0;
 }
 
 .table th {
-    background: #FAF3E0; /* pastel cream header */
-    font-weight: 600;
+    background: #F9F5F0;
+    color: #6b5b4d;
+    padding: 12px 15px;
+    font-size: 13px;
 }
 
-/* Empty Row */
+.table td {
+    padding: 12px 15px;
+    border-top: 1px solid #f1e6d9;
+    font-size: 14px;
+    color: #3a3a3a;
+}
+
+/* ===========================
+   ROW HOVER
+=========================== */
+
+.client-row {
+    transition: all 0.2s ease;
+}
+
+.client-row:hover {
+    background: #FFF8EE;
+}
+
+/* ===========================
+   EMPTY + NO RESULT
+=========================== */
+
 .empty-row {
-    padding: 20px 0;
     text-align: center;
-    color: #888;
+    padding: 25px;
+    color: #999;
+    font-style: italic;
 }
 
-/* No Result Message */
 #noResultMsg {
     margin-top: 10px;
     color: #777;
     font-style: italic;
     font-size: 14px;
+}
+
+/* Number column */
+.index {
+    color: #a08d7c;
+    font-size: 13px;
+    width: 40px;
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media (max-width: 768px) {
+    .search-box {
+        max-width: 100%;
+    }
 }

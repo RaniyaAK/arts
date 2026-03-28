@@ -9,23 +9,37 @@
 
 {% block admin_content %}
 
-<h1 class="page-title">Artists</h1>
+<!-- HEADER -->
+<div class="artists-header">
+    <div>
+        <h1 class="page-title">Artists</h1>
+        <p class="sub-text">Manage and approve artist accounts</p>
+    </div>
 
+    <div class="artist-count-card">
+        <span>Total Artists</span>
+        <h3>{{ artists|length }}</h3>
+    </div>
+</div>
+
+<!-- SEARCH -->
 <div class="search-wrapper">
     <div class="search-box">
-        <i class="fas fa-search text-muted me-2"></i>
-        <input type="text" id="artistSearch" placeholder="Search artists by name or email">
+        <i class="fas fa-search"></i>
+        <input type="text" id="artistSearch" placeholder="Search by name or email...">
     </div>
 </div>
 
 <p id="noResultMsg" style="display:none;">No artists match your search</p>
 
+<!-- TABLE -->
 <div class="section-box">
-    <h3 style="margin-bottom:20px;">Registered Artists</h3>
+    <h3 class="section-title">Registered Artists</h3>
 
     <table class="table">
         <thead>
             <tr>
+                <th>#</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Status</th>
@@ -33,36 +47,52 @@
                 <th>Action</th>
             </tr>
         </thead>
-        <tbody>
-            {% for a in artists %}
-            <tr class="artist-row">
-                <td>{{ a.name }}</td>
-                <td>{{ a.email }}</td>
-                <td>
-                    {% if a.is_approved %}
-                        <span class="status-approved">Approved</span>
-                    {% else %}
-                        <span class="status-pending">Pending</span>
-                    {% endif %}
-                </td>
-                <td>{{ a.date_joined|date:"M d, Y" }}</td>
-                <td>
-                    {% if not a.is_approved %}
-                        <a href="{% url 'approve_artist' a.id %}" class="btn-approve">Approve</a>
-                        <a href="{% url 'reject_artist' a.id %}" class="btn-reject">Reject</a>
-                    {% else %}
-                        <span style="color:#999;">—</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="5" class="empty-row">
-                    No artists found
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
+
+<tbody>
+    {% for a in artists %}
+    <tr class="artist-row">
+        <td class="index">{{ forloop.counter }}</td>
+
+        <!-- NAME + AVATAR -->
+        <td>
+            <div class="artist-info">
+                <div class="artist-avatar">
+                    {{ a.name|slice:":1"|upper }}
+                </div>
+                <span class="name">{{ a.name }}</span>
+            </div>
+        </td>
+
+        <td>{{ a.email }}</td>
+
+        <td>
+            {% if a.is_approved %}
+                <span class="status-approved">Approved</span>
+            {% else %}
+                <span class="status-pending">Pending</span>
+            {% endif %}
+        </td>
+
+        <td>{{ a.date_joined|date:"M d, Y" }}</td>
+
+        <td>
+            {% if not a.is_approved %}
+                <a href="{% url 'approve_artist' a.id %}" class="btn-approve">Approve</a>
+                <a href="{% url 'reject_artist' a.id %}" class="btn-reject">Reject</a>
+            {% else %}
+                <span class="no-action">—</span>
+            {% endif %}
+        </td>
+    </tr>
+
+    {% empty %}
+    <tr>
+        <td colspan="6" class="empty-row">
+            No artists found
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
     </table>
 </div>
 
@@ -70,7 +100,6 @@
 
 {% block extra_js %}
 <script>
-// SEARCH FUNCTIONALITY
 const searchInput = document.getElementById("artistSearch");
 const rows = document.querySelectorAll(".artist-row");
 const noResult = document.getElementById("noResultMsg");
@@ -80,8 +109,8 @@ searchInput.addEventListener("input", function(){
     let visibleCount = 0;
 
     rows.forEach(row => {
-        const name = row.children[0].textContent.toLowerCase();
-        const email = row.children[1].textContent.toLowerCase();
+        const name = row.children[1].textContent.toLowerCase();
+        const email = row.children[2].textContent.toLowerCase();
 
         if(name.includes(value) || email.includes(value)){
             row.style.display = "table-row";

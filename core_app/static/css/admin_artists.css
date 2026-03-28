@@ -1,8 +1,49 @@
 /* ===========================
-   ADMIN ARTISTS PAGE CSS (Pastel / Soft)
+   HEADER
 =========================== */
 
-/* Search Box */
+.artists-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.page-title {
+    margin: 0;
+    font-weight: 600;
+    color: #3E2A20;
+}
+
+.sub-text {
+    font-size: 13px;
+    color: #888;
+    margin-top: 4px;
+}
+
+/* COUNT CARD */
+.artist-count-card {
+    background: #FFF8EE;
+    padding: 12px 18px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.artist-count-card span {
+    font-size: 12px;
+    color: #777;
+}
+
+.artist-count-card h3 {
+    margin: 5px 0 0;
+    color: #8B5E3C;
+}
+
+/* ===========================
+   SEARCH
+=========================== */
+
 .search-wrapper {
     margin-bottom: 20px;
 }
@@ -10,13 +51,17 @@
 .search-box {
     display: flex;
     align-items: center;
+    gap: 10px;
     background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 6px 12px;
-    width: 100%;
-    max-width: 400px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border: 1px solid #e6e2dc;
+    border-radius: 10px;
+    padding: 10px 14px;
+    max-width: 420px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+}
+
+.search-box i {
+    color: #999;
 }
 
 .search-box input {
@@ -24,55 +69,94 @@
     outline: none;
     flex: 1;
     font-size: 14px;
-    color: #2e2e2e;
-    background: transparent;
 }
 
-/* Status Badges */
-.status-approved {
-    background: #A8E6CF; /* soft green pastel */
-    color: #2e7d32;       /* darker green text */
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 500;
+/* ===========================
+   SECTION BOX
+=========================== */
+
+.section-box {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.05);
 }
 
-.status-pending {
-    background: #FFD3B6; /* soft orange pastel */
-    color: #e65100;       /* darker orange text */
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 500;
+.section-title {
+    margin-bottom: 15px;
+    color: #5C4033;
 }
 
-/* No Result Message */
-#noResultMsg {
-    margin-top: 10px;
-    color: #777;
-    font-style: italic;
-    font-size: 14px;
+/* ===========================
+   TABLE
+=========================== */
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-/* Table Empty Row */
-.empty-row {
-    padding: 20px 0;
-    text-align: center;
-    color: #888;
+.table th {
+    background: #FAF7F2;
+    padding: 12px;
+    font-size: 13px;
+    color: #6b5b4d;
 }
 
-/* Buttons Override for Artists Table */
-.btn-approve, .btn-reject {
-    font-size: 12px;
-    padding: 4px 8px;
-    border-radius: 6px;
-    text-decoration: none;
-    display: inline-block;
+.table td {
+    padding: 12px;
+    border-top: 1px solid #f0ebe5;
+}
+
+/* ROW HOVER */
+.artist-row {
     transition: 0.2s ease;
 }
 
-/* Approve button: soft green pastel */
+.artist-row:hover {
+    background: #FFF8EE;
+}
+
+/* INDEX COLUMN */
+.index {
+    color: #999;
+    font-size: 13px;
+}
+
+/* ===========================
+   STATUS
+=========================== */
+
+.status-approved {
+    background: #A8E6CF;
+    color: #2e7d32;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.status-pending {
+    background: #FFD3B6;
+    color: #e65100;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+/* ===========================
+   BUTTONS
+=========================== */
+
+.btn-approve,
+.btn-reject {
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    text-decoration: none;
+    margin-right: 5px;
+    transition: 0.2s ease;
+}
+
 .btn-approve {
     background: #A8E6CF;
     color: #2e7d32;
@@ -82,7 +166,6 @@
     background: #7ddcb0;
 }
 
-/* Reject button: soft red pastel */
 .btn-reject {
     background: #FF8B94;
     color: #b71c1c;
@@ -90,4 +173,41 @@
 
 .btn-reject:hover {
     background: #ff5c66;
+}
+
+/* NO ACTION */
+.no-action {
+    color: #aaa;
+}
+
+/* ===========================
+   EMPTY / NO RESULT
+=========================== */
+
+.empty-row {
+    text-align: center;
+    padding: 25px;
+    color: #999;
+}
+
+#noResultMsg {
+    margin-top: 10px;
+    color: #777;
+    font-style: italic;
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media (max-width: 768px) {
+    .artists-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .search-box {
+        max-width: 100%;
+    }
 }
