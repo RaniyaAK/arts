@@ -9,24 +9,13 @@
 
 {% block admin_content %}
 
-<!-- HEADER -->
-<div class="artists-header">
-    <div>
-        <h1 class="page-title">Artists</h1>
-        <p class="sub-text">Manage and approve artist accounts</p>
-    </div>
-
-    <div class="artist-count-card">
-        <span>Total Artists</span>
-        <h3>{{ artists|length }}</h3>
-    </div>
-</div>
+<h1 class="page-title">Artists</h1>
 
 <!-- SEARCH -->
 <div class="search-wrapper">
     <div class="search-box">
         <i class="fas fa-search"></i>
-        <input type="text" id="artistSearch" placeholder="Search by name or email...">
+        <input type="text" id="artistSearch" placeholder="Search artists by name or email...">
     </div>
 </div>
 
@@ -48,51 +37,54 @@
             </tr>
         </thead>
 
-<tbody>
-    {% for a in artists %}
-    <tr class="artist-row">
-        <td class="index">{{ forloop.counter }}</td>
+        <tbody>
+            {% for a in artists %}
+            <tr class="artist-row">
 
-        <!-- NAME + AVATAR -->
-        <td>
-            <div class="artist-info">
-                <div class="artist-avatar">
-                    {{ a.name|slice:":1"|upper }}
-                </div>
-                <span class="name">{{ a.name }}</span>
-            </div>
-        </td>
+                <!-- NUMBER -->
+                <td class="index">{{ forloop.counter }}</td>
 
-        <td>{{ a.email }}</td>
+                <!-- NAME + AVATAR -->
+                <td>
+                    <div class="artist-info">
+                    <div class="artist-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                        <span class="name">{{ a.name }}</span>
+                    </div>
+                </td>
 
-        <td>
-            {% if a.is_approved %}
-                <span class="status-approved">Approved</span>
-            {% else %}
-                <span class="status-pending">Pending</span>
-            {% endif %}
-        </td>
+                <td>{{ a.email }}</td>
 
-        <td>{{ a.date_joined|date:"M d, Y" }}</td>
+                <td>
+                    {% if a.is_approved %}
+                        <span class="status-approved">Approved</span>
+                    {% else %}
+                        <span class="status-pending">Pending</span>
+                    {% endif %}
+                </td>
 
-        <td>
-            {% if not a.is_approved %}
-                <a href="{% url 'approve_artist' a.id %}" class="btn-approve">Approve</a>
-                <a href="{% url 'reject_artist' a.id %}" class="btn-reject">Reject</a>
-            {% else %}
-                <span class="no-action">—</span>
-            {% endif %}
-        </td>
-    </tr>
+                <td>{{ a.date_joined|date:"M d, Y" }}</td>
 
-    {% empty %}
-    <tr>
-        <td colspan="6" class="empty-row">
-            No artists found
-        </td>
-    </tr>
-    {% endfor %}
-</tbody>
+                <td>
+                    {% if not a.is_approved %}
+                        <a href="{% url 'approve_artist' a.id %}" class="btn-approve">Approve</a>
+                        <a href="{% url 'reject_artist' a.id %}" class="btn-reject">Reject</a>
+                    {% else %}
+                        <span class="no-action">—</span>
+                    {% endif %}
+                </td>
+
+            </tr>
+
+            {% empty %}
+            <tr>
+                <td colspan="6" class="empty-row">
+                    No artists found
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
 </div>
 
@@ -109,6 +101,8 @@ searchInput.addEventListener("input", function(){
     let visibleCount = 0;
 
     rows.forEach(row => {
+
+        // ✅ FIXED INDEX SHIFT (important)
         const name = row.children[1].textContent.toLowerCase();
         const email = row.children[2].textContent.toLowerCase();
 
@@ -120,7 +114,10 @@ searchInput.addEventListener("input", function(){
         }
     });
 
-    noResult.style.display = (rows.length > 0 && visibleCount === 0 && value !== "") ? "block" : "none";
+    noResult.style.display =
+        (rows.length > 0 && visibleCount === 0 && value !== "")
+        ? "block"
+        : "none";
 });
 </script>
 {% endblock %}

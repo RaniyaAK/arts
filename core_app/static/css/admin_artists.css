@@ -1,67 +1,36 @@
 /* ===========================
-   HEADER
+   ARTISTS PAGE (BROWN THEME)
 =========================== */
-
-.artists-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.page-title {
-    margin: 0;
-    font-weight: 600;
-    color: #3E2A20;
-}
-
-.sub-text {
-    font-size: 13px;
-    color: #888;
-    margin-top: 4px;
-}
-
-/* COUNT CARD */
-.artist-count-card {
-    background: #FFF8EE;
-    padding: 12px 18px;
-    border-radius: 12px;
-    text-align: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.artist-count-card span {
-    font-size: 12px;
-    color: #777;
-}
-
-.artist-count-card h3 {
-    margin: 5px 0 0;
-    color: #8B5E3C;
-}
 
 /* ===========================
    SEARCH
 =========================== */
 
 .search-wrapper {
-    margin-bottom: 20px;
+    margin: 25px 0 20px;
 }
 
 .search-box {
     display: flex;
     align-items: center;
-    gap: 10px;
-    background: #fff;
-    border: 1px solid #e6e2dc;
-    border-radius: 10px;
-    padding: 10px 14px;
+    gap: 12px;
+    background: #fffdf9;
+    border: 1px solid #eadfce;
+    border-radius: 12px;
+    padding: 12px 16px;
     max-width: 420px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+    box-shadow: 0 4px 10px rgba(139,94,60,0.08);
+    transition: all 0.25s ease;
+}
+
+.search-box:focus-within {
+    border-color: #CFAF5D;
+    box-shadow: 0 6px 14px rgba(207,175,93,0.2);
 }
 
 .search-box i {
-    color: #999;
+    color: #8B5E3C;
+    font-size: 14px;
 }
 
 .search-box input {
@@ -69,6 +38,8 @@
     outline: none;
     flex: 1;
     font-size: 14px;
+    padding: 4px 0;
+    background: transparent;
 }
 
 /* ===========================
@@ -77,14 +48,15 @@
 
 .section-box {
     background: #fff;
-    border-radius: 14px;
+    border-radius: 12px;
     padding: 20px;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 .section-title {
     margin-bottom: 15px;
     color: #5C4033;
+    font-weight: 600;
 }
 
 /* ===========================
@@ -94,37 +66,75 @@
 .table {
     width: 100%;
     border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 .table th {
-    background: #FAF7F2;
-    padding: 12px;
-    font-size: 13px;
+    background: #F9F5F0;
     color: #6b5b4d;
+    padding: 12px 15px;
+    font-size: 13px;
+    text-align: left;
 }
 
 .table td {
-    padding: 12px;
-    border-top: 1px solid #f0ebe5;
+    padding: 12px 15px;
+    border-top: 1px solid #f1e6d9;
+    font-size: 14px;
+    color: #3a3a3a;
 }
 
-/* ROW HOVER */
+/* ===========================
+   ROW HOVER
+=========================== */
+
 .artist-row {
-    transition: 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 .artist-row:hover {
     background: #FFF8EE;
 }
 
-/* INDEX COLUMN */
+/* ===========================
+   NUMBER COLUMN
+=========================== */
+
 .index {
-    color: #999;
+    color: #a08d7c;
     font-size: 13px;
+    width: 40px;
 }
 
 /* ===========================
-   STATUS
+   ARTIST INFO (AVATAR)
+=========================== */
+
+.artist-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.artist-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #8B5E3C;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    box-shadow: 0 3px 8px rgba(139,94,60,0.25);
+}
+
+/* ===========================
+   STATUS BADGES
 =========================== */
 
 .status-approved {
@@ -175,25 +185,26 @@
     background: #ff5c66;
 }
 
-/* NO ACTION */
 .no-action {
     color: #aaa;
 }
 
 /* ===========================
-   EMPTY / NO RESULT
+   EMPTY + NO RESULT
 =========================== */
 
 .empty-row {
     text-align: center;
     padding: 25px;
     color: #999;
+    font-style: italic;
 }
 
 #noResultMsg {
     margin-top: 10px;
     color: #777;
     font-style: italic;
+    font-size: 14px;
 }
 
 /* ===========================
@@ -201,12 +212,6 @@
 =========================== */
 
 @media (max-width: 768px) {
-    .artists-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-
     .search-box {
         max-width: 100%;
     }
