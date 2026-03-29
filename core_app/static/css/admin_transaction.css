@@ -1,144 +1,222 @@
-/* Section boxes */
-.section-box {
-    background: #fff8f0; /* soft pastel cream */
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-    margin-bottom: 20px;
+/* ===========================
+   TRANSACTIONS PAGE (BROWN THEME)
+=========================== */
+
+/* ===========================
+   SEARCH (same as artists)
+=========================== */
+
+.search-wrapper {
+    margin: 25px 0 20px;
 }
 
-/* Filter box */
-.filter-box .filter-form {
+.search-box {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 15px;
+    align-items: center;
+    gap: 12px;
+    background: #fffdf9;
+    border: 1px solid #eadfce;
+    border-radius: 12px;
+    padding: 12px 16px;
+    max-width: 420px;
+    box-shadow: 0 4px 10px rgba(139,94,60,0.08);
+    transition: all 0.25s ease;
 }
 
-.filter-input, .filter-select {
-    padding: 8px 12px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    font-size: 0.95rem;
-    flex: 1;
+.search-box:focus-within {
+    border-color: #CFAF5D;
+    box-shadow: 0 6px 14px rgba(207,175,93,0.2);
 }
 
-.btn {
-    padding: 8px 16px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-size: 0.95rem;
-    text-decoration: none;
-    text-align: center;
-}
-
-.btn-primary {
-    background-color: #FDEBD0; /* soft pastel orange */
+.search-box i {
     color: #8B5E3C;
+    font-size: 14px;
 }
 
-.btn-primary:hover {
-    background-color: #FCD9A1;
+.search-box input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 14px;
+    padding: 4px 0;
+    background: transparent;
 }
 
-.btn-secondary {
-    background-color: #E8F6EF; /* soft pastel green */
-    color: #2E7D32;
+/* ===========================
+   NO RESULT MESSAGE (FIXED)
+=========================== */
+
+#noResultMsg {
+    margin: 20px 0 30px;
+    text-align: left;
+    color: #a08d7c;
+    font-size: 15px;
 }
 
-.btn-secondary:hover {
-    background-color: #C8E6C9;
+/* ===========================
+   SECTION BOX
+=========================== */
+
+.section-box {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-/* Table card */
-.table-card table {
+/* ===========================
+   TABLE
+=========================== */
+
+.table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.95rem;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
-.table-card th {
-    background-color: #FFF3E0; /* pastel header */
-    color: #5D4037;
-    font-weight: 600;
-    padding: 12px;
+.table th {
+    background: #E2D2BE;
+    color: #4a3b2c;
+    padding: 12px 15px;
+    font-size: 13px;
     text-align: left;
 }
 
-.table-card td {
-    padding: 10px 12px;
-    border-bottom: 1px solid #eee;
+.table td {
+    padding: 12px 15px;
+    border-top: 1px solid #f1e6d9;
+    font-size: 14px;
+    color: #3a3a3a;
 }
 
-.table-card tr:hover {
-    background-color: #FFF8E1;
+/* ===========================
+   ROW HOVER
+=========================== */
+
+.table tr {
+    transition: all 0.2s ease;
 }
 
-/* Status badges */
-.status {
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    text-transform: capitalize;
-    display: inline-block;
+.table tr:hover {
+    background: #F8EFE4;
 }
 
-.status.completed {
-    background-color: #A8E6CF;
-    color: #2E7D32;
-}
+/* ===========================
+   AMOUNT COLUMN (highlight)
+=========================== */
 
-.status.pending {
-    background-color: #FFD3B6;
-    color: #8B5E3C;
-}
-
-.status.failed {
-    background-color: #FF8B94;
-    color: #C62828;
-}
-
-/* Empty row */
-.empty-row {
-    font-style: italic;
-    color: #888;
+.table td:nth-child(2),
+.table th:nth-child(2) {
     text-align: center;
+    font-weight: 600;
+    color: #5C4033;
 }
 
-/* Pagination */
+/* ===========================
+   USER INFO (AVATAR)
+=========================== */
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #8B5E3C;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    box-shadow: 0 3px 8px rgba(139,94,60,0.25);
+}
+
+.name {
+    font-weight: 500;
+    color: #3a3a3a;
+}
+
+/* ===========================
+   EMPTY STATE
+=========================== */
+
+.empty-row {
+    text-align: center;
+    padding: 25px;
+    color: #999;
+    font-style: italic;
+}
+
+/* ===========================
+   PAGINATION
+=========================== */
+
 .pagination-wrapper {
     display: flex;
     justify-content: center;
-    gap: 6px;
-    margin-top: 15px;
+    gap: 8px;
+    margin-top: 20px;
 }
 
 .page-link {
     padding: 6px 12px;
     border-radius: 8px;
-    border: 1px solid #ddd;
+    border: 1px solid #e0d6c8;
     text-decoration: none;
-    color: #5D4037;
+    color: #5c4033;
+    font-size: 13px;
 }
 
 .page-link.active {
-    background-color: #FDEBD0;
-    color: #8B5E3C;
-    font-weight: 600;
+    background: #8B5E3C;
+    color: #fff;
+    font-weight: 500;
 }
 
 .page-link:hover:not(.active) {
-    background-color: #FFF3E0;
+    background: #F3E7D9;
+}
+/* ===========================
+   SEARCH HIGHLIGHT
+=========================== */
+.highlight {
+    background: #FDEBD0;
+    color: #8B5E3C;
+    padding: 0 3px;              /* 🔥 reduce vertical padding */
+    border-radius: 3px;
+    line-height: inherit;        /* ✅ keep same line alignment */
+    display: inline;             /* ✅ prevent shifting */
 }
 
-/* Responsive filter box */
+/* ===========================
+   ROW ANIMATION
+=========================== */
+
+.transaction-row {
+    transition: all 0.25s ease;
+}
+
+.transaction-row.hide {
+    opacity: 0;
+    transform: translateY(5px);
+}
+
+.transaction-row.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+/* ===========================
+   RESPONSIVE
+=========================== */
+
 @media (max-width: 768px) {
-    .filter-box .filter-form {
-        flex-direction: column;
-    }
-    .filter-input, .filter-select, .btn {
-        width: 100%;
+    .search-box {
+        max-width: 100%;
     }
 }

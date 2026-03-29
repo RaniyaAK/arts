@@ -4,77 +4,158 @@
 {% block title %}Transactions | Admin{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/admin_transactions.css' %}">
+<link rel="stylesheet" href="{% static 'css/admin_transaction.css' %}">
 {% endblock %}
 
 {% block admin_content %}
 
 <h1 class="page-title">Transactions</h1>
 
-<!-- FILTER BOX -->
-<div class="section-box filter-box">
-    <form method="GET" class="filter-form">
-        <input type="text" name="search" value="{{ search }}" placeholder="Search by user name" class="filter-input">
-        <select name="status" class="filter-select">
-            <option value="">All Status</option>
-            <option value="completed" {% if status == "completed" %}selected{% endif %}>Completed</option>
-            <option value="pending" {% if status == "pending" %}selected{% endif %}>Pending</option>
-            <option value="failed" {% if status == "failed" %}selected{% endif %}>Failed</option>
-        </select>
-        <button type="submit" class="btn btn-primary">Filter</button>
-        <a href="{% url 'admin_transactions' %}" class="btn btn-secondary">Reset</a>
-    </form>
+<!-- SEARCH (LIKE ARTISTS) -->
+<div class="search-wrapper">
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input 
+            type="text" 
+            id="transactionSearch"
+            placeholder="Search transactions..."
+        >
+    </div>
 </div>
 
+<!-- NO RESULT MESSAGE -->
+<p id="noResultMsg" style="display:none;">
+    No transactions match your search
+</p>
+
 <!-- TABLE -->
-<div class="section-box table-card">
+<div class="section-box">
     <table class="table">
         <thead>
             <tr>
                 <th>User</th>
                 <th>Amount</th>
-                <th>Type</th>
-                <th>Status</th>
                 <th>Date</th>
             </tr>
         </thead>
+
         <tbody>
             {% for t in page_obj %}
-            <tr>
-                <td><strong>{{ t.user.name }}</strong></td>
-                <td>₹{{ t.amount }}</td>
-                <td>{{ t.transaction_type }}</td>
+            <tr class="transaction-row">
+
+                <!-- USER + AVATAR -->
                 <td>
-                    <span class="status {{ t.status|lower }}">{{ t.status }}</span>
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <span class="name">{{ t.user.username }}</span>
+                    </div>
                 </td>
-                <td>{{ t.created_at }}</td>
+
+                <!-- AMOUNT -->
+                <td class="amount">
+                    ₹{{ t.amount|floatformat:2 }}
+                </td>
+
+                <!-- DATE -->
+                <td>
+                    {{ t.created_at|date:"d M Y H:i" }}
+                </td>
+
             </tr>
+
             {% empty %}
             <tr>
-                <td colspan="5" class="empty-row text-center">No transactions found</td>
+                <td colspan="3" class="empty-row">
+                    No transactions found
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
 
-<!-- PAGINATION -->
+<!-- PAGINATION (UNCHANGED) -->
 <div class="pagination-wrapper">
     {% if page_obj.has_previous %}
-    <a href="?page={{ page_obj.previous_page_number }}&search={{ search }}&status={{ status }}" class="page-link">Prev</a>
+    <a href="?page={{ page_obj.previous_page_number }}" class="page-link">Prev</a>
     {% endif %}
 
     {% for num in page_obj.paginator.page_range %}
         {% if page_obj.number == num %}
         <span class="page-link active">{{ num }}</span>
         {% else %}
-        <a href="?page={{ num }}&search={{ search }}&status={{ status }}" class="page-link">{{ num }}</a>
+        <a href="?page={{ num }}" class="page-link">{{ num }}</a>
         {% endif %}
     {% endfor %}
 
     {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}&search={{ search }}&status={{ status }}" class="page-link">Next</a>
+    <a href="?page={{ page_obj.next_page_number }}" class="page-link">Next</a>
     {% endif %}
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const searchInput = document.getElementById("transactionSearch");
+const rows = document.querySelectorAll(".transaction-row");
+const noResult = document.getElementById("noResultMsg");
+
+searchInput.addEventListener("input", function(){
+    const value = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+
+        // reset previous highlight
+        row.querySelectorAll("td").forEach(td => {
+            td.innerHTML = td.textContent;
+        });
+
+        const user = row.children[0].textContent.toLowerCase();
+        const amount = row.children[1].textContent.toLowerCase();
+        const date = row.children[2].textContent.toLowerCase();
+
+        if(
+            user.includes(value) ||
+            amount.includes(value) ||
+            date.includes(value)
+        ){
+            row.style.display = "table-row";
+            row.classList.remove("hide");
+            row.classList.add("show");
+            visibleCount++;
+
+            // highlight match
+            if(value !== ""){
+                highlightText(row, value);
+            }
+
+        } else {
+            row.classList.remove("show");
+            row.classList.add("hide");
+
+            setTimeout(() => {
+                row.style.display = "none";
+            }, 200);
+        }
+    });
+
+    noResult.style.display =
+        (rows.length > 0 && visibleCount === 0 && value !== "")
+        ? "block"
+        : "none";
+});
+
+
+function highlightText(row, value){
+    row.querySelectorAll("td").forEach(td => {
+        const text = td.textContent;
+        const regex = new RegExp(`(${value})`, "gi");
+        td.innerHTML = text.replace(regex, `<span class="highlight">$1</span>`);
+    });
+}
+</script>
 {% endblock %}
