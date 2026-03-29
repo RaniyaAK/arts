@@ -1,12 +1,50 @@
+/* ===========================
+   SEARCH
+=========================== */
+
+.search-wrapper {
+    margin: 25px 0 20px;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fffdf9;
+    border: 1px solid #eadfce;
+    border-radius: 12px;
+    padding: 12px 16px;
+    max-width: 420px;
+    box-shadow: 0 4px 10px rgba(139,94,60,0.08);
+    transition: all 0.25s ease;
+}
+
+.search-box:focus-within {
+    border-color: #CFAF5D;
+    box-shadow: 0 6px 14px rgba(207,175,93,0.2);
+}
+
+.search-box i {
+    color: #8B5E3C;
+    font-size: 14px;
+}
+
+.search-box input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 14px;
+    padding: 4px 0;
+    background: transparent;
+}
+
 /* Section boxes / Table card */
 .section-box.table-card {
-    background: #fff8f0; /* soft pastel cream */
+    background: #fff;   /* 👈 clean white like artists */
     padding: 20px;
     border-radius: 14px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.05);
     border: 1px solid #e0e0e0;
-    overflow: hidden;
-    margin-bottom: 20px;
 }
 
 /* Responsive table wrapper */
@@ -19,21 +57,33 @@
     width: 100%;
     border-collapse: collapse;
     font-size: 0.95rem;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
-.table th, .table td {
-    text-align: center;
-    padding: 12px;
-}
 
+/* HEADER */
 .table th {
-    background-color: #FFF3E0; /* pastel header */
-    color: #5D4037;
+    background: #E2D2BE;   /* 👈 same beige */
+    color: #4a3b2c;
     font-weight: 600;
+    text-align: left;
+    padding: 12px 15px;
 }
 
+/* BODY */
+.table td {
+    padding: 12px 15px;
+    border-top: 1px solid #f1e6d9;
+    font-size: 14px;
+    color: #3a3a3a;
+    text-align: left;
+}
+
+/* ROW HOVER */
 .table tr:hover {
-    background-color: #FFF8E1;
+    background: #F8EFE4;
 }
 
 /* Status badges */
@@ -66,6 +116,12 @@
     font-style: italic;
     color: #888;
     text-align: center;
+}
+
+#noCommissionResult {
+    margin: 20px 0 30px;
+    color: #a08d7c;
+    font-size: 15px;
 }
 
 /* Responsive for smaller screens */

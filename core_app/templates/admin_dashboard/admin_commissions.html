@@ -11,6 +11,15 @@
 
 <h1 class="page-title">All Commissions</h1>
 
+<div class="search-wrapper">
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="commissionSearch" placeholder="Search by ID, title, client or artist...">
+    </div>
+</div>
+
+<p id="noCommissionResult" style="display:none;">No commissions match your search</p>
+
 <div class="section-box table-card">
     <div class="table-responsive">
         <table class="table">
@@ -28,7 +37,7 @@
             </thead>
             <tbody>
                 {% for c in commissions %}
-                <tr>
+                <tr class="commission-row">
                     <td>{{ forloop.counter }}</td>
                     <td>{{ c.commission_id }}</td>
                     <td>{{ c.title }}</td>
@@ -61,5 +70,40 @@
         </table>
     </div>
 </div>
+
+<script>
+const searchInput = document.getElementById("commissionSearch");
+const rows = document.querySelectorAll(".commission-row");
+const noResult = document.getElementById("noCommissionResult");
+
+searchInput.addEventListener("input", function(){
+    const value = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+        const id = row.children[1].textContent.toLowerCase();      // commission_id
+        const title = row.children[2].textContent.toLowerCase();
+        const client = row.children[3].textContent.toLowerCase();
+        const artist = row.children[4].textContent.toLowerCase();
+
+        if (
+            id.includes(value) ||
+            title.includes(value) ||
+            client.includes(value) ||
+            artist.includes(value)
+        ) {
+            row.style.display = "table-row";
+            visibleCount++;
+        } else {
+            row.style.display = "none";
+        }
+    });
+
+    noResult.style.display =
+        (rows.length > 0 && visibleCount === 0 && value !== "")
+        ? "block"
+        : "none";
+});
+</script>
 
 {% endblock %}
