@@ -201,10 +201,10 @@
 }
 
 #noResultMsg {
-    margin-top: 10px;
-    color: #777;
-    font-style: italic;
-    font-size: 14px;
+    margin: 20px 0 30px;
+    text-align: left;
+    color: #a08d7c;
+    font-size: 15px;
 }
 
 /* ===========================
