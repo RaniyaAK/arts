@@ -72,12 +72,13 @@
 }
 
 .table th {
-    background: #F9F5F0;
-    color: #6b5b4d;
+    background: #E2D2BE;
+    color: #4a3b2c;
     padding: 12px 15px;
     font-size: 13px;
     text-align: left;
 }
+
 
 .table td {
     padding: 12px 15px;
