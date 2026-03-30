@@ -60,8 +60,8 @@
 
                 <!-- DATE -->
                 <td class="date">
-                    <span class="date-part">2026-03-30</span>
-                    <span class="time-part">11:45 AM</span>
+                    <span class="date-part">{{ t.created_at|date:"Y-m-d" }}</span> | 
+                    <span class="time-part">{{ t.created_at|date:"h:i A" }}</span>
                 </td>
 
             </tr>
