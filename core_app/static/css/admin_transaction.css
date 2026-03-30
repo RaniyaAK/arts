@@ -217,6 +217,37 @@
     color: #555;
     font-weight: normal;
 }
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #8B5E3C;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 3px 8px rgba(139,94,60,0.25);
+}
+
+.name {
+    font-weight: 500;
+    color: #3a3a3a;
+}
+
+.index {
+    text-align: center;
+    font-weight: 500;
+    color: #3a3a3a;
+}
 /* ===========================
    RESPONSIVE
 =========================== */
