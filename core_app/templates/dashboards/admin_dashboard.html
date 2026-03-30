@@ -80,7 +80,14 @@
             </tr>
             {% for artist in pending_artists %}
             <tr>
-                <td>{{ artist.username }}</td>
+                <td>
+                    <div class="artist-info">
+                        <div class="artist-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <span class="name">{{ artist.username }}</span>
+                    </div>
+                </td>
                 <td>{{ artist.email }}</td>
                 <td>{{ artist.date_joined|date:"M d, Y" }}</td>
                 <td>

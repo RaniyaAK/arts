@@ -86,13 +86,108 @@
     overflow-x: auto;
 }
 
-/* ===== EMPTY ROW ===== */
-.empty-row {
-    padding: 20px;
-    font-size: 14px;
+/* ===========================
+   TABLE (PENDING ARTISTS STYLE)
+=========================== */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
 }
 
-/* ===== RESPONSIVE ===== */
+.table th,
+.table td {
+    text-align: left;
+    padding: 12px 15px;
+    vertical-align: middle;
+    font-size: 14px;
+    color: #3a3a3a;
+}
+
+.table th {
+    background-color: #e7cc8d;
+    color: #4a3b2c;
+    font-weight: 600;
+    font-size: 13px;
+    border-bottom: 1px solid #f1e6d9;
+}
+
+/* ROW HOVER */
+.table tr {
+    transition: all 0.2s ease;
+}
+
+.table tr:hover {
+    background-color: #F8EFE4;
+}
+
+/* USER / ARTIST INFO (AVATAR + NAME) */
+.artist-info,
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.artist-avatar,
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #8B5E3C;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 3px 8px rgba(139,94,60,0.25);
+    text-transform: uppercase;
+}
+
+/* ACTION BUTTONS */
+.btn-approve,
+.btn-reject {
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    text-decoration: none;
+    margin-right: 5px;
+    transition: 0.2s ease;
+}
+
+.btn-approve {
+    background: #A8E6CF;
+    color: #2e7d32;
+}
+
+.btn-approve:hover {
+    background: #7ddcb0;
+}
+
+.btn-reject {
+    background: #FF8B94;
+    color: #b71c1c;
+}
+
+.btn-reject:hover {
+    background: #ff5c66;
+}
+
+/* EMPTY ROW */
+.empty-row {
+    text-align: center;
+    padding: 25px;
+    color: #999;
+    font-style: italic;
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
 @media (max-width: 991px) {
     .dashboard-row {
         flex-direction: column;
@@ -100,5 +195,24 @@
 
     .section-box.half {
         width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .table th,
+    .table td {
+        font-size: 13px;
+        padding: 10px;
+    }
+
+    .artist-avatar,
+    .user-avatar {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+    }
+
+    .metric {
+        padding: 15px;
     }
 }
