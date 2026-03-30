@@ -84,7 +84,6 @@ def admin_commissions(request):
         "commissions": commissions
     })
 
-
 def admin_transactions(request):
 
     transactions = Transaction.objects.all().order_by('-created_at')
@@ -92,20 +91,15 @@ def admin_transactions(request):
     # Search
     search = request.GET.get('search')
     if search:
-        transactions = transactions.filter(user__name__icontains=search)
+        transactions = transactions.filter(user__username__icontains=search)
 
     # Filter by status
     status = request.GET.get('status')
     if status:
         transactions = transactions.filter(status=status)
 
-    # Pagination
-    paginator = Paginator(transactions, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
     context = {
-        'page_obj': page_obj,
+        'transactions': transactions,
         'search': search,
         'status': status
     }

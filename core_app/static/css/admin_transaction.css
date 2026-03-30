@@ -5,7 +5,6 @@
 /* ===========================
    SEARCH (same as artists)
 =========================== */
-
 .search-wrapper {
     margin: 25px 0 20px;
 }
@@ -43,9 +42,8 @@
 }
 
 /* ===========================
-   NO RESULT MESSAGE (FIXED)
+   NO RESULT MESSAGE
 =========================== */
-
 #noResultMsg {
     margin: 20px 0 30px;
     text-align: left;
@@ -56,7 +54,6 @@
 /* ===========================
    SECTION BOX
 =========================== */
-
 .section-box {
     background: #fff;
     border-radius: 12px;
@@ -67,57 +64,88 @@
 /* ===========================
    TABLE
 =========================== */
-
+.transactions-table,
 .table {
     width: 100%;
     border-collapse: collapse;
     background: #fff;
     border-radius: 10px;
     overflow: hidden;
+    table-layout: fixed;
+    font-family: Arial, sans-serif;
 }
 
-.table th {
-    background: #E2D2BE;
-    color: #4a3b2c;
-    padding: 12px 15px;
-    font-size: 13px;
-    text-align: left;
-}
-
+.transactions-table th,
+.transactions-table td,
+.table th,
 .table td {
+    text-align: left;
     padding: 12px 15px;
-    border-top: 1px solid #f1e6d9;
+    vertical-align: middle;
     font-size: 14px;
     color: #3a3a3a;
+}
+
+.transactions-table th,
+.table th {
+    background-color: #e7cc8d;
+    color: #4a3b2c;
+    font-weight: 600;
+    border-bottom: 1px solid #f1e6d9;
+    font-size: 13px;
+}
+
+/* ===========================
+   COLUMN WIDTHS & ALIGNMENTS
+=========================== */
+.transactions-table th:nth-child(1),
+.transactions-table td:nth-child(1),
+.table th:nth-child(1),
+.table td:nth-child(1) {
+    width: 35%; /* User column */
+}
+
+.transactions-table th:nth-child(2),
+.transactions-table td:nth-child(2),
+.table th:nth-child(2),
+.table td:nth-child(2) {
+    width: 25%; /* Amount column */
+    text-align: center;
+    font-weight: 600;
+    color: #5C4033; /* Highlight color */
+}
+
+.transactions-table th:nth-child(3),
+.transactions-table td:nth-child(3),
+.table th:nth-child(3),
+.table td:nth-child(3) {
+    width: 40%; /* Date column */
+    text-align: center;
+}
+
+.transactions-table td.date,
+.table td.date {
+    white-space: nowrap; /* Keep date/time on one line */
+    color: #555;         /* Muted color */
+    font-size: 0.95rem;  /* Slightly smaller font */
 }
 
 /* ===========================
    ROW HOVER
 =========================== */
-
+.transactions-table tr,
 .table tr {
     transition: all 0.2s ease;
 }
 
+.transactions-table tr:hover,
 .table tr:hover {
-    background: #F8EFE4;
-}
-
-/* ===========================
-   AMOUNT COLUMN (highlight)
-=========================== */
-
-.table td:nth-child(2),
-.table th:nth-child(2) {
-    text-align: center;
-    font-weight: 600;
-    color: #5C4033;
+    background-color: #fff1c9; /* Light beige hover */
 }
 
 /* ===========================
    USER INFO (AVATAR)
 =========================== */
-
 .user-info {
     display: flex;
     align-items: center;
@@ -145,7 +173,6 @@
 /* ===========================
    EMPTY STATE
 =========================== */
-
 .empty-row {
     text-align: center;
     padding: 25px;
@@ -156,7 +183,6 @@
 /* ===========================
    PAGINATION
 =========================== */
-
 .pagination-wrapper {
     display: flex;
     justify-content: center;
@@ -182,22 +208,22 @@
 .page-link:hover:not(.active) {
     background: #F3E7D9;
 }
+
 /* ===========================
    SEARCH HIGHLIGHT
 =========================== */
 .highlight {
     background: #FDEBD0;
     color: #8B5E3C;
-    padding: 0 3px;              /* 🔥 reduce vertical padding */
+    padding: 0 3px;
     border-radius: 3px;
-    line-height: inherit;        /* ✅ keep same line alignment */
-    display: inline;             /* ✅ prevent shifting */
+    line-height: inherit;
+    display: inline;
 }
 
 /* ===========================
    ROW ANIMATION
 =========================== */
-
 .transaction-row {
     transition: all 0.25s ease;
 }
@@ -211,12 +237,36 @@
     opacity: 1;
     transform: translateY(0);
 }
+
+
+
 /* ===========================
    RESPONSIVE
 =========================== */
-
 @media (max-width: 768px) {
     .search-box {
         max-width: 100%;
     }
+
+    .transactions-table th:nth-child(1),
+    .transactions-table td:nth-child(1),
+    .table th:nth-child(1),
+    .table td:nth-child(1) {
+        width: 50%;
+    }
+
+    .transactions-table th:nth-child(2),
+    .transactions-table td:nth-child(2),
+    .table th:nth-child(2),
+    .table td:nth-child(2) {
+        width: 25%;
+    }
+
+    .transactions-table th:nth-child(3),
+    .transactions-table td:nth-child(3),
+    .table th:nth-child(3),
+    .table td:nth-child(3) {
+        width: 25%;
+    }
 }
+

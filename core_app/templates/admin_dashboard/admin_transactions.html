@@ -11,7 +11,7 @@
 
 <h1 class="page-title">Transactions</h1>
 
-<!-- SEARCH (LIKE ARTISTS) -->
+<!-- SEARCH -->
 <div class="search-wrapper">
     <div class="search-box">
         <i class="fas fa-search"></i>
@@ -40,10 +40,10 @@
         </thead>
 
         <tbody>
-            {% for t in page_obj %}
+            {% for t in transactions %}
             <tr class="transaction-row">
 
-                <!-- USER + AVATAR -->
+                <!-- USER -->
                 <td>
                     <div class="user-info">
                         <div class="user-avatar">
@@ -59,8 +59,9 @@
                 </td>
 
                 <!-- DATE -->
-                <td>
-                    {{ t.created_at|date:"d M Y H:i" }}
+                <td class="date">
+                    <span class="date-part">2026-03-30</span>
+                    <span class="time-part">11:45 AM</span>
                 </td>
 
             </tr>
@@ -74,25 +75,6 @@
             {% endfor %}
         </tbody>
     </table>
-</div>
-
-<!-- PAGINATION (UNCHANGED) -->
-<div class="pagination-wrapper">
-    {% if page_obj.has_previous %}
-    <a href="?page={{ page_obj.previous_page_number }}" class="page-link">Prev</a>
-    {% endif %}
-
-    {% for num in page_obj.paginator.page_range %}
-        {% if page_obj.number == num %}
-        <span class="page-link active">{{ num }}</span>
-        {% else %}
-        <a href="?page={{ num }}" class="page-link">{{ num }}</a>
-        {% endif %}
-    {% endfor %}
-
-    {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}" class="page-link">Next</a>
-    {% endif %}
 </div>
 
 {% endblock %}
@@ -109,14 +91,9 @@ searchInput.addEventListener("input", function(){
 
     rows.forEach(row => {
 
-        // reset previous highlight
-        row.querySelectorAll("td").forEach(td => {
-            td.innerHTML = td.textContent;
-        });
-
-        const user = row.children[0].textContent.toLowerCase();
-        const amount = row.children[1].textContent.toLowerCase();
-        const date = row.children[2].textContent.toLowerCase();
+        const user = row.querySelector(".name").textContent.toLowerCase();
+        const amount = row.querySelector(".amount").textContent.toLowerCase();
+        const date = row.querySelector(".date").textContent.toLowerCase();
 
         if(
             user.includes(value) ||
@@ -124,22 +101,16 @@ searchInput.addEventListener("input", function(){
             date.includes(value)
         ){
             row.style.display = "table-row";
-            row.classList.remove("hide");
-            row.classList.add("show");
             visibleCount++;
 
-            // highlight match
             if(value !== ""){
                 highlightText(row, value);
+            } else {
+                resetText(row);
             }
 
         } else {
-            row.classList.remove("show");
-            row.classList.add("hide");
-
-            setTimeout(() => {
-                row.style.display = "none";
-            }, 200);
+            row.style.display = "none";
         }
     });
 
@@ -151,11 +122,23 @@ searchInput.addEventListener("input", function(){
 
 
 function highlightText(row, value){
-    row.querySelectorAll("td").forEach(td => {
-        const text = td.textContent;
+    const elements = [
+        row.querySelector(".name"),
+        row.querySelector(".amount"),
+        row.querySelector(".date")
+    ];
+
+    elements.forEach(el => {
+        const text = el.textContent;
         const regex = new RegExp(`(${value})`, "gi");
-        td.innerHTML = text.replace(regex, `<span class="highlight">$1</span>`);
+        el.innerHTML = text.replace(regex, `<span class="highlight">$1</span>`);
     });
+}
+
+function resetText(row){
+    row.querySelector(".name").innerHTML = row.querySelector(".name").textContent;
+    row.querySelector(".amount").innerHTML = row.querySelector(".amount").textContent;
+    row.querySelector(".date").innerHTML = row.querySelector(".date").textContent;
 }
 </script>
 {% endblock %}

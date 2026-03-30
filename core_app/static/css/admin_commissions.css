@@ -65,7 +65,7 @@
 
 /* HEADER */
 .table th {
-    background: #E2D2BE;   /* 👈 same beige */
+    background-color: #e7cc8d;  
     color: #4a3b2c;
     font-weight: 600;
     text-align: left;
